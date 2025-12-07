@@ -33,7 +33,7 @@ Download the latest APK from the [Releases Section](https://github.com/matsuzaka
 ## System Requirements
 
 - Supports the ARM64 architecture
-- Supports Android kernel versions 3.18 - 6.6
+- Supports Android kernel versions 3.18 - 6.12
 
 ## Open Source Credits
 

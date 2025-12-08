@@ -61,6 +61,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -457,6 +458,29 @@ fun SettingScreen() {
                 hideApatchCard = it
             }
             
+            // Home Layout Style
+            val showHomeLayoutDialog = remember { mutableStateOf(false) }
+            val homeLayoutStyle = prefs.getString("home_layout_style", "default")
+            
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_home_layout_style)) },
+                modifier = Modifier.clickable {
+                    showHomeLayoutDialog.value = true
+                },
+                supportingContent = {
+                    Text(
+                        text = if (homeLayoutStyle == "kernelsu") stringResource(R.string.settings_home_layout_grid) else stringResource(R.string.settings_home_layout_default),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                },
+                leadingContent = { Icon(Icons.Filled.AspectRatio, null) }
+            )
+            
+            if (showHomeLayoutDialog.value) {
+                HomeLayoutChooseDialog(showHomeLayoutDialog)
+            }
+
             // Home Page Hide Settings
             var hideSuPath by rememberSaveable {
                 mutableStateOf(
@@ -1416,4 +1440,85 @@ private fun iconPresetList(): List<IconPreset> {
 @Composable
 private fun iconNameToString(iconName: String): Int {
     return iconPresetList().find { it.name == iconName }?.nameId ?: R.string.launcher_icon_default
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeLayoutChooseDialog(showDialog: MutableState<Boolean>) {
+    val prefs = APApplication.sharedPreferences
+
+    BasicAlertDialog(
+        onDismissRequest = { showDialog.value = false }, properties = DialogProperties(
+            decorFitsSystemWindows = true,
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(310.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(30.dp),
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+            color = AlertDialogDefaults.containerColor,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_home_layout_style),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                val currentStyle = prefs.getString("home_layout_style", "default")
+                
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AlertDialogDefaults.containerColor,
+                    tonalElevation = 2.dp
+                ) {
+                    Column {
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_home_layout_default)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentStyle == "default",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("home_layout_style", "default").apply()
+                                showDialog.value = false
+                            }
+                        )
+                        
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_home_layout_grid)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentStyle == "kernelsu",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("home_layout_style", "kernelsu").apply()
+                                showDialog.value = false
+                            }
+                        )
+                    }
+                }
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { showDialog.value = false }) {
+                        Text(stringResource(id = android.R.string.cancel))
+                    }
+                }
+            }
+            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+            APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
+        }
+    }
 }

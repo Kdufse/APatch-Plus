@@ -402,4 +402,9 @@
     <!-- Auto-added missing strings -->
     <string name="settings_simple_kernel_version_mode_summary">隐藏魔法卡片中的星之版本信息</string>
     <string name="settings_simple_kernel_version_mode">简约星之版本模式</string>
+
+    <!-- Home Layout Strings -->
+    <string name="settings_home_layout_style">魔法大厅布局样式</string>
+    <string name="settings_home_layout_default">ListUI</string>
+    <string name="settings_home_layout_grid">GridUI</string>
 </resources>

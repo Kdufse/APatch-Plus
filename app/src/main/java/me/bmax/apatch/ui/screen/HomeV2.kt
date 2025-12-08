@@ -1,0 +1,289 @@
+package me.bmax.apatch.ui.screen
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Android
+import androidx.compose.material.icons.outlined.Extension
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.ramcosta.composedestinations.generated.destinations.InstallModeSelectScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import me.bmax.apatch.APApplication
+import me.bmax.apatch.R
+import me.bmax.apatch.ui.theme.BackgroundConfig
+import me.bmax.apatch.util.Version
+import androidx.compose.foundation.isSystemInDarkTheme
+
+import me.bmax.apatch.apApp
+import me.bmax.apatch.util.Version.getManagerVersion
+
+private val managerVersion = getManagerVersion()
+
+@Composable
+fun HomeScreenV2(
+    paddingValues: PaddingValues,
+    navigator: DestinationsNavigator,
+    kpState: APApplication.State,
+    apState: APApplication.State
+) {
+    val scrollState = rememberScrollState()
+    
+    val showAuthKeyDialog = remember { mutableStateOf(false) }
+    val showUninstallDialog = remember { mutableStateOf(false) }
+    val showAuthFailedTipDialog = remember { mutableStateOf(false) }
+
+    if (showAuthFailedTipDialog.value) {
+        AuthFailedTipDialog(showDialog = showAuthFailedTipDialog)
+    }
+    if (showAuthKeyDialog.value) {
+        AuthSuperKey(showDialog = showAuthKeyDialog, showFailedDialog = showAuthFailedTipDialog)
+    }
+    if (showUninstallDialog.value) {
+        UninstallDialog(showDialog = showUninstallDialog, navigator)
+    }
+    
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .padding(horizontal = 16.dp)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Spacer(Modifier.height(0.dp))
+        
+        // Top Section: Split into Left (Status) and Right (Details)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Left: Big Status Card
+            StatusCardBig(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                kpState = kpState,
+                apState = apState,
+                onClick = {
+                    when (kpState) {
+                        APApplication.State.UNKNOWN_STATE -> showAuthKeyDialog.value = true
+                        APApplication.State.KERNELPATCH_NEED_UPDATE -> navigator.navigate(InstallModeSelectScreenDestination)
+                        APApplication.State.KERNELPATCH_INSTALLED -> {} 
+                        else -> navigator.navigate(InstallModeSelectScreenDestination)
+                    }
+                }
+            )
+            
+            // Right: Two Small Cards
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Top Right: KP Version
+                SmallInfoCard(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.kernel_patch),
+                    value = if (kpState != APApplication.State.UNKNOWN_STATE) "${Version.installedKPVString()} (${managerVersion.second})" else "N/A",
+                    icon = Icons.Outlined.Extension,
+                    onClick = {
+                        if (kpState == APApplication.State.KERNELPATCH_NEED_UPDATE) {
+                             navigator.navigate(InstallModeSelectScreenDestination)
+                        }
+                    }
+                )
+                
+                // Bottom Right: AP Version
+                SmallInfoCard(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.android_patch),
+                    value = when(apState) {
+                        APApplication.State.ANDROIDPATCH_INSTALLED -> "Active"
+                        APApplication.State.ANDROIDPATCH_NEED_UPDATE -> "Update"
+                        APApplication.State.ANDROIDPATCH_INSTALLING -> "..."
+                        else -> "Inactive"
+                    },
+                    icon = Icons.Outlined.Android,
+                    onClick = {
+                        if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) {
+                            showUninstallDialog.value = true
+                        } else if (apState != APApplication.State.ANDROIDPATCH_NOT_INSTALLED && kpState == APApplication.State.KERNELPATCH_INSTALLED) {
+                            // Only allow install/uninstall if NOT in "Not Installed" state (per user request to disable click)
+                            // Wait, if it is NOT installed, user wants NO trigger effect.
+                            // So we only allow action if INSTALLED.
+                            // But what about INSTALLING?
+                            // User said: "When system patch (AP) is not installed... click... should be set to no trigger effect"
+                            // So if apState == ANDROIDPATCH_NOT_INSTALLED -> No effect.
+                            APApplication.installApatch()
+                        }
+                    }
+                )
+            }
+        }
+
+        // Warning Card for AP Not Installed
+        if (apState == APApplication.State.ANDROIDPATCH_NOT_INSTALLED) {
+            WarningCard()
+        }
+        
+        // AndroidPatch Install Card (Only when not installed)
+        if (kpState != APApplication.State.UNKNOWN_STATE && apState != APApplication.State.ANDROIDPATCH_INSTALLED) {
+            AStatusCard(apState)
+        }
+        
+        // Info Card
+        InfoCard(kpState, apState)
+        
+        // Learn More
+        val hideApatchCard = APApplication.sharedPreferences.getBoolean("hide_apatch_card", true)
+        if (!hideApatchCard) {
+            LearnMoreCard()
+        }
+        
+        Spacer(Modifier.height(16.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StatusCardBig(
+    modifier: Modifier = Modifier,
+    kpState: APApplication.State,
+    apState: APApplication.State,
+    onClick: () -> Unit
+) {
+    val isWorking = kpState == APApplication.State.KERNELPATCH_INSTALLED
+    val isUpdate = kpState == APApplication.State.KERNELPATCH_NEED_UPDATE || kpState == APApplication.State.KERNELPATCH_NEED_REBOOT
+    val isDark = isSystemInDarkTheme()
+    
+    // Colors
+    val containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+         MaterialTheme.colorScheme.primary.copy(alpha = BackgroundConfig.customBackgroundOpacity)
+    } else {
+        if (isWorking) {
+             MaterialTheme.colorScheme.primary
+        } else if (isUpdate) {
+             MaterialTheme.colorScheme.secondaryContainer
+        } else {
+             // Use secondaryContainer for Unknown/Not Installed (Fixed/Neutral color like original layout)
+             MaterialTheme.colorScheme.secondaryContainer
+        }
+    }
+    
+    val contentColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+         if (BackgroundConfig.customBackgroundOpacity > 0.5f) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+    } else {
+        if (isWorking) {
+            MaterialTheme.colorScheme.onPrimary
+        } else if (isUpdate) {
+             MaterialTheme.colorScheme.onSecondaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSecondaryContainer
+        }
+    }
+
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 2.dp)
+    ) {
+        Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            Column(modifier = Modifier.align(Alignment.BottomStart)) {
+                Text(
+                    text = when(kpState) {
+                        APApplication.State.KERNELPATCH_INSTALLED -> stringResource(R.string.home_working)
+                        APApplication.State.KERNELPATCH_NEED_UPDATE -> stringResource(R.string.home_kp_need_update)
+                        APApplication.State.KERNELPATCH_NEED_REBOOT -> stringResource(R.string.home_ap_cando_reboot)
+                        APApplication.State.UNKNOWN_STATE -> stringResource(R.string.home_install_unknown)
+                        else -> stringResource(R.string.home_not_installed)
+                    },
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
+                )
+                if (isWorking) {
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        text = if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) "<Full>" else "<Half>",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor.copy(alpha = 0.8f)
+                    )
+                }
+            }
+            
+            // Icon
+            Icon(
+                imageVector = if (isWorking) Icons.Filled.CheckCircle else Icons.Filled.Warning,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(48.dp),
+                tint = contentColor
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SmallInfoCard(
+    modifier: Modifier = Modifier,
+    title: String,
+    value: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    val containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+        MaterialTheme.colorScheme.surface.copy(alpha = BackgroundConfig.customBackgroundOpacity)
+    } else {
+        MaterialTheme.colorScheme.surfaceContainer
+    }
+    
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = icon, 
+                    contentDescription = null, 
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                 color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}

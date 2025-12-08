@@ -398,4 +398,9 @@
     <string name="home_hide_kpatch_version">隱藏核心修補程式版本</string>
     <string name="home_hide_su_path">隱藏 su 執行檔路徑</string>
     <string name="app_title_magicpatch">MagicPatch</string>
+
+    <!-- Home Layout Strings -->
+    <string name="settings_home_layout_style">首頁佈局樣式</string>
+    <string name="settings_home_layout_default">ListUI</string>
+    <string name="settings_home_layout_grid">GridUI</string>
 </resources>

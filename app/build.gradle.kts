@@ -3,6 +3,8 @@
 import com.android.build.gradle.tasks.PackageAndroidArtifact
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.agp.app)
@@ -20,6 +22,13 @@ val managerVersionName: String by rootProject.extra
 val branchname: String by rootProject.extra
 val kernelPatchVersion: String by rootProject.extra
 
+// Load keystore properties
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 apksign {
     storeFileProperty = "KEYSTORE_FILE"
     storePasswordProperty = "KEYSTORE_PASSWORD"
@@ -29,6 +38,15 @@ apksign {
 
 android {
     namespace = "me.bmax.apatch"
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties["KEYSTORE_FILE"] as String)
+            storePassword = keystoreProperties["KEYSTORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["KEY_ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
+        }
+    }
 
     buildTypes {
         debug {
@@ -46,6 +64,9 @@ android {
             isDebuggable = false
             multiDexEnabled = true
             vcsInfo.include = false
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

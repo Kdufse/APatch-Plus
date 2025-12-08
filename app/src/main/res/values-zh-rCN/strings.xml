@@ -402,4 +402,9 @@
     <string name="backup_dir_open_failed">打开备份目录失败</string>
     <string name="auto_backup_failed">自动备份失败: %s</string>
     <string name="auto_backup_success">自动备份成功: %s</string>
+
+    <!-- Home Layout Strings -->
+    <string name="settings_home_layout_style">首页布局样式</string>
+    <string name="settings_home_layout_default">ListUI</string>
+    <string name="settings_home_layout_grid">GridUI</string>
 </resources>

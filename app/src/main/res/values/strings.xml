@@ -409,4 +409,9 @@
     <string name="backup_dir_open_failed">Failed to open backup directory</string>
     <string name="auto_backup_failed">Auto backup failed: %s</string>
     <string name="auto_backup_success">Auto backup success: %s</string>
+
+    <!-- Home Layout Strings -->
+    <string name="settings_home_layout_style">Home Layout Style</string>
+    <string name="settings_home_layout_default">ListUI</string>
+    <string name="settings_home_layout_grid">GridUI</string>
 </resources>

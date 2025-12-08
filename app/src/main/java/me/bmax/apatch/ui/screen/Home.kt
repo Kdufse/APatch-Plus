@@ -115,30 +115,46 @@ fun HomeScreen(navigator: DestinationsNavigator) {
         showPatchFloatAction = false
     }
 
+    val homeLayout = APApplication.sharedPreferences.getString("home_layout_style", "default")
+
     Scaffold(topBar = {
         TopBar(onInstallClick = dropUnlessResumed {
             navigator.navigate(InstallModeSelectScreenDestination)
         }, navigator, kpState)
     }) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Spacer(Modifier.height(0.dp))
-            KStatusCard(kpState, apState, navigator)
-            if (kpState != APApplication.State.UNKNOWN_STATE && apState != APApplication.State.ANDROIDPATCH_INSTALLED) {
-                AStatusCard(apState)
-            }
-            InfoCard(kpState, apState)
-            val hideApatchCard = APApplication.sharedPreferences.getBoolean("hide_apatch_card", true)
-            if (!hideApatchCard) {
-                LearnMoreCard()
-            }
-            Spacer(Modifier)
+        if (homeLayout == "kernelsu") {
+            HomeScreenV2(innerPadding, navigator, kpState, apState)
+        } else {
+            HomeScreenV1(innerPadding, navigator, kpState, apState)
         }
+    }
+}
+
+@Composable
+fun HomeScreenV1(
+    innerPadding: PaddingValues,
+    navigator: DestinationsNavigator,
+    kpState: APApplication.State,
+    apState: APApplication.State
+) {
+    Column(
+        modifier = Modifier
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Spacer(Modifier.height(0.dp))
+        KStatusCard(kpState, apState, navigator)
+        if (kpState != APApplication.State.UNKNOWN_STATE && apState != APApplication.State.ANDROIDPATCH_INSTALLED) {
+            AStatusCard(apState)
+        }
+        InfoCard(kpState, apState)
+        val hideApatchCard = APApplication.sharedPreferences.getBoolean("hide_apatch_card", true)
+        if (!hideApatchCard) {
+            LearnMoreCard()
+        }
+        Spacer(Modifier)
     }
 }
 
@@ -481,7 +497,7 @@ private fun TopBar(
 }
 
 @Composable
-private fun StatusBadge(
+fun StatusBadge(
     text: String,
     containerColor: Color = MaterialTheme.colorScheme.onPrimary,
     contentColor: Color = MaterialTheme.colorScheme.primary
@@ -766,7 +782,7 @@ private fun KStatusCard(
 }
 
 @Composable
-private fun AStatusCard(apState: APApplication.State) {
+fun AStatusCard(apState: APApplication.State) {
     ElevatedCard(
         colors = CardDefaults.elevatedCardColors(containerColor = run {
             if (BackgroundConfig.isCustomBackgroundEnabled) {
@@ -949,11 +965,11 @@ fun WarningCard() {
     }
 }
 
-private fun getSystemVersion(): String {
+fun getSystemVersion(): String {
     return "${Build.VERSION.RELEASE} ${if (Build.VERSION.PREVIEW_SDK_INT != 0) "Preview" else ""} (API ${Build.VERSION.SDK_INT})"
 }
 
-private fun getDeviceInfo(): String {
+fun getDeviceInfo(): String {
     var manufacturer =
         Build.MANUFACTURER[0].uppercaseChar().toString() + Build.MANUFACTURER.substring(1)
     if (!Build.BRAND.equals(Build.MANUFACTURER, ignoreCase = true)) {
@@ -964,7 +980,7 @@ private fun getDeviceInfo(): String {
 }
 
 @Composable
-private fun InfoCard(kpState: APApplication.State, apState: APApplication.State) {
+fun InfoCard(kpState: APApplication.State, apState: APApplication.State) {
     // 隐藏设定状态
     val hideSuPath = remember { mutableStateOf(APApplication.sharedPreferences.getBoolean("hide_su_path", false)) }
     val hideKpatchVersion = remember { mutableStateOf(APApplication.sharedPreferences.getBoolean("hide_kpatch_version", false)) }

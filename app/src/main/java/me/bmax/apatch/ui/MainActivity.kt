@@ -22,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +37,7 @@ import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationSty
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import me.bmax.apatch.APApplication
+import me.bmax.apatch.R
 import me.bmax.apatch.ui.screen.BottomBarDestination
 import me.bmax.apatch.ui.theme.APatchThemeWithBackground
 import me.bmax.apatch.util.PermissionRequestHandler
@@ -42,6 +45,7 @@ import me.bmax.apatch.util.PermissionUtils
 import me.bmax.apatch.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -152,22 +156,25 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
 
             // 检查权限
             LaunchedEffect(Unit) {
                 if (!PermissionUtils.hasRequiredPermissions(context)) {
-                    permissionHandler.requestPermissions(
-                        onGranted = {
-                            // 权限已授予
-                        },
-                        onDenied = {
-                            // 权限被拒绝，显示snackbar提示
-                            snackBarHostState.showSnackbar(
-                                "需要存储权限以正常使用应用功能",
-                                withDismissAction = true
-                            )
-                        }
-                    )
+                    coroutineScope.launch {
+                        permissionHandler.requestPermissions(
+                            onGranted = {
+                                // 权限已授予
+                            },
+                            onDenied = {
+                                // 权限被拒绝，显示snackbar提示
+                                snackBarHostState.showSnackbar(
+                                    "需要存储权限以正常使用应用功能",
+                                    withDismissAction = true
+                                )
+                            }
+                        )
+                    }
                 }
             }
 

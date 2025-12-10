@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.Manifest
 import android.app.Activity
@@ -70,11 +70,11 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.viewmodel.KPModel
-import me.bmax.apatch.ui.viewmodel.PatchesViewModel
-import me.bmax.apatch.util.Version
-import me.bmax.apatch.util.reboot
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.viewmodel.KPModel
+import me.kdufse.apatch.plus.ui.viewmodel.PatchesViewModel
+import me.kdufse.apatch.plus.util.Version
+import me.kdufse.apatch.plus.util.reboot
 
 private const val TAG = "Patches"
 

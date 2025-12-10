@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
@@ -166,12 +167,12 @@ class MainActivity : AppCompatActivity() {
 
                 Scaffold(
                     bottomBar = { BottomBar(navController) },
-                ) { _ ->
+                ) { innerPadding ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
                         DestinationsNavHost(
-                            modifier = Modifier.padding(bottom = 80.dp),
+                            modifier = Modifier.padding(innerPadding),
                             navGraph = NavGraphs.root,
                             navController = navController,
                             engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
@@ -238,5 +239,51 @@ class MainActivity : AppCompatActivity() {
         )
 
         isLoading = false
+    }
+
+    @Composable
+    private fun BottomBar(navController: NavHostController) {
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
+        
+        NavigationBar(
+            tonalElevation = NavigationBarDefaults.Elevation,
+            containerColor = MaterialTheme.colorScheme.surface
+        ) {
+            BottomBarDestination.entries.forEach { destination ->
+                val isSelected = currentRoute == destination.direction.route
+                
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = {
+                        if (!isSelected) {
+                            navController.navigate(destination.direction.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                                // Pop up to the start destination of the graph to
+                                // avoid building up a large stack of destinations
+                                popUpTo(NavGraphs.root.route) {
+                                    saveState = true
+                                }
+                            }
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = destination.icon,
+                            contentDescription = stringResource(destination.label)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(destination.label),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    alwaysShowLabel = true
+                )
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package me.bmax.apatch
+package me.kdufse.apatch.plus
 
 import android.os.Parcelable
 import androidx.annotation.Keep

@@ -1,4 +1,4 @@
-package me.bmax.apatch
+package me.kdufse.apatch.plus
 
 import android.app.Application
 import android.content.Context
@@ -12,14 +12,14 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.topjohnwu.superuser.CallbackList
-import me.bmax.apatch.ui.CrashHandleActivity
-import me.bmax.apatch.ui.component.KpmAutoLoadManager
-import me.bmax.apatch.util.APatchCli
-import me.bmax.apatch.util.APatchKeyHelper
-import me.bmax.apatch.util.Version
-import me.bmax.apatch.util.getRootShell
-import me.bmax.apatch.util.rootShellForResult
-import me.bmax.apatch.util.verifyAppSignature
+import me.kdufse.apatch.plus.ui.CrashHandleActivity
+import me.kdufse.apatch.plus.ui.component.KpmAutoLoadManager
+import me.kdufse.apatch.plus.util.APatchCli
+import me.kdufse.apatch.plus.util.APatchKeyHelper
+import me.kdufse.apatch.plus.util.Version
+import me.kdufse.apatch.plus.util.getRootShell
+import me.kdufse.apatch.plus.util.rootShellForResult
+import me.kdufse.apatch.plus.util.verifyAppSignature
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.io.File
@@ -298,7 +298,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         Log.d(TAG, "Initializing SharedPreferences...")
         sharedPreferences = getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
         APatchKeyHelper.setSharedPreferences(sharedPreferences)
-        me.bmax.apatch.util.LauncherIconUtils.applySaved(this, sharedPreferences.getString("launcher_icon_variant", "default"))
+        me.kdufse.apatch.plus.util.LauncherIconUtils.applySaved(this, sharedPreferences.getString("launcher_icon_variant", "default"))
         Log.d(TAG, "Reading superKey...")
         superKey = APatchKeyHelper.readSPSuperKey()
         Log.d(TAG, "superKey read completed, length=${superKey.length}")

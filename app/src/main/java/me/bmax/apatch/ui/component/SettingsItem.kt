@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.component
+package me.kdufse.apatch.plus.ui.component
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.interaction.MutableInteractionSource

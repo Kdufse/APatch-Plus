@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui
+package me.kdufse.apatch.plus.ui
 
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -15,9 +15,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.webkit.WebViewAssetLoader
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.ui.webui.SuFilePathHandler
-import me.bmax.apatch.ui.webui.WebViewInterface
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.ui.webui.SuFilePathHandler
+import me.kdufse.apatch.plus.ui.webui.WebViewInterface
 import java.io.File
 
 @SuppressLint("SetJavaScriptEnabled")

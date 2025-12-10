@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui
+package me.kdufse.apatch.plus.ui
 
 import android.content.ClipData
 import android.os.Build
@@ -40,9 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import me.bmax.apatch.BuildConfig
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.theme.APatchTheme
+import me.kdufse.apatch.plus.BuildConfig
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.theme.APatchTheme
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale

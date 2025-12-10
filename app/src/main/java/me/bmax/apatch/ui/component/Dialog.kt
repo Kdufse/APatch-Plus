@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.component
+package me.kdufse.apatch.plus.ui.component
 
 import android.graphics.text.LineBreaker
 import android.os.Build
@@ -61,7 +61,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.parcelize.Parcelize
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils.Companion.setupWindowBlurListener
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils.Companion.setupWindowBlurListener
 import kotlin.coroutines.resume
 
 private const val TAG = "DialogComponent"

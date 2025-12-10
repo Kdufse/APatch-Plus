@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.viewmodel
+package me.kdufse.apatch.plus.ui.viewmodel
 
 import android.os.SystemClock
 import android.util.Log
@@ -10,9 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.bmax.apatch.apApp
-import me.bmax.apatch.util.listModules
-import me.bmax.apatch.util.toggleModule
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.util.listModules
+import me.kdufse.apatch.plus.util.toggleModule
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.Collator

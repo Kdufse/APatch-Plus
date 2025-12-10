@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.viewmodel
+package me.kdufse.apatch.plus.ui.viewmodel
 
 import android.content.ContentValues
 import android.content.Context
@@ -22,17 +22,17 @@ import com.topjohnwu.superuser.nio.ExtendedFile
 import com.topjohnwu.superuser.nio.FileSystemManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.BuildConfig
-import me.bmax.apatch.R
-import me.bmax.apatch.apApp
-import me.bmax.apatch.util.Version
-import me.bmax.apatch.util.copyAndClose
-import me.bmax.apatch.util.copyAndCloseOut
-import me.bmax.apatch.util.createRootShell
-import me.bmax.apatch.util.inputStream
-import me.bmax.apatch.util.shellForResult
-import me.bmax.apatch.util.writeTo
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.BuildConfig
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.util.Version
+import me.kdufse.apatch.plus.util.copyAndClose
+import me.kdufse.apatch.plus.util.copyAndCloseOut
+import me.kdufse.apatch.plus.util.createRootShell
+import me.kdufse.apatch.plus.util.inputStream
+import me.kdufse.apatch.plus.util.shellForResult
+import me.kdufse.apatch.plus.util.writeTo
 import org.ini4j.Ini
 import java.io.BufferedReader
 import java.io.File

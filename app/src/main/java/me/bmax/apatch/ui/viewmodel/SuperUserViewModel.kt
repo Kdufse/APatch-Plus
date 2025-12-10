@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.viewmodel
+package me.kdufse.apatch.plus.ui.viewmodel
 
 import android.content.ComponentName
 import android.content.Intent
@@ -17,14 +17,14 @@ import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.IAPRootService
-import me.bmax.apatch.Natives
-import me.bmax.apatch.apApp
-import me.bmax.apatch.services.RootServices
-import me.bmax.apatch.util.APatchCli
-import me.bmax.apatch.util.HanziToPinyin
-import me.bmax.apatch.util.PkgConfig
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.IAPRootService
+import me.kdufse.apatch.plus.Natives
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.services.RootServices
+import me.kdufse.apatch.plus.util.APatchCli
+import me.kdufse.apatch.plus.util.HanziToPinyin
+import me.kdufse.apatch.plus.util.PkgConfig
 import java.text.Collator
 import java.util.Locale
 import kotlin.concurrent.thread

@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.component
+package me.kdufse.apatch.plus.ui.component
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import me.bmax.apatch.ui.theme.BackgroundConfig
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 
 @Composable
 fun ProvideMenuShape(

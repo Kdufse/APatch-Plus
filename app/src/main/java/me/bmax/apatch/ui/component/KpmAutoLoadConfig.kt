@@ -1,11 +1,11 @@
-package me.bmax.apatch.ui.component
+package me.kdufse.apatch.plus.ui.component
 
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.apApp
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.apApp
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -281,7 +281,7 @@ object KpmAutoLoadManager {
                     return@forEach
                 }
                 
-                val rc = me.bmax.apatch.Natives.loadKernelPatchModule(path, "")
+                val rc = me.kdufse.apatch.plus.Natives.loadKernelPatchModule(path, "")
                 if (rc == 0L) {
                     successCount++
                     Log.d(TAG, "KPM加载成功: $path")

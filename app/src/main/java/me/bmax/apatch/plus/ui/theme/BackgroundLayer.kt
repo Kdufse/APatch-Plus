@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.theme
+package me.kdufse.apatch.plus.ui.theme
 
 import android.content.Context
 import android.net.Uri
@@ -20,7 +20,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
+import me.kdufse.apatch.plus.APApplication
 
 /**
  * 背景层组件，用于显示自定义背景或默认背景

@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.theme
+package me.kdufse.apatch.plus.ui.theme
 
 import android.os.Build
 import androidx.activity.ComponentActivity
@@ -32,7 +32,7 @@ import androidx.lifecycle.MutableLiveData
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import android.net.Uri
-import me.bmax.apatch.APApplication
+import me.kdufse.apatch.plus.APApplication
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController

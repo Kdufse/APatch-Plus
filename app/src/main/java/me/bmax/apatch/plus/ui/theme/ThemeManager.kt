@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.theme
+package me.kdufse.apatch.plus.ui.theme
 
 import android.content.Context
 import android.net.Uri
@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
+import me.kdufse.apatch.plus.APApplication
 import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream

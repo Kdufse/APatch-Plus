@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.theme
+package me.kdufse.apatch.plus.ui.theme
 
 import android.content.Context
 import android.graphics.Typeface

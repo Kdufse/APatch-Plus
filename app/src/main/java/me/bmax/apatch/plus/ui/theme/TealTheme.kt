@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.theme
+package me.kdufse.apatch.plus.ui.theme
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme

@@ -37,7 +37,7 @@ apksign {
 }
 
 android {
-    namespace = "me.bmax.apatch"
+    namespace = "me.kdufse.apatch.plus"
 
     signingConfigs {
         create("release") {

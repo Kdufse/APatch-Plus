@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -20,7 +20,7 @@ import com.ramcosta.composedestinations.generated.destinations.OnlineKPMScreenDe
 import com.ramcosta.composedestinations.generated.destinations.SettingScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import me.bmax.apatch.R
+import me.kdufse.apatch.plus.R
 
 enum class BottomBarDestination(
     val direction: DirectionDestinationSpec,

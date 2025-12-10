@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -57,10 +57,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.R
-import me.bmax.apatch.util.installModule
-import me.bmax.apatch.util.reboot
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.util.installModule
+import me.kdufse.apatch.plus.util.reboot
 
 @Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)

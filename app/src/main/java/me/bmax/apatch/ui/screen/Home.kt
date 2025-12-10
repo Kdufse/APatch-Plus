@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.os.Build
 import android.system.Os
@@ -43,7 +43,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import me.bmax.apatch.ui.theme.BackgroundConfig
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -86,20 +86,20 @@ import com.ramcosta.composedestinations.generated.destinations.InstallModeSelect
 import com.ramcosta.composedestinations.generated.destinations.PatchesDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.Natives
-import me.bmax.apatch.R
-import me.bmax.apatch.apApp
-import me.bmax.apatch.ui.component.ProvideMenuShape
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenu
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenuItem
-import me.bmax.apatch.ui.component.rememberConfirmDialog
-import me.bmax.apatch.ui.viewmodel.PatchesViewModel
-import me.bmax.apatch.util.Version
-import me.bmax.apatch.util.Version.getManagerVersion
-import me.bmax.apatch.util.getSELinuxStatus
-import me.bmax.apatch.util.reboot
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.Natives
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.ui.component.ProvideMenuShape
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
+import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
+import me.kdufse.apatch.plus.ui.viewmodel.PatchesViewModel
+import me.kdufse.apatch.plus.util.Version
+import me.kdufse.apatch.plus.util.Version.getManagerVersion
+import me.kdufse.apatch.plus.util.getSELinuxStatus
+import me.kdufse.apatch.plus.util.reboot
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
 
 private val managerVersion = getManagerVersion()
 

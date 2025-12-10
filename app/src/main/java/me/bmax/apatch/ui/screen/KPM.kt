@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -86,25 +86,25 @@ import com.topjohnwu.superuser.nio.FileSystemManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.Natives
-import me.bmax.apatch.R
-import me.bmax.apatch.apApp
-import me.bmax.apatch.ui.component.ConfirmResult
-import me.bmax.apatch.ui.component.KPModuleRemoveButton
-import me.bmax.apatch.ui.component.KpmAutoLoadManager
-import me.bmax.apatch.ui.component.LoadingDialogHandle
-import me.bmax.apatch.ui.component.ProvideMenuShape
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenu
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenuItem
-import me.bmax.apatch.ui.component.rememberConfirmDialog
-import me.bmax.apatch.ui.component.rememberLoadingDialog
-import me.bmax.apatch.ui.viewmodel.KPModel
-import me.bmax.apatch.ui.viewmodel.KPModuleViewModel
-import me.bmax.apatch.ui.viewmodel.PatchesViewModel
-import me.bmax.apatch.util.inputStream
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils
-import me.bmax.apatch.util.writeTo
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.Natives
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.ui.component.ConfirmResult
+import me.kdufse.apatch.plus.ui.component.KPModuleRemoveButton
+import me.kdufse.apatch.plus.ui.component.KpmAutoLoadManager
+import me.kdufse.apatch.plus.ui.component.LoadingDialogHandle
+import me.kdufse.apatch.plus.ui.component.ProvideMenuShape
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
+import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
+import me.kdufse.apatch.plus.ui.component.rememberLoadingDialog
+import me.kdufse.apatch.plus.ui.viewmodel.KPModel
+import me.kdufse.apatch.plus.ui.viewmodel.KPModuleViewModel
+import me.kdufse.apatch.plus.ui.viewmodel.PatchesViewModel
+import me.kdufse.apatch.plus.util.inputStream
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
+import me.kdufse.apatch.plus.util.writeTo
 import java.io.IOException
 
 private const val TAG = "KernelPatchModule"

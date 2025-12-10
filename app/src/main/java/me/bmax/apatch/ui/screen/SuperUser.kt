@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -65,17 +65,17 @@ import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.launch
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.Natives
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.component.ProvideMenuShape
-import me.bmax.apatch.ui.component.SearchAppBar
-import me.bmax.apatch.ui.component.SwitchItem
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenu
-import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenuItem
-import me.bmax.apatch.ui.viewmodel.SuperUserViewModel
-import me.bmax.apatch.util.PkgConfig
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils.Companion.setupWindowBlurListener
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.Natives
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.component.ProvideMenuShape
+import me.kdufse.apatch.plus.ui.component.SearchAppBar
+import me.kdufse.apatch.plus.ui.component.SwitchItem
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
+import me.kdufse.apatch.plus.ui.viewmodel.SuperUserViewModel
+import me.kdufse.apatch.plus.util.PkgConfig
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils.Companion.setupWindowBlurListener
 
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)

@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -40,9 +40,9 @@ import androidx.lifecycle.compose.dropUnlessResumed
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import me.bmax.apatch.BuildConfig
-import me.bmax.apatch.R
-import me.bmax.apatch.util.Version
+import me.kdufse.apatch.plus.BuildConfig
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.util.Version
 
 @Destination<RootGraph>
 @Composable

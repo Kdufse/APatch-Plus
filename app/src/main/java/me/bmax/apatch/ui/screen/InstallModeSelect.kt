@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity
 import android.content.Intent
@@ -34,11 +34,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.generated.destinations.PatchesDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.component.rememberConfirmDialog
-import me.bmax.apatch.ui.viewmodel.PatchesViewModel
-import me.bmax.apatch.util.isABDevice
-import me.bmax.apatch.util.rootAvailable
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
+import me.kdufse.apatch.plus.ui.viewmodel.PatchesViewModel
+import me.kdufse.apatch.plus.util.isABDevice
+import me.kdufse.apatch.plus.util.rootAvailable
 
 var selectedBootImage: Uri? = null
 

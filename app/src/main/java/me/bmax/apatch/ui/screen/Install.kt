@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.net.Uri
 import android.os.Environment
@@ -42,11 +42,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.component.KeyEventBlocker
-import me.bmax.apatch.util.installModule
-import me.bmax.apatch.util.reboot
-import me.bmax.apatch.util.ui.LocalSnackbarHost
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.component.KeyEventBlocker
+import me.kdufse.apatch.plus.util.installModule
+import me.kdufse.apatch.plus.util.reboot
+import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date

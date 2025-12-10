@@ -241,7 +241,7 @@ class MainActivity : AppCompatActivity() {
         isLoading = false
     }
 
-    @Composable
+@Composable
 private fun BottomBar(navController: NavHostController) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry?.destination?.route
@@ -267,15 +267,12 @@ private fun BottomBar(navController: NavHostController) {
                     }
                 },
                 icon = {
-                    // 暂时使用默认图标，或者根据 destination 类型选择图标
-                    val icon = when (destination) {
-                        // 这里需要根据实际的 BottomBarDestination 枚举值来设置
-                        else -> androidx.compose.material.icons.Icons.Default.Home
+                    // 使用一个简单的占位符
+                    Box(
+                        modifier = Modifier.padding(4.dp)
+                    ) {
+                        Text("●")
                     }
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = stringResource(destination.label)
-                    )
                 },
                 label = {
                     Text(

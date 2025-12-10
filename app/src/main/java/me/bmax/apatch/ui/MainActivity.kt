@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        // åˆå§‹åŒ–æƒé™å¤„ç†å™¨
+        // ³õÊ¼»¯È¨ÏŞ´¦ÀíÆ÷
         permissionHandler = PermissionRequestHandler(this)
 
         val prefs = APApplication.sharedPreferences
@@ -142,15 +142,15 @@ class MainActivity : AppCompatActivity() {
         me.bmax.apatch.util.DPIUtils.load(this)
         me.bmax.apatch.util.DPIUtils.applyDpi(this)
         
-        // æ£€æŸ¥å¹¶è¯·æ±‚æƒé™
+        // ¼ì²é²¢ÇëÇóÈ¨ÏŞ
         if (!PermissionUtils.hasExternalStoragePermission(this) || 
             !PermissionUtils.hasWriteExternalStoragePermission(this)) {
             permissionHandler.requestPermissions(
                 onGranted = {
-                    // æƒé™å·²æˆäºˆ
+                    // È¨ÏŞÒÑÊÚÓè
                 },
                 onDenied = {
-                    // æƒé™è¢«æ‹’ç»ï¼Œå¯ä»¥æ˜¾ç¤ºä¸€ä¸ªæç¤º
+                    // È¨ÏŞ±»¾Ü¾ø£¬¿ÉÒÔÏÔÊ¾Ò»¸öÌáÊ¾
                 }
             )
         }

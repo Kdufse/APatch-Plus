@@ -242,48 +242,51 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun BottomBar(navController: NavHostController) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry?.destination?.route
-        
-        NavigationBar(
-            tonalElevation = NavigationBarDefaults.Elevation,
-            containerColor = MaterialTheme.colorScheme.surface
-        ) {
-            BottomBarDestination.entries.forEach { destination ->
-                val isSelected = currentRoute == destination.direction.route
-                
-                NavigationBarItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) {
-                            navController.navigate(destination.direction.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                popUpTo(NavGraphs.root.route) {
-                                    saveState = true
-                                }
+private fun BottomBar(navController: NavHostController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+    
+    NavigationBar(
+        tonalElevation = NavigationBarDefaults.Elevation,
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
+        BottomBarDestination.entries.forEach { destination ->
+            val isSelected = currentRoute == destination.direction.route
+            
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = {
+                    if (!isSelected) {
+                        navController.navigate(destination.direction.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(NavGraphs.root.route) {
+                                saveState = true
                             }
                         }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = destination.icon,
-                            contentDescription = stringResource(destination.label)
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(destination.label),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    alwaysShowLabel = true
-                )
-            }
+                    }
+                },
+                icon = {
+                    // 暂时使用默认图标，或者根据 destination 类型选择图标
+                    val icon = when (destination) {
+                        // 这里需要根据实际的 BottomBarDestination 枚举值来设置
+                        else -> androidx.compose.material.icons.Icons.Default.Home
+                    }
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = stringResource(destination.label)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(destination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                alwaysShowLabel = true
+            )
         }
     }
+}
 }

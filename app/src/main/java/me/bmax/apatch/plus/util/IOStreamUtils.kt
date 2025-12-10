@@ -1,8 +1,8 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.content.ContentResolver
 import android.net.Uri
-import me.bmax.apatch.apApp
+import me.kdufse.apatch.plus.apApp
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream

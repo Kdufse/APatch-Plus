@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.ramcosta.composedestinations.generated.destinations.InstallModeSelectScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.theme.BackgroundConfig
-import me.bmax.apatch.util.Version
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
+import me.kdufse.apatch.plus.util.Version
 import androidx.compose.foundation.isSystemInDarkTheme
 
 import androidx.compose.ui.draw.alpha
@@ -35,8 +35,8 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import android.os.Build
-import me.bmax.apatch.apApp
-import me.bmax.apatch.util.Version.getManagerVersion
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.util.Version.getManagerVersion
 
 private val managerVersion = getManagerVersion()
 

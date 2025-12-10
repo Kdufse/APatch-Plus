@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -101,34 +101,34 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.BuildConfig
-import me.bmax.apatch.Natives
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.component.SwitchItem
-import me.bmax.apatch.ui.component.rememberConfirmDialog
-import me.bmax.apatch.ui.component.rememberLoadingDialog
-import me.bmax.apatch.ui.theme.BackgroundConfig
-import me.bmax.apatch.ui.theme.BackgroundManager
-import me.bmax.apatch.ui.theme.FontConfig
-import me.bmax.apatch.ui.theme.ThemeManager
-import me.bmax.apatch.ui.theme.refreshTheme
-import me.bmax.apatch.util.APatchKeyHelper
-import me.bmax.apatch.util.PermissionRequestHandler
-import me.bmax.apatch.util.PermissionUtils
-import me.bmax.apatch.util.getBugreportFile
-import me.bmax.apatch.util.isForceUsingOverlayFS
-import me.bmax.apatch.util.isGlobalNamespaceEnabled
-import me.bmax.apatch.util.isLiteModeEnabled
-import me.bmax.apatch.util.outputStream
-import me.bmax.apatch.util.overlayFsAvailable
-import me.bmax.apatch.util.rootShellForResult
-import me.bmax.apatch.util.setForceUsingOverlayFS
-import me.bmax.apatch.util.setGlobalNamespaceEnabled
-import me.bmax.apatch.util.setLiteMode
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils
-import me.bmax.apatch.util.ui.LocalSnackbarHost
-import me.bmax.apatch.util.ui.NavigationBarsSpacer
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.BuildConfig
+import me.kdufse.apatch.plus.Natives
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.component.SwitchItem
+import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
+import me.kdufse.apatch.plus.ui.component.rememberLoadingDialog
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
+import me.kdufse.apatch.plus.ui.theme.BackgroundManager
+import me.kdufse.apatch.plus.ui.theme.FontConfig
+import me.kdufse.apatch.plus.ui.theme.ThemeManager
+import me.kdufse.apatch.plus.ui.theme.refreshTheme
+import me.kdufse.apatch.plus.util.APatchKeyHelper
+import me.kdufse.apatch.plus.util.PermissionRequestHandler
+import me.kdufse.apatch.plus.util.PermissionUtils
+import me.kdufse.apatch.plus.util.getBugreportFile
+import me.kdufse.apatch.plus.util.isForceUsingOverlayFS
+import me.kdufse.apatch.plus.util.isGlobalNamespaceEnabled
+import me.kdufse.apatch.plus.util.isLiteModeEnabled
+import me.kdufse.apatch.plus.util.outputStream
+import me.kdufse.apatch.plus.util.overlayFsAvailable
+import me.kdufse.apatch.plus.util.rootShellForResult
+import me.kdufse.apatch.plus.util.setForceUsingOverlayFS
+import me.kdufse.apatch.plus.util.setGlobalNamespaceEnabled
+import me.kdufse.apatch.plus.util.setLiteMode
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
+import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
+import me.kdufse.apatch.plus.util.ui.NavigationBarsSpacer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -1048,7 +1048,7 @@ fun SettingScreen() {
                     showDpiDialog.value = true
                 },
                 supportingContent = {
-                    val currentDpi = me.bmax.apatch.util.DPIUtils.currentDpi
+                    val currentDpi = me.kdufse.apatch.plus.util.DPIUtils.currentDpi
                     val dpiText = if (currentDpi == -1) {
                         stringResource(id = R.string.system_default)
                     } else {
@@ -1587,12 +1587,12 @@ fun DpiChooseDialog(showDialog: MutableState<Boolean>) {
             color = AlertDialogDefaults.containerColor,
         ) {
             LazyColumn {
-                items(me.bmax.apatch.util.DPIUtils.presets) { preset ->
+                items(me.kdufse.apatch.plus.util.DPIUtils.presets) { preset ->
                     ListItem(
                         headlineContent = { Text(text = preset.name) },
                         modifier = Modifier.clickable {
                             showDialog.value = false
-                            me.bmax.apatch.util.DPIUtils.setDpi(context, preset.value)
+                            me.kdufse.apatch.plus.util.DPIUtils.setDpi(context, preset.value)
                             // Restart activity to apply changes
                             activity?.recreate()
                         })
@@ -1632,7 +1632,7 @@ fun IconChooseDialog(showDialog: MutableState<Boolean>) {
                         modifier = Modifier.clickable {
                             showDialog.value = false
                             prefs.edit { putString("launcher_icon_variant", preset.name) }
-                            me.bmax.apatch.util.LauncherIconUtils.applySaved(context, preset.name)
+                            me.kdufse.apatch.plus.util.LauncherIconUtils.applySaved(context, preset.name)
                         })
                 }
             }

@@ -1,12 +1,12 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.content.Context
 import android.net.Uri
 import androidx.compose.material3.SnackbarHostState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.R
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.R
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File

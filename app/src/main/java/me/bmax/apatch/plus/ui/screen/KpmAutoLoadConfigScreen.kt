@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -60,11 +60,11 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.component.KpmAutoLoadConfig
-import me.bmax.apatch.ui.component.KpmAutoLoadManager
-import me.bmax.apatch.util.ui.APDialogBlurBehindUtils
-import me.bmax.apatch.util.ui.showToast
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.component.KpmAutoLoadConfig
+import me.kdufse.apatch.plus.ui.component.KpmAutoLoadManager
+import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
+import me.kdufse.apatch.plus.util.ui.showToast
 
 @Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)

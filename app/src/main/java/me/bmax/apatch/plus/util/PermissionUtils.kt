@@ -1,4 +1,4 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.Manifest
 import android.content.Context

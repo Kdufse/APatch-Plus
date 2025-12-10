@@ -1,12 +1,12 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.os.Parcelable
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.runtime.Immutable
 import kotlinx.parcelize.Parcelize
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.Natives
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.Natives
 import java.io.File
 import java.io.FileWriter
 import kotlin.concurrent.thread

@@ -1,4 +1,4 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.content.ContentResolver
 import android.content.Context
@@ -14,11 +14,11 @@ import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.io.SuFile
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.APApplication.Companion.SUPERCMD
-import me.bmax.apatch.BuildConfig
-import me.bmax.apatch.apApp
-import me.bmax.apatch.ui.screen.MODULE_TYPE
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.APApplication.Companion.SUPERCMD
+import me.kdufse.apatch.plus.BuildConfig
+import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.ui.screen.MODULE_TYPE
 import java.io.File
 import java.security.MessageDigest
 import java.security.cert.CertificateFactory
@@ -159,7 +159,7 @@ fun listModules(): String {
     val out =
         shell.newJob().add("${APApplication.APD_PATH} module list").to(ArrayList(), null).exec().out
     withNewRootShell{
-       newJob().add("cp /data/user/*/me.bmax.apatch/patch/ori.img /data/adb/ap/ && rm /data/user/*/me.bmax.apatch/patch/ori.img")
+       newJob().add("cp /data/user/*/me.kdufse.apatch.plus/patch/ori.img /data/adb/ap/ && rm /data/user/*/me.kdufse.apatch.plus/patch/ori.img")
        .to(ArrayList(),null).exec()
    }
     return out.joinToString("\n").ifBlank { "[]" }

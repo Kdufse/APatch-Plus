@@ -78,6 +78,19 @@ import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 
+// Material3 图标导入
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Dashboard
+
 class MainActivity : AppCompatActivity() {
 
     private var isLoading = true
@@ -241,49 +254,66 @@ class MainActivity : AppCompatActivity() {
         isLoading = false
     }
 
-@Composable
-private fun BottomBar(navController: NavHostController) {
-    val currentBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = currentBackStackEntry?.destination?.route
-    
-    NavigationBar(
-        tonalElevation = NavigationBarDefaults.Elevation,
-        containerColor = MaterialTheme.colorScheme.surface
-    ) {
-        BottomBarDestination.entries.forEach { destination ->
-            val isSelected = currentRoute == destination.direction.route
-            
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = {
-                    if (!isSelected) {
-                        navController.navigate(destination.direction.route) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(NavGraphs.root.route) {
-                                saveState = true
+    @Composable
+    private fun BottomBar(navController: NavHostController) {
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
+        
+        // 创建一个路由到图标的映射
+        val routeToIcon = remember {
+            mutableMapOf<String, androidx.compose.ui.graphics.vector.ImageVector>().apply {
+                // 根据路由名称映射图标
+                // 这里使用一些常见的图标，您需要根据实际路由调整
+                BottomBarDestination.entries.forEachIndexed { index, destination ->
+                    val icon = when (index) {
+                        0 -> Icons.Filled.Home
+                        1 -> Icons.Filled.Dashboard
+                        2 -> Icons.Filled.Person
+                        3 -> Icons.Filled.Settings
+                        else -> Icons.Filled.Info
+                    }
+                    put(destination.direction.route, icon)
+                }
+            }
+        }
+        
+        NavigationBar(
+            tonalElevation = NavigationBarDefaults.Elevation,
+            containerColor = MaterialTheme.colorScheme.surface
+        ) {
+            BottomBarDestination.entries.forEach { destination ->
+                val isSelected = currentRoute == destination.direction.route
+                val icon = routeToIcon[destination.direction.route] ?: Icons.Filled.Home
+                
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = {
+                        if (!isSelected) {
+                            navController.navigate(destination.direction.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(NavGraphs.root.route) {
+                                    saveState = true
+                                }
                             }
                         }
-                    }
-                },
-                icon = {
-                    // 使用一个简单的占位符
-                    Box(
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Text("●")
-                    }
-                },
-                label = {
-                    Text(
-                        text = stringResource(destination.label),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                alwaysShowLabel = true
-            )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = stringResource(destination.label)
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(destination.label),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    alwaysShowLabel = true
+                )
+            }
         }
     }
-}
 }

@@ -163,7 +163,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             APatchThemeWithBackground(navController = navController) {
-                { _ ->
+
+                Scaffold(
+                    bottomBar = { BottomBar(navController) },
+                ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {

@@ -165,40 +165,8 @@ class MainActivity : AppCompatActivity() {
             APatchThemeWithBackground(navController = navController) {
 
                 Scaffold(
-    bottomBar = {
-        NavigationBar {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
-
-            // 定义底部导航项（可以根据你的实际页面调整）
-            val bottomNavItems = listOf(
-                BottomBarDestination.Home,
-                BottomBarDestination.Modules,
-                BottomBarDestination.Tools,
-                BottomBarDestination.Settings
-                // 根据你的实际 BottomBarDestination 枚举添加更多
-            )
-
-            bottomNavItems.forEach { destination ->
-                NavigationBarItem(
-                    icon = { Icon(imageVector = destination.icon, contentDescription = null) },
-                    label = { Text(stringResource(destination.titleRes)) },
-                    selected = currentRoute == destination.direction.route,
-                    onClick = {
-                        navController.navigate(destination.direction.route) {
-                            // 避免重复点击同一个页面
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        }
-    }
-) { _ ->
+                    bottomBar = { BottomBar(navController) },
+                ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {

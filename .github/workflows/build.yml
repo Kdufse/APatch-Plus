@@ -93,14 +93,22 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
           zipAlign: true
 
-      - name: Upload build artifact
-        env:
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-        if: ${{ env.SIGNING_KEY != '' }}
+      - name: Upload Unsigned APK Artifact
+        if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: APatch
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          name: APatch-Unsigned-APK
+          path: app/build/outputs/apk/release/*.apk
+        # 上传所有未签名的 APK 文件
+
+      - name: Upload Signed APK Artifact
+        if: env.SIGNING_KEY != '' && always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: APatch-Signed-APK
+          path: app/build/outputs/apk/release/*.apk
+        # 或者更精确地查找签名的 APK，如带有 'signed' 的文件名
+        # 根据实际情况调整路径
 
       - name: Post to channel
         if: ${{github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.ref_type != 'tag'}}

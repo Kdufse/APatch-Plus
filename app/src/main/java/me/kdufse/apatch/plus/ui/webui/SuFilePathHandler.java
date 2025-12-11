@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.webui;
+package me.kdufse.apatch.plus.ui.webui;
 
 import android.content.Context;
 import android.util.Log;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-import me.bmax.apatch.util.APatchCliKt;
+import me.kdufse.apatch.plus.util.APatchCliKt;
 
 /**
  * Handler class to open files from file system by root access

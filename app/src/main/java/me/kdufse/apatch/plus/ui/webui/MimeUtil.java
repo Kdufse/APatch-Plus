@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.bmax.apatch.ui.webui;
+package me.kdufse.apatch.plus.ui.webui;
 
 import java.net.URLConnection;
 

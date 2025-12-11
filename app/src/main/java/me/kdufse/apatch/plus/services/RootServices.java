@@ -1,4 +1,4 @@
-package me.bmax.apatch.services;
+package me.kdufse.apatch.plus.services;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bmax.apatch.IAPRootService;
+import me.kdufse.apatch.plus.IAPRootService;
 import rikka.parcelablelist.ParcelableListSlice;
 
 public class RootServices extends RootService {

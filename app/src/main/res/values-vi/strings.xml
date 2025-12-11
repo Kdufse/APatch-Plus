@@ -113,7 +113,7 @@
     <string name="home_system_version">Phiên bản hệ thống</string>
     <string name="home_kpatch_version">Phiên bản bản vá nhân</string>
     <string name="home_su_path">Tệp thực thi su</string>
-    <string name="home_apatch_version">Phiên bản FolkPatch</string>
+    <string name="home_apatch_version">Phiên bản APatchPlus</string>
 
     <string name="kpm">Module nhân</string>
     <string name="kpm_kp_not_installed">Chưa cài đặt bản vá nhân</string>
@@ -277,7 +277,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_folkpatch">FolkPatch</string>
+    <string name="app_title_APatchPlus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -317,8 +317,8 @@
     <string name="settings_clear_background">Xóa nền</string>
     <string name="settings_clear_background_confirm">Bạn có chắc chắn muốn xóa hình ảnh nền không?</string>
     <string name="settings_launcher_icon">Biểu tượng màn hình chính</string>
-    <string name="launcher_icon_default">FolkPatch</string>
-    <string name="launcher_icon_classic">FolkPatch Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -408,7 +408,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Phiên bản không chính thức</string>
-    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý FolkPatch phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
+    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý APatchPlus phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
     <string name="go_to_github">Đi đến Github</string>
     <string name="settings_save_theme">Lưu chủ đề</string>
     <string name="settings_import_theme">Nhập chủ đề</string>

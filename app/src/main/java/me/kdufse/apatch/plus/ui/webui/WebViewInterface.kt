@@ -1,4 +1,4 @@
-me.kdufse.apatch.plus me.kdufse.apatch.plus.ui.webui
+package me.kdufse.apatch.plus.ui.webui
 
 import android.app.Activity
 import android.content.Context

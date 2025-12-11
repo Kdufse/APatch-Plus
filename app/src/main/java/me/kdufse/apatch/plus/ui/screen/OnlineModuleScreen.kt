@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.content.Context
 import android.widget.Toast
@@ -23,10 +23,10 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.viewmodel.OnlineModuleViewModel
-import me.bmax.apatch.util.download
-import me.bmax.apatch.util.DownloadListener
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.viewmodel.OnlineModuleViewModel
+import me.kdufse.apatch.plus.util.download
+import me.kdufse.apatch.plus.util.DownloadListener
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>

@@ -119,7 +119,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 FilledTonalButton(
-                    onClick = { uriHandler.openUri("https://t.me/APatch-Plus") }
+                    onClick = { uriHandler.openUri("https://t.me/APatchPlus") }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.telegram),

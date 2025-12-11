@@ -270,7 +270,7 @@
     <!-- About Screen Strings -->
     <string name="about_app_version">应用版本</string>
     <string name="about_github">GitHub</string>
-    <string name="about_telegram_channel">Telegram 频道</string>
+    <string name="about_telegram_channel">Telegram 群组</string>
 
     <!-- App Title Strings -->
     <string name="app_title_fpatch">FPatch</string>

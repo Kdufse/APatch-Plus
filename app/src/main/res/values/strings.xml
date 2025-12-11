@@ -277,7 +277,7 @@
     <!-- About Screen Strings -->
     <string name="about_app_version">App Version</string>
     <string name="about_github">GitHub</string>
-    <string name="about_telegram_channel">Telegram Channel</string>
+    <string name="about_telegram_channel">Telegram Group</string>
 
     <!-- App Title Strings -->
     <string name="app_title_fpatch">FPatch</string>

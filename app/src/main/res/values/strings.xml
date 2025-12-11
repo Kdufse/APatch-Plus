@@ -122,7 +122,7 @@
     <string name="home_system_version">System version</string>
     <string name="home_kpatch_version">KernelPatch version</string>
     <string name="home_su_path">Executable su</string>
-    <string name="home_apatch_version">APatchPlus version</string>
+    <string name="home_apatch_version">FolkPatch version</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch not installed</string>
@@ -284,7 +284,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_"APatchPlus>APatchPlus</string>
+    <string name="app_title_folkpatch">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -324,8 +324,8 @@
     <string name="settings_clear_background">Clear Background</string>
     <string name="settings_clear_background_confirm">Are you sure you want to clear the background image?</string>
     <string name="settings_launcher_icon">Launcher Icon</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">FolkPatch</string>
+    <string name="launcher_icon_classic">FolkPatch Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -415,7 +415,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Unofficial Version</string>
-    <string name="unofficial_version_message">You are using APatchPlus which is not an official app, please download the official app!</string>
+    <string name="unofficial_version_message">You are using FolkPatch which is not an official app, please download the official app!</string>
     <string name="go_to_github">Go to Github</string>
     <string name="settings_save_theme">Save theme</string>
     <string name="settings_import_theme">Import theme</string>

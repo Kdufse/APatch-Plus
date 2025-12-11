@@ -148,13 +148,13 @@ class MainActivity : AppCompatActivity() {
             APatchThemeWithBackground(navController = navController) {
 
                 Scaffold(
-                    bottomBar = { BottomBar(navController) },
-                ) { innerPadding ->
+                    bottomBar = { BottomBar(navController) }
+                ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
                         DestinationsNavHost(
-                            modifier = Modifier.padding(innerPadding),
+                            modifier = Modifier.padding(bottom = 80.dp),
                             navGraph = NavGraphs.root,
                             navController = navController,
                             engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),

@@ -609,3 +609,11 @@ pub fn start_uid_listener() -> Result<()> {
 
     Ok(())
 }
+
+use std::fs::OpenOptions;
+
+let file = OpenOptions::new()
+    .write(true)
+    .create(true)  // 如果不存在则创建
+    .truncate(false)  // 不截断（保留内容）
+    .open("/data/adb/.overlayfs_enable")?;

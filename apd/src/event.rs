@@ -518,7 +518,9 @@ pub fn on_services(superkey: Option<String>) -> Result<()> {
 fn run_uid_monitor() {
     info!("Trigger run_uid_monitor!");
 
-    let mut command = &mut Command::new("/data/adb/apd");
+    let mut command = Command::new("sh");
+    command.arg("-c")
+       .arg("touch /data/adb/.overlayfs_enable && /data/adb/apd");
     {
         command = command.process_group(0);
         command = unsafe {

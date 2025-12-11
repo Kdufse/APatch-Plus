@@ -1,4 +1,4 @@
-package me.bmax.apatch.util.ui
+package me.kdufse.apatch.plus.util.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf

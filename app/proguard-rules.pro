@@ -15,7 +15,7 @@
 -keep,allowobfuscation,allowoptimization public class org.ini4j.spi.*
 
 # Keep native methods and JNI classes
--keep class me.bmax.apatch.Natives {
+-keep class me.kdufse.apatch.plus.Natives {
     *;
 }
 
@@ -23,8 +23,8 @@
     native <methods>;
 }
 
--keep class me.bmax.apatch.Natives$Profile { *; }
--keep class me.bmax.apatch.Natives$KPMCtlRes { *; }
+-keep class me.kdufse.apatch.plus.Natives$Profile { *; }
+-keep class me.kdufse.apatch.plus.Natives$KPMCtlRes { *; }
 
 # Kotlin
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {

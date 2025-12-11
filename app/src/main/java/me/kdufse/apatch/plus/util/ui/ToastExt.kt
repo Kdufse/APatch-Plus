@@ -1,4 +1,4 @@
-package me.bmax.apatch.util.ui
+package me.kdufse.apatch.plus.util.ui
 
 import android.content.Context
 import android.widget.Toast

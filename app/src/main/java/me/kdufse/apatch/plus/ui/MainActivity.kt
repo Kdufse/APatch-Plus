@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -26,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,52 +42,23 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
-import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
-import me.kdufse.apatch.plus.ui.theme.APatchTheme
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
-import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.MaterialTheme
 import me.kdufse.apatch.plus.util.PermissionRequestHandler
 import me.kdufse.apatch.plus.util.PermissionUtils
 import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.window.DialogProperties
-import me.kdufse.apatch.plus.R
-import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.delay
-import kotlin.system.exitProcess
-import me.zhanghai.android.appiconloader.coil.AppIconKeyer
-
-// Material3 Õº±Íµº»Î
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Dashboard
+import me.kdufse.apatch.plus.R
+import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 
 class MainActivity : AppCompatActivity() {
 

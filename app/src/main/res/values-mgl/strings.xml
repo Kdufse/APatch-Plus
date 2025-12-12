@@ -159,7 +159,7 @@
     <string name="apm_version">魔法等级</string>
     <string name="apm_author">创造者</string>
     <string name="apm_desc">魔法描述</string>
-    <string name="apm_overlay_fs_not_available">星之回廊被心之核心封印，魔法阵不可用！</string>
+    <string name="apm_magic_mount_not_available">星之回廊被心之核心封印，魔法阵不可用！</string>
     <string name="apm_magisk_conflict">由于与Magisk魔法阵冲突，此魔法阵不可用！</string>
     <string name="apm_reboot_to_apply">重新觉醒后生效</string>
     <string name="apm_changelog">魔法更新记录</string>
@@ -288,8 +288,8 @@
     <string name="settings_app_dpi">魔法使清晰度</string>
     <string name="settings_lite_mode">简约魔法模式</string>
     <string name="settings_lite_mode_mode_summary">启用简约魔法模式以获得更好的施法体验</string>
-    <string name="settings_force_overlayfs_mode">强制星之回廊模式</string>
-    <string name="settings_force_overlayfs_mode_summary">强制使用星之回廊加载魔法阵</string>
+    <string name="settings_force_magicmount_mode">强制星之回廊模式</string>
+    <string name="settings_force_magicmount_mode_summary">强制使用星之回廊加载魔法阵</string>
     <string name="settings_app_title">魔法使名称</string>
     <string name="settings_custom_background">自定义魔法背景</string>
     <string name="settings_custom_background_enabled">已启用自定义魔法背景</string>

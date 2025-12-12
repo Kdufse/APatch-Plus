@@ -157,7 +157,7 @@
     <string name="apm_version">符篆篇次</string>
     <string name="apm_author">符祖</string>
     <string name="apm_desc">符篆玄义</string>
-    <string name="apm_overlay_fs_not_available">OverlayFS仙域为道核所禁，天道仙符不可用！</string>
+    <string name="apm_magic_mount_not_available">MagicMount仙域为道核所禁，天道仙符不可用！</string>
     <string name="apm_magisk_conflict">以与Magisk魔符相戾，天道仙符不可用！</string>
     <string name="apm_reboot_to_apply">重铸仙躯乃显符效</string>
     <string name="apm_changelog">仙法易新录</string>
@@ -285,8 +285,8 @@
     <string name="settings_app_dpi">仙器DPI</string>
     <string name="settings_lite_mode">清修之境</string>
     <string name="settings_lite_mode_mode_summary">启清修之境，以臻渡劫优效</string>
-    <string name="settings_force_overlayfs_mode">强启OverlayFS仙域</string>
-    <string name="settings_force_overlayfs_mode_summary">强以OverlayFS仙域引仙符入道</string>
+    <string name="settings_force_magicmount_mode">强启MagicMount仙域</string>
+    <string name="settings_force_magicmount_mode_summary">强以MagicMount仙域引仙符入道</string>
     <string name="settings_app_title">仙器名讳</string>
     <string name="settings_custom_background">自定仙府背景</string>
     <string name="settings_custom_background_enabled">已启自定仙府背景</string>

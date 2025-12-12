@@ -159,7 +159,7 @@
     <string name="apm_version">版本</string>
     <string name="apm_author">作者</string>
     <string name="apm_desc">描述</string>
-    <string name="apm_overlay_fs_not_available">OverlayFS 被内核禁用，模块不可用！</string>
+    <string name="apm_magic_mount_not_available">MagicMount 被内核禁用，模块不可用！</string>
     <string name="apm_magisk_conflict">由于与 Magisk 冲突，模块不可用！</string>
     <string name="apm_reboot_to_apply">重启生效</string>
     <string name="apm_changelog">更新日志</string>
@@ -288,8 +288,8 @@
     <string name="settings_app_dpi">应用 DPI</string>
     <string name="settings_lite_mode">精简模式</string>
     <string name="settings_lite_mode_mode_summary">启用精简模式以获得更好的性能</string>
-    <string name="settings_force_overlayfs_mode">强制 OverlayFS 模式</string>
-    <string name="settings_force_overlayfs_mode_summary">强制使用 OverlayFS 加载模块</string>
+    <string name="settings_force_magicmount_mode">强制 MagicMount 模式</string>
+    <string name="settings_force_magicmount_mode_summary">强制使用 MagicMount 加载模块</string>
     <string name="settings_app_title">应用名称</string>
     <string name="settings_custom_background">自定义背景</string>
     <string name="settings_custom_background_enabled">已启用自定义背景</string>

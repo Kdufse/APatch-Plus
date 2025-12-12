@@ -17,7 +17,7 @@ use crate::{
 use rustix::thread::{Gid, Uid, set_thread_res_gid, set_thread_res_uid};
 
 fn print_usage(opts: Options) {
-    let brief = "APatch\n\nUsage: <command> [options] [-] [user [argument...]]".to_string();
+    let brief = "APatchPlus\n\nUsage: <command> [options] [-] [user [argument...]]".to_string();
     print!("{}", opts.usage(&brief));
 }
 
@@ -180,7 +180,7 @@ pub fn root_shell() -> Result<()> {
         }
     }
 
-    // add /data/adb/ap/bin to PATH
+    // add /data/adb/aplus/bin to PATH
     #[cfg(any(target_os = "linux", target_os = "android"))]
     add_path_to_env(defs::BINARY_DIR)?;
 

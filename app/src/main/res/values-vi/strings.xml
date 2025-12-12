@@ -159,7 +159,7 @@
     <string name="apm_version">Phiên bản</string>
     <string name="apm_author">Tác giả</string>
     <string name="apm_desc">Mô tả</string>
-    <string name="apm_overlay_fs_not_available">OverlayFS bị nhân vô hiệu hóa, module không khả dụng!</string>
+    <string name="apm_magic_mount_not_available">MagicMount bị nhân vô hiệu hóa, module không khả dụng!</string>
     <string name="apm_magisk_conflict">Module không khả dụng do xung đột với Magisk!</string>
     <string name="apm_reboot_to_apply">Khởi động lại để áp dụng</string>
     <string name="apm_changelog">Nhật ký cập nhật</string>
@@ -288,8 +288,8 @@
     <string name="settings_app_dpi">DPI ứng dụng</string>
     <string name="settings_lite_mode">Chế độ gọn nhẹ</string>
     <string name="settings_lite_mode_mode_summary">Bật chế độ gọn nhẹ để có hiệu suất tốt hơn</string>
-    <string name="settings_force_overlayfs_mode">Buộc chế độ OverlayFS</string>
-    <string name="settings_force_overlayfs_mode_summary">Buộc sử dụng OverlayFS để tải module</string>
+    <string name="settings_force_magicmount_mode">Buộc chế độ MagicMount</string>
+    <string name="settings_force_magicmount_mode_summary">Buộc sử dụng MagicMount để tải module</string>
     <string name="settings_app_title">Tên ứng dụng</string>
     <string name="settings_custom_background">Hình nền tùy chỉnh</string>
     <string name="settings_custom_background_enabled">Đã bật hình nền tùy chỉnh</string>

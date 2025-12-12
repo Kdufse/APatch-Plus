@@ -284,8 +284,8 @@
     <string name="settings_app_dpi">應用程式 DPI</string>
     <string name="settings_lite_mode">簡易模式</string>
     <string name="settings_lite_mode_mode_summary">啟用簡易模式以獲得更好的效能</string>
-    <string name="settings_force_overlayfs_mode">強制 OverlayFS 模式</string>
-    <string name="settings_force_overlayfs_mode_summary">強制使用 OverlayFS 模組功能</string>
+    <string name="settings_force_magicmount_mode">強制 MagicMount 模式</string>
+    <string name="settings_force_magicmount_mode_summary">強制使用 MagicMount 模組功能</string>
     <string name="settings_app_title">應用程式標題</string>
     <string name="settings_custom_background">自訂背景</string>
     <string name="settings_custom_background_enabled">已啟用自訂背景</string>

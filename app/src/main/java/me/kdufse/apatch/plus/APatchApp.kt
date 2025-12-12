@@ -67,15 +67,15 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
 
 
     companion object {
-        const val APD_PATH = "/data/adb/apd"
+        const val APD_PATH = "/data/adb/aplusd"
 
         @Deprecated("No more KPatch ELF from 0.11.0-dev")
         const val KPATCH_PATH = "/data/adb/kpatch"
         const val SUPERCMD = "/system/bin/truncate"
-        const val APATCH_FOLDER = "/data/adb/ap/"
+        const val APATCH_FOLDER = "/data/adb/aplus/"
         private const val APATCH_BIN_FOLDER = APATCH_FOLDER + "bin/"
         private const val APATCH_LOG_FOLDER = APATCH_FOLDER + "log/"
-        private const val APD_LINK_PATH = APATCH_BIN_FOLDER + "apd"
+        private const val APD_LINK_PATH = APATCH_BIN_FOLDER + "aplusd"
         const val PACKAGE_CONFIG_FILE = APATCH_FOLDER + "package_config"
         const val SU_PATH_FILE = APATCH_FOLDER + "su_path"
         const val SAFEMODE_FILE = "/dev/.safemode"
@@ -85,7 +85,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         const val FORCE_OVERLAYFS_FILE = "/data/adb/.overlayfs_enable"
         const val KPMS_DIR = APATCH_FOLDER + "kpms/"
 
-        @Deprecated("Use 'apd -V'")
+        @Deprecated("Use 'aplusd -V'")
         const val APATCH_VERSION_PATH = APATCH_FOLDER + "version"
         private const val MAGISKPOLICY_BIN_PATH = APATCH_BIN_FOLDER + "magiskpolicy"
         private const val BUSYBOX_BIN_PATH = APATCH_BIN_FOLDER + "busybox"
@@ -155,7 +155,9 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                 "mkdir -p $APATCH_BIN_FOLDER",
                 "mkdir -p $APATCH_LOG_FOLDER",
 
-                "cp -f ${nativeDir}/libapd.so $APD_PATH",
+                "cp -f ${nativeDir}/libaplusd.so $APD_PATH",
+                "touch /data/adb/.overlayfs_enable",
+                "chmod 000 /proc/fs/ext4",
                 "chmod +x $APD_PATH",
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
@@ -240,7 +242,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                     // AndroidPatch version
                     val mgv = Version.getManagerVersion().second
                     val installedApdVInt = Version.installedApdVUInt()
-                    Log.d(TAG, "manager version: $mgv, installed apd version: $installedApdVInt")
+                    Log.d(TAG, "manager version: $mgv, installed aplus version: $installedApdVInt")
 
                     if (Version.installedApdVInt > 0) {
                         _apStateLiveData.postValue(State.ANDROIDPATCH_INSTALLED)

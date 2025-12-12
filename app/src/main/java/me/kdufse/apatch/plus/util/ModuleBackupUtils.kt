@@ -82,7 +82,7 @@ object ModuleBackupUtils {
         withContext(Dispatchers.IO) {
             try {
                 // Use the busybox bundled with APatch
-                val busyboxPath = "/data/adb/ap/bin/busybox"
+                val busyboxPath = "/data/adb/aplus/bin/busybox"
                 val tempFile = File(context.cacheDir, "backup_tmp.tar.gz")
                 val tempPath = tempFile.absolutePath
 
@@ -122,7 +122,7 @@ object ModuleBackupUtils {
     suspend fun restoreModules(context: Context, snackBarHost: SnackbarHostState, uri: Uri) {
         withContext(Dispatchers.IO) {
             try {
-                val busyboxPath = "/data/adb/ap/bin/busybox"
+                val busyboxPath = "/data/adb/aplus/bin/busybox"
                 val tempFile = File(context.cacheDir, "restore_tmp.tar.gz")
                 val tempPath = tempFile.absolutePath
 

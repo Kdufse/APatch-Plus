@@ -159,7 +159,7 @@ fun listModules(): String {
     val out =
         shell.newJob().add("${APApplication.APD_PATH} module list").to(ArrayList(), null).exec().out
     withNewRootShell{
-       newJob().add("cp /data/user/*/me.kdufse.apatch.plus/patch/ori.img /data/adb/ap/ && rm /data/user/*/me.kdufse.apatch.plus/patch/ori.img")
+       newJob().add("cp /data/user/*/me.kdufse.apatch.plus/patch/ori.img /data/adb/aplus/ && rm /data/user/*/me.kdufse.apatch.plus/patch/ori.img")
        .to(ArrayList(),null).exec()
    }
     return out.joinToString("\n").ifBlank { "[]" }

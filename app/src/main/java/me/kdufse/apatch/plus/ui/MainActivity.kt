@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui
+package me.kdufse.apatch.plus.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -45,16 +45,16 @@ import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.ui.screen.BottomBarDestination
-import me.bmax.apatch.ui.theme.APatchTheme
-import me.bmax.apatch.ui.theme.APatchThemeWithBackground
-import me.bmax.apatch.ui.theme.BackgroundConfig
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
+import me.kdufse.apatch.plus.ui.theme.APatchTheme
+import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.MaterialTheme
-import me.bmax.apatch.util.PermissionRequestHandler
-import me.bmax.apatch.util.PermissionUtils
-import me.bmax.apatch.util.ui.LocalSnackbarHost
+import me.kdufse.apatch.plus.util.PermissionRequestHandler
+import me.kdufse.apatch.plus.util.PermissionUtils
+import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.platform.LocalUriHandler
@@ -71,13 +71,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.window.DialogProperties
-import me.bmax.apatch.R
+import me.kdufse.apatch.plus.R
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.delay
 import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
-import me.bmax.apatch.util.UpdateChecker
-import me.bmax.apatch.ui.component.UpdateDialog
+import me.kdufse.apatch.plus.util.UpdateChecker
+import me.kdufse.apatch.plus.ui.component.UpdateDialog
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionRequestHandler
 
     override fun attachBaseContext(newBase: android.content.Context) {
-        super.attachBaseContext(me.bmax.apatch.util.DPIUtils.updateContext(newBase))
+        super.attachBaseContext(me.kdufse.apatch.plus.util.DPIUtils.updateContext(newBase))
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         
         // Load DPI settings
-        me.bmax.apatch.util.DPIUtils.load(this)
-        me.bmax.apatch.util.DPIUtils.applyDpi(this)
+        me.kdufse.apatch.plus.util.DPIUtils.load(this)
+        me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
         
         // 检查并请求权限
         if (!PermissionUtils.hasExternalStoragePermission(this) || 

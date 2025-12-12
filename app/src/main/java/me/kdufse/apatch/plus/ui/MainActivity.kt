@@ -1,4 +1,4 @@
-package me.kdufse.apatch.plus.ui
+package me.bmax.apatch.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -25,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
@@ -42,23 +43,44 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import me.kdufse.apatch.plus.APApplication
-import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
-import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
+import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
+import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
+import me.bmax.apatch.APApplication
+import me.bmax.apatch.ui.screen.BottomBarDestination
+import me.bmax.apatch.ui.theme.APatchTheme
+import me.bmax.apatch.ui.theme.APatchThemeWithBackground
+import me.bmax.apatch.ui.theme.BackgroundConfig
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.MaterialTheme
-import me.kdufse.apatch.plus.util.PermissionRequestHandler
-import me.kdufse.apatch.plus.util.PermissionUtils
-import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
+import me.bmax.apatch.util.PermissionRequestHandler
+import me.bmax.apatch.util.PermissionUtils
+import me.bmax.apatch.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Dashboard
-import me.kdufse.apatch.plus.R
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.window.DialogProperties
+import me.bmax.apatch.R
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
+import me.bmax.apatch.util.UpdateChecker
+import me.bmax.apatch.ui.component.UpdateDialog
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,7 +88,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionRequestHandler
 
     override fun attachBaseContext(newBase: android.content.Context) {
-        super.attachBaseContext(me.kdufse.apatch.plus.util.DPIUtils.updateContext(newBase))
+        super.attachBaseContext(me.bmax.apatch.util.DPIUtils.updateContext(newBase))
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -122,8 +144,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         
         // Load DPI settings
-        me.kdufse.apatch.plus.util.DPIUtils.load(this)
-        me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
+        me.bmax.apatch.util.DPIUtils.load(this)
+        me.bmax.apatch.util.DPIUtils.applyDpi(this)
         
         // 检查并请求权限
         if (!PermissionUtils.hasExternalStoragePermission(this) || 
@@ -146,6 +168,29 @@ class MainActivity : AppCompatActivity() {
             }
 
             APatchThemeWithBackground(navController = navController) {
+                
+                val showUpdateDialog = remember { mutableStateOf(false) }
+                val context = LocalContext.current
+                
+                LaunchedEffect(Unit) {
+                    val prefs = APApplication.sharedPreferences
+                    if (prefs.getBoolean("auto_update_check", false)) {
+                         val hasUpdate = UpdateChecker.checkUpdate()
+                         if (hasUpdate) {
+                             showUpdateDialog.value = true
+                         }
+                    }
+                }
+
+                if (showUpdateDialog.value) {
+                    UpdateDialog(
+                        onDismiss = { showUpdateDialog.value = false },
+                        onUpdate = {
+                            showUpdateDialog.value = false
+                            UpdateChecker.openUpdateUrl(context)
+                        }
+                    )
+                }
 
                 Scaffold(
                     bottomBar = { BottomBar(navController) }
@@ -221,68 +266,5 @@ class MainActivity : AppCompatActivity() {
         )
 
         isLoading = false
-    }
-
-    @Composable
-    private fun BottomBar(navController: NavHostController) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry?.destination?.route
-        
-        // 创建一个路由到图标的映射
-        val routeToIcon = remember {
-            mutableMapOf<String, androidx.compose.ui.graphics.vector.ImageVector>().apply {
-                // 根据路由名称映射图标
-                // 这里使用一些常见的图标，您需要根据实际路由调整
-                BottomBarDestination.entries.forEachIndexed { index, destination ->
-                    val icon = when (index) {
-                        0 -> Icons.Filled.Home
-                        1 -> Icons.Filled.Dashboard
-                        2 -> Icons.Filled.Person
-                        3 -> Icons.Filled.Settings
-                        else -> Icons.Filled.Info
-                    }
-                    put(destination.direction.route, icon)
-                }
-            }
-        }
-        
-        NavigationBar(
-            tonalElevation = NavigationBarDefaults.Elevation,
-            containerColor = MaterialTheme.colorScheme.surface
-        ) {
-            BottomBarDestination.entries.forEach { destination ->
-                val isSelected = currentRoute == destination.direction.route
-                val icon = routeToIcon[destination.direction.route] ?: Icons.Filled.Home
-                
-                NavigationBarItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) {
-                            navController.navigate(destination.direction.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(NavGraphs.root.route) {
-                                    saveState = true
-                                }
-                            }
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = stringResource(destination.label)
-                        )
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(destination.label),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    alwaysShowLabel = true
-                )
-            }
-        }
     }
 }

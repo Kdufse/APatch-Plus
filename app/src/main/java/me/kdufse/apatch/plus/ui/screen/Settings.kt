@@ -866,12 +866,13 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
                             Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
                             Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
+                        val items: List<Triple<Int, String, String?>> = listOf(
+                            Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
+                            Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
+                            Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
+                            Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
                             Triple(R.string.settings_select_settings_background, "settings", BackgroundConfig.settingsBackgroundUri)
                         )
-                        items.forEach { (titleRes, type, uri) ->
-                            ListItem(
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                headlineContent = { Text(text = stringResource(id = titleRes)) },
                                 supportingContent = {
                                     if (!uri.isNullOrEmpty()) {
                                         Text(

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="name" translatable="false">APatch Plus</string>
+    <string name="app_name" translatable="false">APatch Plus</string>
 
     <string name="home">Home</string>
 

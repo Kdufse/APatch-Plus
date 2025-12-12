@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">APatch Plus</string>
+    <string name="name" translatable="false">APatch Plus</string>
 
     <string name="home">Home</string>
 
@@ -23,7 +23,7 @@
     <string name="reboot_download">Mulai Ulang ke Download</string>
     <string name="reboot_edl">Mulai Ulang ke EDL</string>
     <string name="about">Tentang Aplikasi</string>
-    <string name="settings_app_language">Bahasa</string>
+    <string name="settings_language">Bahasa</string>
     <string name="system_default">Bawaan Sistem</string>
     <string name="settings_global_namespace_mode">Mode Ruang Nama Global</string>
     <string name="settings_global_namespace_mode_summary">Semua sesi root menggunakan ruang mount global</string>
@@ -251,7 +251,7 @@
     <string name="teal_theme">Hijau Kebiru-biruan</string>
     <string name="yellow_theme">Kuning</string>
 
-    <string name="about_app_desc">Solusi *root* tingkat kernel yang mendukung modul kernel dan *hook* fungsi kernel tanpa kompilasi ulang kernel.</string>
+    <string name="about_desc">Solusi *root* tingkat kernel yang mendukung modul kernel dan *hook* fungsi kernel tanpa kompilasi ulang kernel.</string>
     <string name="about_powered_by">Didukung oleh %1$s</string>
     <string name="about_telegram_group">Grup Telegram</string>
 
@@ -272,14 +272,14 @@
     <string name="about_github">GitHub</string>
     <string name="about_telegram_channel">Saluran Telegram</string>
 
-    <string name="app_title_fpatch">FPatch</string>
-    <string name="app_title_apatch_folk">APatch Folk</string>
-    <string name="app_title_apatchx">APatch X</string>
-    <string name="app_title_apatch">APatch</string>
-    <string name="app_title_folkpatch">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_fpatch">fpatch</string>
+    <string name="app_title_apatch_folk">apatch_folk</string>
+    <string name="app_title_apatchx">apatchx</string>
+    <string name="app_title_apatch">apatch</string>
+    <string name="app_title_kernelpatch">kernelpatch</string>
     <string name="app_title_supersu">SuperSU</string>
-    <string name="app_title_folksu">FolkSU</string>
+    <string name="app_title_folksu">folksu</string>
     <string name="app_title_superuser">Superuser</string>
     <string name="app_title_superpatch">SuperPatch</string>
     <string name="app_title_magicpatch">MagicPatch</string>

@@ -163,7 +163,7 @@
     <string name="apm_version">Wersja</string>
     <string name="apm_author">Autor</string>
     <string name="apm_desc">Opis</string>
-    <string name="apm_magic_mount_not_available">Moduły są niedostępne, ponieważ MagicMount jest wyłączony przez jądro!</string>
+    <string name="apm_magic_mount_not_available">Moduły są niedostępne, ponieważ OverlayFS jest wyłączony przez jądro!</string>
     <string name="apm_magisk_conflict">Moduły są niedostępne z powodu konfliktu z Magisk!</string>
     <string name="apm_reboot_to_apply">Uruchom ponownie, aby zastosować</string>
     <string name="apm_changelog">Dziennik zmian</string>
@@ -291,8 +291,8 @@
     <string name="settings_app_dpi">DPI aplikacji</string>
     <string name="settings_lite_mode">Tryb uproszczony</string>
     <string name="settings_lite_mode_mode_summary">Włącz tryb uproszczony dla lepszej wydajności</string>
-    <string name="settings_force_magicmount_mode">Wymuś tryb MagicMount</string>
-    <string name="settings_force_magicmount_mode_summary">Wymuś użycie MagicMount dla modułów</string>
+    <string name="settings_force_magicmount_mode">Wymuś tryb OverlayFS</string>
+    <string name="settings_force_magicmount_mode_summary">Wymuś użycie OverlayFS dla modułów</string>
     <string name="settings_app_title">Tytuł aplikacji</string>
     <string name="settings_custom_background">Niestandardowe tło</string>
     <string name="settings_custom_background_enabled">Włączono niestandardowe tło</string>

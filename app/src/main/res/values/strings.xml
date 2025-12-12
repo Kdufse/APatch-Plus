@@ -164,7 +164,7 @@
     <string name="apm_version">Version</string>
     <string name="apm_author">Author</string>
     <string name="apm_desc">Desc</string>
-    <string name="apm_magic_mount_not_available">Modules are unavailable as MagicMount is disabled by the kernel!</string>
+    <string name="apm_magic_mount_not_available">Modules are unavailable as OverlayFS is disabled by the kernel!</string>
     <string name="apm_magisk_conflict">Modules are unavailable due to a conflict with Magisk!</string>
     <string name="apm_reboot_to_apply">Reboot to take effect</string>
     <string name="apm_changelog">Changelog</string>
@@ -295,8 +295,8 @@
     <string name="settings_app_dpi">App DPI</string>
     <string name="settings_lite_mode">Lite Mode</string>
     <string name="settings_lite_mode_mode_summary">Enable lite mode for better performance</string>
-    <string name="settings_force_magicmount_mode">Force MagicMount Mode</string>
-    <string name="settings_force_magicmount_mode_summary">Force use MagicMount for modules</string>
+    <string name="settings_force_magicmount_mode">Force OverlayFS Mode</string>
+    <string name="settings_force_magicmount_mode_summary">Force use OverlayFS for modules</string>
     <string name="settings_app_title">App Title</string>
     <string name="settings_custom_background">Custom Background</string>
     <string name="settings_custom_background_enabled">Custom Background Enabled</string>

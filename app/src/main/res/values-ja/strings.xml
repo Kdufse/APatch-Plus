@@ -140,7 +140,7 @@
     <string name="apm_version">バージョン</string>
     <string name="apm_author">制作者</string>
     <string name="apm_desc">説明</string>
-    <string name="apm_magic_mount_not_available">カーネルによって MagicMount が無効なため、モジュールを使用できません。</string>
+    <string name="apm_magic_mount_not_available">カーネルによって OverlayFS が無効なため、モジュールを使用できません。</string>
     <string name="apm_magisk_conflict">Magisk と競合したためモジュールを使用できません。</string>
     <string name="apm_reboot_to_apply">再起動して適用する</string>
     <string name="apm_changelog">変更履歴</string>
@@ -254,8 +254,8 @@
     <string name="settings_app_dpi">アプリの DPI</string>
     <string name="settings_lite_mode">ライトモード</string>
     <string name="settings_lite_mode_mode_summary">パフォーマンス向上のためライトモードを有効にする</string>
-    <string name="settings_force_magicmount_mode">強制MagicMountモード</string>
-    <string name="settings_force_magicmount_mode_summary">モジュール機能にMagicMountを強制的に使用する</string>
+    <string name="settings_force_magicmount_mode">強制OverlayFSモード</string>
+    <string name="settings_force_magicmount_mode_summary">モジュール機能にOverlayFSを強制的に使用する</string>
     <string name="settings_app_title">アプリタイトル</string>
     <string name="settings_custom_background">カスタム背景</string>
     <string name="settings_custom_background_enabled">カスタム背景が有効です</string>

@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui
+package me.kdufse.apatch.plus.ui
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -51,12 +51,12 @@ import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationSty
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import kotlinx.coroutines.launch
-import me.bmax.apatch.APApplication
-import me.bmax.apatch.ui.screen.BottomBarDestination
-import me.bmax.apatch.ui.theme.APatchThemeWithBackground
-import me.bmax.apatch.util.PermissionRequestHandler
-import me.bmax.apatch.util.PermissionUtils
-import me.bmax.apatch.util.ui.LocalSnackbarHost
+import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
+import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
+import me.kdufse.apatch.plus.util.PermissionRequestHandler
+import me.kdufse.apatch.plus.util.PermissionUtils
+import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionHandler: PermissionRequestHandler
 
     override fun attachBaseContext(newBase: android.content.Context) {
-        super.attachBaseContext(me.bmax.apatch.util.DPIUtils.updateContext(newBase))
+        super.attachBaseContext(me.kdufse.apatch.plus.util.DPIUtils.updateContext(newBase))
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -140,8 +140,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         
         // Load DPI settings
-        me.bmax.apatch.util.DPIUtils.load(this)
-        me.bmax.apatch.util.DPIUtils.applyDpi(this)
+        me.kdufse.apatch.plus.util.DPIUtils.load(this)
+        me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
         
         // ≥ı ºªØCoil
         initializeCoil()

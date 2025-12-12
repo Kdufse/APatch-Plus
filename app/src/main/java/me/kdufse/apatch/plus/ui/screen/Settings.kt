@@ -858,46 +858,61 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         BackgroundConfig.save(context)
                         refreshTheme.value = true
                     }
-                    
-                    if (BackgroundConfig.isMultiBackgroundEnabled) {
-                        // Multi selectors
-                        val items = listOf(
-                            Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
-                            Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
-                            Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
-                            Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
-                        val items: List<Triple<Int, String, String?>> = listOf(
-                            Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
-                            Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
-                            Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
-                            Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
-                            Triple(R.string.settings_select_settings_background, "settings", BackgroundConfig.settingsBackgroundUri)
-                        )
-                                supportingContent = {
-                                    if (!uri.isNullOrEmpty()) {
-                                        Text(
-                                            text = stringResource(id = R.string.settings_background_selected),
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.outline
-                                        )
-                                    }
-                                },
-                                leadingContent = { Icon(painterResource(id = R.drawable.ic_custom_background), null) },
-                                modifier = Modifier.clickable {
-                                    if (PermissionUtils.hasExternalStoragePermission(context) && 
-                                        PermissionUtils.hasWriteExternalStoragePermission(context)) {
-                                        pickingType = type
-                                        try {
-                                            pickImageLauncher.launch("image/*")
-                                        } catch (e: ActivityNotFoundException) {
-                                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                                        }
-                                    } else {
-                                        Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            )
-                        }
+if (BackgroundConfig.isMultiBackgroundEnabled) {
+    // 创建背景列表
+    val backgroundItems = listOf(
+        Pair(R.string.settings_select_home_background, "home"),
+        Pair(R.string.settings_select_kernel_background, "kernel"),
+        Pair(R.string.settings_select_superuser_background, "superuser"),
+        Pair(R.string.settings_select_system_module_background, "system"),
+        Pair(R.string.settings_select_settings_background, "settings")
+    )
+    
+    backgroundItems.forEach { (titleRes, type) ->
+        // 根据类型获取对应的 URI
+        val uri = when (type) {
+            "home" -> BackgroundConfig.homeBackgroundUri
+            "kernel" -> BackgroundConfig.kernelBackgroundUri
+            "superuser" -> BackgroundConfig.superuserBackgroundUri
+            "system" -> BackgroundConfig.systemModuleBackgroundUri
+            "settings" -> BackgroundConfig.settingsBackgroundUri
+            else -> null
+        }
+        
+        ListItem(
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            headlineContent = { Text(text = stringResource(id = titleRes)) },
+            supportingContent = {
+                if (!uri.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(id = R.string.settings_background_selected),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+            },
+            leadingContent = { 
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_custom_background), 
+                    contentDescription = null
+                ) 
+            },
+            modifier = Modifier.clickable {
+                if (PermissionUtils.hasExternalStoragePermission(context) && 
+                    PermissionUtils.hasWriteExternalStoragePermission(context)) {
+                    pickingType = type
+                    try {
+                        pickImageLauncher.launch("image/*")
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+}
                     } else {
                         // Single Background Selector
                         ListItem(

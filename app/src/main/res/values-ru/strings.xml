@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">APatchPlus</string>
+    <string name="app_name" translatable="false">APatch Plus</string>
 
     <string name="home">Главная</string>
 
@@ -121,7 +121,7 @@
     <string name="home_system_version">Версия системы</string>
     <string name="home_kpatch_version">Версия KernelPatch</string>
     <string name="home_su_path">Исполняемый файл su</string>
-    <string name="home_apatch_version">Версия APatchPlus</string>
+    <string name="home_apatch_version">Версия APatch Plus</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch не установлен</string>
@@ -285,7 +285,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatchPlus</string>
+    <string name="app_title_APatchPlus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -312,8 +312,8 @@
     <string name="settings_clear_background">Очистить фон</string>
     <string name="settings_clear_background_confirm">Вы уверены, что хотите очистить фоновое изображение?</string>
     <string name="settings_launcher_icon">Иконка лаунчера</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -415,7 +415,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Неофициальная версия</string>
-    <string name="unofficial_version_message">Вы используете APatchPlus, который не является официальным приложением, пожалуйста, скачайте официальное приложение!</string>
+    <string name="unofficial_version_message">Вы используете APatch Plus, который не является официальным приложением, пожалуйста, скачайте официальное приложение!</string>
     <string name="go_to_github">Перейти на Github</string>
     <string name="settings_save_theme">Сохранить тему</string>
     <string name="settings_import_theme">Импортировать тему</string>

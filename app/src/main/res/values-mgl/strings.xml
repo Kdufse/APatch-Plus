@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">APatchPlus</string>
+    <string name="app_name" translatable="false">APatch Plus</string>
 
     <string name="home">魔法大厅</string>
 
@@ -277,7 +277,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatchPlus</string>
+    <string name="app_title_APatchPlus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -304,8 +304,8 @@
     <string name="settings_clear_background">清除魔法背景</string>
     <string name="settings_clear_background_confirm">确定要清除魔法背景图片吗？</string>
     <string name="settings_launcher_icon">魔法使徽章</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -410,7 +410,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">非正统魔法工坊✨</string>
-    <string name="unofficial_version_message">你所使用的APatchPlus并非星界认证的正统魔法工坊~ 请前往官方魔法屋获取正版工坊，以避免魔法反噬或契约失效！</string>
+    <string name="unofficial_version_message">你所使用的APatch Plus并非星界认证的正统魔法工坊~ 请前往官方魔法屋获取正版工坊，以避免魔法反噬或契约失效！</string>
     <string name="go_to_github">前往Github星界魔法屋~☆</string>
     <string name="settings_save_theme">封印魔法主题</string>
     <string name="settings_import_theme">唤醒魔法主题</string>

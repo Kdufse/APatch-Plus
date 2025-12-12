@@ -270,8 +270,8 @@ pub fn on_post_data_fs(superkey: Option<String>) -> Result<()> {
     let args = ["/data/adb/aplus/bin/magiskpolicy", "--magisk", "--live"];
     fork_for_result("/data/adb/aplus/bin/magiskpolicy", &args, &superkey);
 
-    info!("Re-privilege aplud profile after injecting sepolicy");
-    supercall::privilege_aplud_profile(&superkey);
+    info!("Re-privilege aplus profile after injecting sepolicy");
+    supercall::privilege_aplus_profile(&superkey);
 
     if utils::has_magisk() {
         warn!("Magisk detected, skip post-fs-data!");

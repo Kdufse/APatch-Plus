@@ -340,8 +340,8 @@ fun SettingScreen() {
             if (kPatchReady && aPatchReady && isOverlayFSAvailable) {
                 SwitchItem(
                     icon = Icons.Filled.FilePresent,
-                    title = stringResource(id = R.string.settings_force_overlayfs_mode),
-                    summary = stringResource(id = R.string.settings_force_overlayfs_mode_summary),
+                    title = stringResource(id = R.string.settings_force_magicmount_mode),1
+                    summary = stringResource(id = R.string.settings_force_magicmount_mode_summary),
                     checked = forceUsingOverlayFS,
                     onCheckedChange = {
                         setForceUsingOverlayFS(it)

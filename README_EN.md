@@ -1,17 +1,17 @@
 <div align="center">
-<a href="https://github.com/matsuzaka-yuki/FolkPatch/releases/latest"><img src="logo.png" style="width: 128px;" alt="logo"></a>
+<a href="https://github.com/Kdufse/APatchPlus/releases/latest"><img src="logo.png" style="width: 128px;" alt="logo"></a>
 
-<h1 align="center">FolkPatch Manager</h1>
+<h1 align="center">APatchPlus Manager</h1>
 
-[![Latest Release](https://img.shields.io/github/v/release/matsuzaka-yuki/FolkPatch?label=Release&logo=github)](https://github.com/matsuzaka-yuki/FolkPatch/releases/latest)
-[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/FolkPatch)
-[![GitHub License](https://img.shields.io/github/license/matsuzaka-yuki/FolkPatch?logo=gnu)](/LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/Kdufse/APatch-Plus?label=Release&logo=github)](https://github.com/Kdufse/APatch-Plus/releases/latest)
+[![Channel](https://img.shields.io/badge/Follow-Telegram-blue.svg?logo=telegram)](https://t.me/APatchPlus)
+[![GitHub License](https://img.shields.io/github/license/bmax121/APatch?logo=gnu)](/LICENSE)
 
 </div>
 
 **Language / 语言:** [English](README_EN.md) | [中文](README.md)
 
-**FolkPatch** is an extended non-parallel branch based on [APatch](https://github.com/bmax121/APatch), only through optimizing the interface design and extending the features, without introducing new core functions.
+**APatchPlus** is an extended non-parallel branch based on [FolkPatch](https://github.com/matsuzaka-yuki/FolkPatch), only through optimizing the interface design and extending the features, without introducing new core functions.
 
 # Main Features
 
@@ -28,7 +28,7 @@
 
 ## Download & Install
 
-Download the latest APK from the [Releases Section](https://github.com/matsuzaka-yuki/FolkPatch/releases/latest).
+Download the latest APK from the [Releases Section](https://github.com/matsuzaka-yuki/APatchPlus/releases/latest).
 
 ## System Requirements
 
@@ -47,13 +47,13 @@ This project is based on the following open source projects:
 
 ## License
 
-FolkPatch is licensed under the GNU General Public License v3 [GPL-3](http://www.gnu.org/copyleft/gpl.html).
+APatchPlus is licensed under the GNU General Public License v3 [GPL-3](http://www.gnu.org/copyleft/gpl.html).
 
-# FolkPatch Discussion & Communication
-- Telegram Channel: [@FolkPatch](https://t.me/FolkPatch)
+# APatchPlus Discussion & Communication
+- Telegram Channel: [@APatchPlus](https://t.me/APatchPlus)
 
 # APatch Community
 
 Telegram Channel: [@APatch](https://t.me/apatch_discuss)
 
-For questions and suggestions regarding FolkPatch, please raise them in the [@FolkPatch](https://t.me/FolkPatch) channel or QQ Group, and avoid causing inconvenience to the official channel.
+For questions and suggestions regarding APatchPlus, please raise them in the [@APatchPlus](https://t.me/APatchPlus) channel or QQ Group, and avoid causing inconvenience to the official channel.

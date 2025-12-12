@@ -180,7 +180,7 @@ pub fn root_shell() -> Result<()> {
         }
     }
 
-    // add /data/adb/aplus/bin to PATH
+    // add /data/adb/ap/bin to PATH
     #[cfg(any(target_os = "linux", target_os = "android"))]
     add_path_to_env(defs::BINARY_DIR)?;
 

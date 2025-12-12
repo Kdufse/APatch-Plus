@@ -67,12 +67,12 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
 
 
     companion object {
-        const val APD_PATH = "/data/adb/aplusd"
+        const val APD_PATH = "/data/adb/apd"
 
         @Deprecated("No more KPatch ELF from 0.11.0-dev")
         const val KPATCH_PATH = "/data/adb/kpatch"
         const val SUPERCMD = "/system/bin/truncate"
-        const val APATCH_FOLDER = "/data/adb/aplus/"
+        const val APATCH_FOLDER = "/data/adb/ap/"
         private const val APATCH_BIN_FOLDER = APATCH_FOLDER + "bin/"
         private const val APATCH_LOG_FOLDER = APATCH_FOLDER + "log/"
         private const val APD_LINK_PATH = APATCH_BIN_FOLDER + "aplusd"

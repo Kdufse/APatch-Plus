@@ -81,7 +81,7 @@ struct su_profile
 #define ECHO_PATH "/system/bin/echo"
 #define KERNELPATCH_DATA_DIR "/data/adb/kp"
 #define KERNELPATCH_MODULE_DATA_DIR KERNELPATCH_DATA_DIR "/modules"
-#define APD_PATH "/data/adb/aplusd"
+#define APD_PATH "/data/adb/apd"
 #define ALL_ALLOW_SCONTEXT "u:r:kp:s0"
 #define ALL_ALLOW_SCONTEXT_MAGISK "u:r:magisk:s0"
 #define ALL_ALLOW_SCONTEXT_KERNEL "u:r:kernel:s0"

@@ -129,7 +129,7 @@ pub fn run() -> Result<()> {
     log::info!("command: {:?}", cli.command);
 
     if let Some(ref _superkey) = cli.superkey {
-        supercall::privilege_apd_profile(&cli.superkey);
+        supercall::privilege_aplus_profile(&cli.superkey);
     }
 
     let result = match cli.command {

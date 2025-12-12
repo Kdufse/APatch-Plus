@@ -267,8 +267,8 @@ pub fn on_post_data_fs(superkey: Option<String>) -> Result<()> {
 
     init_load_su_path(&superkey);
 
-    let args = ["/data/adb/aplus/bin/magiskpolicy", "--magisk", "--live"];
-    fork_for_result("/data/adb/aplus/bin/magiskpolicy", &args, &superkey);
+    let args = ["/data/adb/ap/bin/magiskpolicy", "--magisk", "--live"];
+    fork_for_result("/data/adb/ap/bin/magiskpolicy", &args, &superkey);
 
     info!("Re-privilege aplus profile after injecting sepolicy");
     supercall::privilege_aplus_profile(&superkey);
@@ -518,7 +518,7 @@ pub fn on_services(superkey: Option<String>) -> Result<()> {
 fn run_uid_monitor() {
     info!("Trigger run_uid_monitor!");
 
-    let mut command = &mut Command::new("/data/adb/aplusd");
+    let mut command = &mut Command::new("/data/adb/apd");
     {
         command = command.process_group(0);
         command = unsafe {

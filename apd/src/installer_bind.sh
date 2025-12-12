@@ -72,7 +72,7 @@ print_title() {
 }
 
 check_sepolicy() {
-    /data/adb/aplus sepolicy check "$1"
+    /data/adb/ap sepolicy check "$1"
     return $?
 }
 

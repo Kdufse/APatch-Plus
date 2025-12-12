@@ -19,7 +19,7 @@ pub struct PackageConfig {
 pub fn read_ap_package_config() -> Vec<PackageConfig> {
     let max_retry = 5;
     for _ in 0..max_retry {
-        let file = match File::open("/data/adb/aplus/package_config") {
+        let file = match File::open("/data/adb/ap/package_config") {
             Ok(file) => file,
             Err(e) => {
                 warn!("Error opening file: {}", e);
@@ -54,7 +54,7 @@ pub fn read_ap_package_config() -> Vec<PackageConfig> {
 pub fn write_ap_package_config(package_configs: &[PackageConfig]) -> io::Result<()> {
     let max_retry = 5;
     for _ in 0..max_retry {
-        let temp_path = "/data/adb/aplus/package_config.tmp";
+        let temp_path = "/data/adb/ap/package_config.tmp";
         let file = match File::create(temp_path) {
             Ok(file) => file,
             Err(e) => {
@@ -86,7 +86,7 @@ pub fn write_ap_package_config(package_configs: &[PackageConfig]) -> io::Result<
             continue;
         }
 
-        if let Err(e) = std::fs::rename(temp_path, "/data/adb/aplus/package_config") {
+        if let Err(e) = std::fs::rename(temp_path, "/data/adb/ap/package_config") {
             warn!("Error renaming temp file: {}", e);
             thread::sleep(Duration::from_secs(1));
             continue;

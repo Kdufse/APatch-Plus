@@ -304,7 +304,7 @@ pub fn refresh_ap_package_list(skey: &CStr, mutex: &Arc<Mutex<()>>) {
     }
 }
 
-pub fn privilege_aplusd_profile(superkey: &Option<String>) {
+pub fn privilege_apd_profile(superkey: &Option<String>) {
     let key = convert_superkey(superkey);
 
     let all_allow_ctx = "u:r:magisk:s0";

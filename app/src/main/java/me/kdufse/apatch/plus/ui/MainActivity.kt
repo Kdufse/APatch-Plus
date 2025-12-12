@@ -268,3 +268,40 @@ class MainActivity : AppCompatActivity() {
         isLoading = false
     }
 }
+@Composable
+private fun BottomBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val bottomBarRoutes = BottomBarDestination.entries.map { it.direction.route }
+
+    NavigationBar {
+        BottomBarDestination.entries.forEach { destination ->
+            val selected = currentDestination?.route == destination.direction.route
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    navController.navigate(destination.direction.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.labelResId)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(destination.labelResId),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
+        }
+    }
+}

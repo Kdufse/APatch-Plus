@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.content.Intent
 import android.net.Uri
@@ -28,8 +28,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import me.bmax.apatch.R
-import me.bmax.apatch.ui.viewmodel.ThemeStoreViewModel
+import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.ui.viewmodel.ThemeStoreViewModel
 
 @Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)

@@ -414,7 +414,7 @@ private fun TopBar(
         "superuser" -> R.string.app_title_superuser
         "superpatch" -> R.string.app_title_superpatch
         "magicpatch" -> R.string.app_title_magicpatch
-        else -> R.string.app_title_apatchplus
+        else -> R.string.aapp_title_APatchPlus
     }
 
     TopAppBar(title = {

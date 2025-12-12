@@ -274,7 +274,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -283,9 +283,9 @@
 
     <string name="settings_app_dpi">應用程式 DPI</string>
     <string name="settings_lite_mode">簡易模式</string>
-    <string name="settings_lite_mode_mode_summary">啟用簡易模式以獲得更好的效能</string>
-    <string name="settings_force_magicmount_mode">強制 MagicMount 模式</string>
-    <string name="settings_force_magicmount_mode_summary">強制使用 MagicMount 模組功能</string>
+    <string name="settings_lite_mode_mode_summary">不掛載檔案以獲得更好的效能和隱藏性</string>
+    <string name="settings_force_overlayfs_mode">強制 OverlayFS 模式</string>
+    <string name="settings_force_overlayfs_mode_summary">強制使用 OverlayFS 模組功能</string>
     <string name="settings_app_title">應用程式標題</string>
     <string name="settings_custom_background">自訂背景</string>
     <string name="settings_custom_background_enabled">已啟用自訂背景</string>
@@ -299,6 +299,13 @@
     <string name="settings_background_image_cleared">背景圖片已清除</string>
     <string name="settings_clear_background">清除背景</string>
     <string name="settings_clear_background_confirm">確定要清除背景圖片嗎？</string>
+    <string name="settings_multi_background_mode">啟用多背景模式</string>
+    <string name="settings_multi_background_mode_summary">為不同頁面設置不同的背景圖片</string>
+    <string name="settings_select_home_background">首頁背景</string>
+    <string name="settings_select_kernel_background">內核模組背景</string>
+    <string name="settings_select_superuser_background">超級用戶背景</string>
+    <string name="settings_select_system_module_background">系統模組背景</string>
+    <string name="settings_select_settings_background">設置頁面背景</string>
     <string name="settings_launcher_icon">桌面圖示</string>
     <string name="launcher_icon_default">APatch Plus Anime</string>
     <string name="launcher_icon_classic">APatch Plus</string>
@@ -389,11 +396,9 @@
 
     <!-- Auto-added missing strings -->
     <string name="home_hide_kpatch_version_summary">在資訊卡中隱藏核心修補程式版本</string>
-    <string name="settings_simple_kernel_version_mode_summary">啟用後在運作卡片中隱藏詳細版本資訊</string>
     <string name="home_hide_su_path_summary">在資訊卡中隱藏 su 執行檔路徑</string>
     <string name="home_hide_fingerprint_summary">在資訊卡中隱藏指紋資訊</string>
     <string name="home_hide_fingerprint">隱藏指紋</string>
-    <string name="settings_simple_kernel_version_mode">簡潔核心版本模式</string>
     <string name="about_source_code"><![CDATA[<p>查看原始碼於 %1$s<p/>加入我們的 %2$s 頻道<p/>加入我們的 %3$s 群組]]></string>
     <string name="home_hide_kpatch_version">隱藏核心修補程式版本</string>
     <string name="home_hide_su_path">隱藏 su 執行檔路徑</string>
@@ -444,4 +449,50 @@
     <string name="msg_biometric">請驗證您的生物識別身分</string>
     <string name="settings_biometric_login">生物識別認證</string>
     <string name="settings_biometric_login_summary">開啟應用程式時要求生物識別認證</string>
+
+    <!-- Theme Store Strings -->
+    <string name="theme_store_title">主題商店</string>
+    <string name="theme_source_official">官方</string>
+    <string name="theme_source_third_party">第三方</string>
+    <string name="theme_store_author">作者: %s</string>
+    <string name="theme_store_version">版本: %s</string>
+    <string name="theme_source">來源</string>
+    <string name="theme_store_download_failed">下載失敗</string>
+    <string name="theme_store_download">下載</string>
+    <string name="theme_store_search_hint">搜索主題...</string>
+
+    <!-- Update Check Strings -->
+    <string name="settings_auto_update_check">自動檢查更新</string>
+    <string name="settings_auto_update_check_summary">應用程式啟動時自動檢查更新</string>
+    <string name="settings_check_update">檢查更新</string>
+    <string name="update_available_title">有可用更新</string>
+    <string name="update_available_message">檢測到您的版本過低，是否要下載新版本？</string>
+    <string name="update_action">更新</string>
+    <string name="update_close">關閉</string>
+    <string name="update_latest">您已是最新版本</string>
+    <string name="update_error">檢查更新時出錯</string>
+    <!--折疊選項-->
+    <string name="settings_category_general">常規</string>
+    <string name="settings_category_appearance">外觀</string>
+    <string name="settings_category_behavior">行為</string>
+    <string name="settings_category_module">模組</string>
+    <string name="settings_category_security">安全</string>
+    
+    <!-- 背景音樂字符串 -->
+    <string name="settings_background_music">背景音樂</string>
+    <string name="settings_background_music_summary">應用在前台時播放背景音樂</string>
+    <string name="settings_background_music_playing">正在播放: %s</string>
+    <string name="settings_background_music_enabled">背景音樂已啟用</string>
+    <string name="settings_select_music_file">選擇音樂檔案</string>
+    <string name="settings_music_selected">音樂已選擇</string>
+    <string name="settings_clear_music">清除音樂</string>
+    <string name="settings_clear_music_confirm">確定要清除背景音樂嗎？</string>
+    <string name="settings_music_auto_play">自動播放</string>
+    <string name="settings_music_auto_play_summary">應用打開時自動播放音樂</string>
+    <string name="settings_music_volume">音量</string>
+    <string name="settings_music_saved">音樂檔案已保存</string>
+    <string name="settings_music_save_error">音樂檔案保存失敗</string>
+    <string name="settings_music_cleared">音樂已清除</string>
+    <string name="settings_category_multimedia">多媒體</string>
+    <string name="settings_music_playback_control">播放控制</string>
 </resources>

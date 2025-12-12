@@ -159,7 +159,7 @@
     <string name="apm_version">Phiên bản</string>
     <string name="apm_author">Tác giả</string>
     <string name="apm_desc">Mô tả</string>
-    <string name="apm_magic_mount_not_available">OverlayFS bị nhân vô hiệu hóa, module không khả dụng!</string>
+    <string name="apm_overlay_fs_not_available">OverlayFS bị nhân vô hiệu hóa, module không khả dụng!</string>
     <string name="apm_magisk_conflict">Module không khả dụng do xung đột với Magisk!</string>
     <string name="apm_reboot_to_apply">Khởi động lại để áp dụng</string>
     <string name="apm_changelog">Nhật ký cập nhật</string>
@@ -277,7 +277,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -287,9 +287,9 @@
 
     <string name="settings_app_dpi">DPI ứng dụng</string>
     <string name="settings_lite_mode">Chế độ gọn nhẹ</string>
-    <string name="settings_lite_mode_mode_summary">Bật chế độ gọn nhẹ để có hiệu suất tốt hơn</string>
-    <string name="settings_force_magicmount_mode">Buộc chế độ OverlayFS</string>
-    <string name="settings_force_magicmount_mode_summary">Buộc sử dụng OverlayFS để tải module</string>
+    <string name="settings_lite_mode_mode_summary">Không gắn kết tệp để có hiệu suất và khả năng ẩn tốt hơn</string>
+    <string name="settings_force_overlayfs_mode">Buộc chế độ OverlayFS</string>
+    <string name="settings_force_overlayfs_mode_summary">Buộc sử dụng OverlayFS để tải module</string>
     <string name="settings_app_title">Tên ứng dụng</string>
     <string name="settings_custom_background">Hình nền tùy chỉnh</string>
     <string name="settings_custom_background_enabled">Đã bật hình nền tùy chỉnh</string>
@@ -316,6 +316,13 @@
     <string name="settings_background_image_cleared">Hình ảnh nền đã được xóa</string>
     <string name="settings_clear_background">Xóa nền</string>
     <string name="settings_clear_background_confirm">Bạn có chắc chắn muốn xóa hình ảnh nền không?</string>
+    <string name="settings_multi_background_mode">Chế độ đa nền</string>
+    <string name="settings_multi_background_mode_summary">Thiết lập hình ảnh nền khác nhau cho các trang khác nhau</string>
+    <string name="settings_select_home_background">Nền trang chủ</string>
+    <string name="settings_select_kernel_background">Nền mô-đun kernel</string>
+    <string name="settings_select_superuser_background">Nền siêu người dùng</string>
+    <string name="settings_select_system_module_background">Nền mô-đun hệ thống</string>
+    <string name="settings_select_settings_background">Nền trang cài đặt</string>
     <string name="settings_launcher_icon">Biểu tượng màn hình chính</string>
     <string name="launcher_icon_default">APatch Plus</string>
     <string name="launcher_icon_classic">APatch Plus Anime</string>
@@ -391,8 +398,6 @@
     <string name="apm_backup_failed_msg">Sao lưu thất bại: %s</string>
     <string name="apm_restore_failed_msg">Khôi phục thất bại: %s</string>
     
-    <string name="settings_simple_kernel_version_mode">Chế độ đơn giản phiên bản nhân</string>
-    <string name="settings_simple_kernel_version_mode_summary">Sau khi bật, không hiển thị thông tin phiên bản ở dưới chữ người làm việc của thẻ đang làm việc</string>
 
     <!-- Auto Backup Strings -->
     <string name="settings_auto_backup_module">Sao lưu tự động module hệ thống</string>
@@ -448,4 +453,53 @@
     <string name="msg_biometric">Vui lòng xác minh danh tính sinh trắc học của bạn</string>
     <string name="settings_biometric_login">Xác thực sinh trắc học</string>
     <string name="settings_biometric_login_summary">Yêu cầu xác thực sinh trắc học khi mở ứng dụng</string>
+
+    <!-- Theme Store Strings -->
+    <string name="theme_store_title">Cửa hàng chủ đề</string>
+    <string name="theme_store_search_hint">Tìm kiếm chủ đề...</string>
+    <string name="theme_source_official">Chính thức</string>
+    <string name="theme_source_third_party">Bên thứ ba</string>
+    <string name="theme_source_local">Cục bộ</string>
+    <string name="theme_source">Nguồn</string>
+    <string name="theme_install">Cài đặt</string>
+    <string name="theme_install_success">Cài đặt thành công</string>
+    <string name="theme_install_failed">Cài đặt thất bại</string>
+    <string name="theme_download">Tải xuống</string>
+    <string name="theme_store_author">Tác giả</string>
+    <string name="theme_store_version">Phiên bản</string>
+
+    <!-- Update Check Strings -->
+    <string name="settings_auto_update_check">Kiểm tra cập nhật tự động</string>
+    <string name="settings_auto_update_check_summary">Tự động kiểm tra cập nhật khi khởi động ứng dụng</string>
+    <string name="settings_check_update">Kiểm tra cập nhật</string>
+    <string name="update_available_title">Có bản cập nhật mới</string>
+    <string name="update_available_message">Phát hiện phiên bản của bạn quá cũ, bạn có muốn tải xuống phiên bản mới không?</string>
+    <string name="update_action">Cập nhật</string>
+    <string name="update_close">Đóng</string>
+    <string name="update_latest">Bạn đang sử dụng phiên bản mới nhất</string>
+    <string name="update_error">Lỗi kiểm tra cập nhật</string>
+    <!--Tùy chọn thu gọn-->
+    <string name="settings_category_general">Chung</string>
+    <string name="settings_category_appearance">Giao diện</string>
+    <string name="settings_category_behavior">Hành vi</string>
+    <string name="settings_category_module">Mô-đun</string>
+    <string name="settings_category_security">Bảo mật</string>
+    
+    <!-- Background Music Strings -->
+    <string name="settings_background_music">Nhạc nền</string>
+    <string name="settings_background_music_summary">Phát nhạc nền khi ứng dụng ở foreground</string>
+    <string name="settings_background_music_playing">Đang phát: %s</string>
+    <string name="settings_background_music_enabled">Nhạc nền đã được kích hoạt</string>
+    <string name="settings_select_music_file">Chọn tệp nhạc</string>
+    <string name="settings_music_selected">Nhạc đã chọn</string>
+    <string name="settings_clear_music">Xóa nhạc</string>
+    <string name="settings_clear_music_confirm">Bạn có chắc muốn xóa nhạc nền không?</string>
+    <string name="settings_music_auto_play">Tự động phát</string>
+    <string name="settings_music_auto_play_summary">Tự động phát nhạc khi mở ứng dụng</string>
+    <string name="settings_music_volume">Âm lượng</string>
+    <string name="settings_music_saved">Tệp nhạc đã được lưu</string>
+    <string name="settings_music_save_error">Lưu tệp nhạc thất bại</string>
+    <string name="settings_music_cleared">Nhạc đã được xóa</string>
+    <string name="settings_category_multimedia">Đa phương tiện</string>
+    <string name="settings_music_playback_control">Điều khiển phát nhạc</string>
 </resources>

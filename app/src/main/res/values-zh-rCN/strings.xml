@@ -159,7 +159,7 @@
     <string name="apm_version">版本</string>
     <string name="apm_author">作者</string>
     <string name="apm_desc">描述</string>
-    <string name="apm_magic_mount_not_available">OverlayFS 被内核禁用，模块不可用！</string>
+    <string name="apm_overlay_fs_not_available">OverlayFS 被内核禁用，模块不可用！</string>
     <string name="apm_magisk_conflict">由于与 Magisk 冲突，模块不可用！</string>
     <string name="apm_reboot_to_apply">重启生效</string>
     <string name="apm_changelog">更新日志</string>
@@ -270,14 +270,14 @@
     <!-- About Screen Strings -->
     <string name="about_app_version">应用版本</string>
     <string name="about_github">GitHub</string>
-    <string name="about_telegram_channel">Telegram 群组</string>
+    <string name="about_telegram_channel">Telegram 频道</string>
 
     <!-- App Title Strings -->
     <string name="app_title_fpatch">FPatch</string>
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -286,15 +286,22 @@
     <string name="app_title_magicpatch">MagicPatch</string>
 
     <string name="settings_app_dpi">应用 DPI</string>
-    <string name="settings_lite_mode">精简模式</string>
-    <string name="settings_lite_mode_mode_summary">启用精简模式以获得更好的性能</string>
-    <string name="settings_force_magicmount_mode">强制 OverlayFS 模式</string>
-    <string name="settings_force_magicmount_mode_summary">强制使用 OverlayFS 加载模块</string>
+    <string name="settings_lite_mode">Lite模式</string>
+    <string name="settings_lite_mode_mode_summary">不挂载文件以获得更好的性能和隐藏性</string>
+    <string name="settings_force_overlayfs_mode">强制 OverlayFS 模式</string>
+    <string name="settings_force_overlayfs_mode_summary">强制使用 OverlayFS 加载模块</string>
     <string name="settings_app_title">应用名称</string>
     <string name="settings_custom_background">自定义背景</string>
     <string name="settings_custom_background_enabled">已启用自定义背景</string>
     <string name="settings_custom_background_opacity">卡片不透明度</string>
     <string name="settings_custom_background_dim">背景暗度</string>
+    <string name="settings_multi_background_mode">启用多背景模式</string>
+    <string name="settings_multi_background_mode_summary">为不同页面设置不同的背景图片</string>
+    <string name="settings_select_home_background">首页背景</string>
+    <string name="settings_select_kernel_background">内核模块背景</string>
+    <string name="settings_select_superuser_background">超级用户背景</string>
+    <string name="settings_select_system_module_background">系统模块背景</string>
+    <string name="settings_select_settings_background">设置页面背景</string>
     
     <!-- Font Settings -->
     <string name="settings_custom_font">自定义字体</string>
@@ -316,6 +323,8 @@
     <string name="settings_background_image_cleared">背景图片已清除</string>
     <string name="settings_clear_background">清除背景</string>
     <string name="settings_clear_background_confirm">确定要清除背景图片吗？</string>
+
+
     <string name="settings_launcher_icon">桌面图标</string>
     <string name="launcher_icon_default">APatch Plus</string>
     <string name="launcher_icon_classic">APatch Plus Anime</string>
@@ -391,8 +400,6 @@
     <string name="apm_backup_failed_msg">备份失败：%s</string>
     <string name="apm_restore_failed_msg">恢复失败：%s</string>
     
-    <string name="settings_simple_kernel_version_mode">内核版本简洁模式</string>
-    <string name="settings_simple_kernel_version_mode_summary">开启后不显示工作中卡片工作者文字底部的版本信息</string>
 
     <!-- Auto Backup Strings -->
     <string name="settings_auto_backup_module">自动备份系统模块</string>
@@ -448,4 +455,50 @@
     <string name="msg_biometric">请验证您的生物识别身份</string>
     <string name="settings_biometric_login">生物识别认证</string>
     <string name="settings_biometric_login_summary">打开应用时要求生物识别认证</string>
+
+    <!-- Theme Store Strings -->
+    <string name="theme_store_title">主题商店</string>
+    <string name="theme_source_official">官方</string>
+    <string name="theme_source_third_party">第三方</string>
+    <string name="theme_store_author">作者: %s</string>
+    <string name="theme_store_version">版本: %s</string>
+    <string name="theme_source">来源</string>
+    <string name="theme_store_download_failed">下载失败</string>
+    <string name="theme_store_download">下载</string>
+    <string name="theme_store_search_hint">搜索主题...</string>
+
+    <!-- Update Check Strings -->
+    <string name="settings_auto_update_check">自动检查更新</string>
+    <string name="settings_auto_update_check_summary">应用启动时自动检查更新</string>
+    <string name="settings_check_update">检查更新</string>
+    <string name="update_available_title">有可用更新</string>
+    <string name="update_available_message">检测到您的版本过低，是否要下载新版本？</string>
+    <string name="update_action">更新</string>
+    <string name="update_close">关闭</string>
+    <string name="update_latest">您已是最新版本</string>
+    <string name="update_error">检查更新时出错</string>
+    <!--折叠选项-->
+    <string name="settings_category_general">常规</string>
+    <string name="settings_category_appearance">外观</string>
+    <string name="settings_category_behavior">行为</string>
+    <string name="settings_category_module">模块</string>
+    <string name="settings_category_security">安全</string>
+    
+    <!-- 背景音乐字符串 -->
+    <string name="settings_background_music">背景音乐</string>
+    <string name="settings_background_music_summary">应用在前台时播放背景音乐</string>
+    <string name="settings_background_music_playing">正在播放: %s</string>
+    <string name="settings_background_music_enabled">背景音乐已启用</string>
+    <string name="settings_select_music_file">选择音乐文件</string>
+    <string name="settings_music_selected">音乐已选择</string>
+    <string name="settings_clear_music">清除音乐</string>
+    <string name="settings_clear_music_confirm">确定要清除背景音乐吗？</string>
+    <string name="settings_music_auto_play">自动播放</string>
+    <string name="settings_music_auto_play_summary">应用打开时自动播放音乐</string>
+    <string name="settings_music_volume">音量</string>
+    <string name="settings_music_saved">音乐文件已保存</string>
+    <string name="settings_music_save_error">保存音乐文件失败</string>
+    <string name="settings_music_cleared">音乐已清除</string>
+    <string name="settings_category_multimedia">多媒体</string>
+    <string name="settings_music_playback_control">播放控制</string>
 </resources>

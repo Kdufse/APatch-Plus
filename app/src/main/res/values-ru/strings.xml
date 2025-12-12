@@ -167,7 +167,7 @@
     <string name="apm_version">Версия</string>
     <string name="apm_author">Автор</string>
     <string name="apm_desc">Описание</string>
-    <string name="apm_magic_mount_not_available">Модули недоступны, так как OverlayFS отключён ядром!</string>
+    <string name="apm_overlay_fs_not_available">Модули недоступны, так как OverlayFS отключён ядром!</string>
     <string name="apm_magisk_conflict">Модули недоступны из-за конфликта с Magisk!</string>
     <string name="apm_reboot_to_apply">Перезагрузите, чтобы применить изменения</string>
     <string name="apm_changelog">Список изменений</string>
@@ -285,7 +285,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -295,9 +295,9 @@
 
     <string name="settings_app_dpi">DPI приложения</string>
     <string name="settings_lite_mode">Легкий режим</string>
-    <string name="settings_lite_mode_mode_summary">Включить легкий режим для лучшей производительности</string>
-    <string name="settings_force_magicmount_mode">Принудительный режим OverlayFS</string>
-    <string name="settings_force_magicmount_mode_summary">Принудительно использовать OverlayFS для модулей</string>
+    <string name="settings_lite_mode_mode_summary">Не монтировать файлы для лучшей производительности и скрытности</string>
+    <string name="settings_force_overlayfs_mode">Принудительный режим OverlayFS</string>
+    <string name="settings_force_overlayfs_mode_summary">Принудительно использовать OverlayFS для модулей</string>
     <string name="settings_app_title">Заголовок приложения</string>
     <string name="settings_custom_background">Пользовательский фон</string>
     <string name="settings_custom_background_enabled">Пользовательский фон включен</string>
@@ -311,6 +311,13 @@
     <string name="settings_background_image_cleared">Фоновое изображение очищено</string>
     <string name="settings_clear_background">Очистить фон</string>
     <string name="settings_clear_background_confirm">Вы уверены, что хотите очистить фоновое изображение?</string>
+    <string name="settings_multi_background_mode">Режим множественных фонов</string>
+    <string name="settings_multi_background_mode_summary">Установить разные фоновые изображения для разных страниц</string>
+    <string name="settings_select_home_background">Фон главной страницы</string>
+    <string name="settings_select_kernel_background">Фон модуля ядра</string>
+    <string name="settings_select_superuser_background">Фон суперпользователя</string>
+    <string name="settings_select_system_module_background">Фон системного модуля</string>
+    <string name="settings_select_settings_background">Фон страницы настроек</string>
     <string name="settings_launcher_icon">Иконка лаунчера</string>
     <string name="launcher_icon_default">APatch Plus</string>
     <string name="launcher_icon_classic">APatch Plus Anime</string>
@@ -407,8 +414,6 @@
     <string name="auto_backup_success">Резервная копия создана: %s</string>
 
     <!-- Auto-added missing strings -->
-    <string name="settings_simple_kernel_version_mode_summary">Скрыть информацию о версии в рабочей карточке, когда включено</string>
-    <string name="settings_simple_kernel_version_mode">Лаконичный режим версии ядра</string>
 
     <!-- Home Layout Strings -->
     <string name="settings_home_layout_style">Стиль главной страницы</string>
@@ -454,4 +459,50 @@
     <string name="msg_biometric">Пожалуйста, подтвердите свою биометрическую личность</string>
     <string name="settings_biometric_login">Биометрическая аутентификация</string>
     <string name="settings_biometric_login_summary">Требовать биометрическую аутентификацию при открытии приложения</string>
+
+    <!-- Theme Store Strings -->
+    <string name="theme_store_title">Магазин тем</string>
+    <string name="theme_source_official">Официальные</string>
+    <string name="theme_source_third_party">Третьи лица</string>
+    <string name="theme_store_author">Автор: %s</string>
+    <string name="theme_store_version">Версия: %s</string>
+    <string name="theme_source">Источник</string>
+    <string name="theme_store_download_failed">Загрузка не удалась</string>
+    <string name="theme_store_download">Загрузить</string>
+    <string name="theme_store_search_hint">Поиск тем...</string>
+
+    <!-- Update Check Strings -->
+    <string name="settings_auto_update_check">Автоматическая проверка обновлений</string>
+    <string name="settings_auto_update_check_summary">Автоматически проверять обновления при запуске приложения</string>
+    <string name="settings_check_update">Проверить обновления</string>
+    <string name="update_available_title">Доступно обновление</string>
+    <string name="update_available_message">Обнаружено, что ваша версия устарела. Хотите скачать новую версию?</string>
+    <string name="update_action">Обновить</string>
+    <string name="update_close">Закрыть</string>
+    <string name="update_latest">У вас последняя версия</string>
+    <string name="update_error">Ошибка при проверке обновлений</string>
+    <!--Варианты сворачивания-->
+    <string name="settings_category_general">Общие</string>
+    <string name="settings_category_appearance">Внешний вид</string>
+    <string name="settings_category_behavior">Поведение</string>
+    <string name="settings_category_module">Модули</string>
+    <string name="settings_category_security">Безопасность</string>
+    
+    <!-- Background Music Strings -->
+    <string name="settings_background_music">Фоновая музыка</string>
+    <string name="settings_background_music_summary">Воспроизводить фоновую музыку, когда приложение на переднем плане</string>
+    <string name="settings_background_music_playing">Воспроизведение: %s</string>
+    <string name="settings_background_music_enabled">Фоновая музыка включена</string>
+    <string name="settings_select_music_file">Выбрать музыкальный файл</string>
+    <string name="settings_music_selected">Музыка выбрана</string>
+    <string name="settings_clear_music">Очистить музыку</string>
+    <string name="settings_clear_music_confirm">Вы уверены, что хотите очистить фоновую музыку?</string>
+    <string name="settings_music_auto_play">Автовоспроизведение</string>
+    <string name="settings_music_auto_play_summary">Автоматически воспроизводить музыку при открытии приложения</string>
+    <string name="settings_music_volume">Громкость</string>
+    <string name="settings_music_saved">Музыкальный файл сохранён</string>
+    <string name="settings_music_save_error">Не удалось сохранить музыкальный файл</string>
+    <string name="settings_music_cleared">Музыка очищена</string>
+    <string name="settings_category_multimedia">Мультимедиа</string>
+    <string name="settings_music_playback_control">Управление воспроизведением</string>
 </resources>

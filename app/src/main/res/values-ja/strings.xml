@@ -140,7 +140,7 @@
     <string name="apm_version">バージョン</string>
     <string name="apm_author">制作者</string>
     <string name="apm_desc">説明</string>
-    <string name="apm_magic_mount_not_available">カーネルによって OverlayFS が無効なため、モジュールを使用できません。</string>
+    <string name="apm_overlay_fs_not_available">カーネルによって OverlayFS が無効なため、モジュールを使用できません。</string>
     <string name="apm_magisk_conflict">Magisk と競合したためモジュールを使用できません。</string>
     <string name="apm_reboot_to_apply">再起動して適用する</string>
     <string name="apm_changelog">変更履歴</string>
@@ -243,7 +243,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_APatchPlus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -253,9 +253,9 @@
 
     <string name="settings_app_dpi">アプリの DPI</string>
     <string name="settings_lite_mode">ライトモード</string>
-    <string name="settings_lite_mode_mode_summary">パフォーマンス向上のためライトモードを有効にする</string>
-    <string name="settings_force_magicmount_mode">強制OverlayFSモード</string>
-    <string name="settings_force_magicmount_mode_summary">モジュール機能にOverlayFSを強制的に使用する</string>
+    <string name="settings_lite_mode_mode_summary">より良いパフォーマンスと隠匿性のためにファイルをマウントしない</string>
+    <string name="settings_force_overlayfs_mode">強制OverlayFSモード</string>
+    <string name="settings_force_overlayfs_mode_summary">モジュール機能にOverlayFSを強制的に使用する</string>
     <string name="settings_app_title">アプリタイトル</string>
     <string name="settings_custom_background">カスタム背景</string>
     <string name="settings_custom_background_enabled">カスタム背景が有効です</string>
@@ -269,6 +269,13 @@
     <string name="settings_background_image_cleared">背景画像がクリアされました</string>
     <string name="settings_clear_background">背景をクリア</string>
     <string name="settings_clear_background_confirm">背景画像をクリアしてもよろしいですか？</string>
+    <string name="settings_multi_background_mode">複数背景モード</string>
+    <string name="settings_multi_background_mode_summary">異なるページに異なる背景画像を設定する</string>
+    <string name="settings_select_home_background">ホームページ背景</string>
+    <string name="settings_select_kernel_background">カーネルモジュール背景</string>
+    <string name="settings_select_superuser_background">スーパーユーザー背景</string>
+    <string name="settings_select_system_module_background">システムモジュール背景</string>
+    <string name="settings_select_settings_background">設定ページ背景</string>
     <string name="launcher_icon_default">APatch Plus</string>
     <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
@@ -358,11 +365,9 @@
 
     <!-- Auto-added missing strings -->
     <string name="home_hide_kpatch_version_summary">情報カードでカーネルパッチのバージョンを隠す</string>
-    <string name="settings_simple_kernel_version_mode_summary">有効にすると、動作カードのバージョン情報を隠します</string>
     <string name="home_hide_su_path_summary">情報カードで su のパスを隠す</string>
     <string name="home_hide_fingerprint_summary">情報カードで指紋情報を隠す</string>
     <string name="settings_launcher_icon">ランチャーアイコン</string>
-    <string name="settings_simple_kernel_version_mode">簡潔なカーネルバージョンモード</string>
     <string name="home_hide_fingerprint">指紋情報を隠す</string>
     <string name="home_hide_kpatch_version">カーネルパッチのバージョンを隠す</string>
     <string name="home_hide_su_path">su のパスを隠す</string>
@@ -411,4 +416,50 @@
     <string name="msg_biometric">生体認証を確認してください</string>
     <string name="settings_biometric_login">生体認証</string>
     <string name="settings_biometric_login_summary">アプリを開く際に生体認証を要求する</string>
+
+    <!-- Theme Store Strings -->
+    <string name="theme_store_title">テーマストア</string>
+    <string name="theme_source_official">公式</string>
+    <string name="theme_source_third_party">サードパーティ</string>
+    <string name="theme_store_author">作者: %s</string>
+    <string name="theme_store_version">バージョン: %s</string>
+    <string name="theme_source">出典</string>
+    <string name="theme_store_download_failed">ダウンロードに失敗しました</string>
+    <string name="theme_store_download">ダウンロード</string>
+    <string name="theme_store_search_hint">テーマを検索...</string>
+
+    <!-- Update Check Strings -->
+    <string name="settings_auto_update_check">自動更新チェック</string>
+    <string name="settings_auto_update_check_summary">アプリ起動時に自動的に更新を確認する</string>
+    <string name="settings_check_update">更新を確認</string>
+    <string name="update_available_title">更新が利用可能です</string>
+    <string name="update_available_message">お使いのバージョンが古いことが検出されました。新しいバージョンをダウンロードしますか？</string>
+    <string name="update_action">更新</string>
+    <string name="update_close">閉じる</string>
+    <string name="update_latest">最新バージョンです</string>
+    <string name="update_error">更新の確認でエラーが発生しました</string>
+    <!--折りたたみオプション-->
+    <string name="settings_category_general">一般</string>
+    <string name="settings_category_appearance">外観</string>
+    <string name="settings_category_behavior">動作</string>
+    <string name="settings_category_module">モジュール</string>
+    <string name="settings_category_security">セキュリティ</string>
+    
+    <!-- 背景音楽の文字列 -->
+    <string name="settings_background_music">背景音楽</string>
+    <string name="settings_background_music_summary">アプリがフォアグラウンドの時に背景音楽を再生</string>
+    <string name="settings_background_music_playing">再生中: %s</string>
+    <string name="settings_background_music_enabled">背景音楽有効</string>
+    <string name="settings_select_music_file">音楽ファイルを選択</string>
+    <string name="settings_music_selected">音楽が選択されました</string>
+    <string name="settings_clear_music">音楽をクリア</string>
+    <string name="settings_clear_music_confirm">背景音楽をクリアしてもよろしいですか？</string>
+    <string name="settings_music_auto_play">自動再生</string>
+    <string name="settings_music_auto_play_summary">アプリを開いたときに自動的に音楽を再生</string>
+    <string name="settings_music_volume">音量</string>
+    <string name="settings_music_saved">音楽ファイルが保存されました</string>
+    <string name="settings_music_save_error">音楽ファイルの保存に失敗しました</string>
+    <string name="settings_music_cleared">音楽がクリアされました</string>
+    <string name="settings_category_multimedia">マルチメディア</string>
+    <string name="settings_music_playback_control">再生コントロール</string>
 </resources>

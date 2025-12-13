@@ -78,6 +78,7 @@ import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 import me.kdufse.apatch.plus.util.UpdateChecker
 import me.kdufse.apatch.plus.ui.component.UpdateDialog
+import me.kdufse.apatch.plus.ui.component.BottomBar
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
@@ -192,9 +193,54 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                Scaffold(
-                    bottomBar = { BottomBar(navController) }
-                ) { _ ->
+                @Composable
+private fun BottomBar(navController: NavHostController) {
+    // 使用Compose Destinations的API来获取当前路由状态
+    val currentDestination: com.ramcosta.composedestinations.spec.Destination? =
+        rememberDestinationsNavigator().let { navigator ->
+            navigator.appCurrentDestinationAsState().value
+        }
+    
+    // 或者使用原始的NavController API
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    NavigationBar {
+        BottomBarDestination.entries.forEach { destination ->
+            val selected = currentRoute == destination.direction.route
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    navController.navigate(destination.direction.route) {
+                        // 避免重复添加相同的destination
+                        launchSingleTop = true
+                        // 恢复保存的状态
+                        restoreState = true
+                        // 如果已经存在，弹出到起始destination
+                        navController.graph.findStartDestination()?.let { startDestination ->
+                            popUpTo(startDestination.id) {
+                                saveState = true
+                            }
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.label)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(destination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
+        }
+    }
+} { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {

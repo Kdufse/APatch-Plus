@@ -196,18 +196,20 @@ class MainActivity : AppCompatActivity() {
                 Scaffold(
                     bottomBar = {
     NavigationBar {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry?.destination?.route
+        // 使用正确的 API 获取当前路由
+        val backStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = backStackEntry?.destination?.route
 
-        BottomBarDestination.entries.forEach { destination ->
-            val selected = currentRoute == destination.direction.route
+        BottomBarDestination.entries.forEach { dest ->
+            val selected = currentRoute == dest.direction.route
             
             NavigationBarItem(
                 selected = selected,
                 onClick = {
-                    if (currentRoute != destination.direction.route) {
-                        navController.navigate(destination.direction.route) {
-                            popUpTo(navController.graph.startDestinationId) {
+                    if (currentRoute != dest.direction.route) {
+                        navController.navigate(dest.direction.route) {
+                            // 使用正确的 API
+                            popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -217,13 +219,14 @@ class MainActivity : AppCompatActivity() {
                 },
                 icon = {
                     Icon(
-                        imageVector = destination.icon,
-                        contentDescription = stringResource(destination.label)
+                        // 确保 dest 有 icon 属性
+                        imageVector = dest.icon,
+                        contentDescription = stringResource(dest.label)
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.label),
+                        text = stringResource(dest.label),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

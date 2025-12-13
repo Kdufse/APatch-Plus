@@ -1194,7 +1194,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     SwitchItem(
                         icon = Icons.Filled.Save,
                         title = stringResource(id = R.string.settings_auto_backup_module),
-                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/FolkPatch/ModuleBackups",
+                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APatchPlus/ModuleBackups",
                         checked = autoBackupModule
                     ) {
                         prefs.edit { putBoolean("auto_backup_module", it) }
@@ -1206,7 +1206,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = { Text(stringResource(id = R.string.settings_open_backup_dir)) },
                             modifier = Modifier.clickable {
-                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "FolkPatch/ModuleBackups")
+                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "APatchPlus/ModuleBackups")
                                 if (!backupDir.exists()) backupDir.mkdirs()
 
                                 try {

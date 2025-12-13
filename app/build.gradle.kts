@@ -284,8 +284,6 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.lifecycle:lifecycle-process:2.6.2)
-    implementation(libs.androidx.lifecycle:lifecycle-runtime-ktx:2.6.2)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)

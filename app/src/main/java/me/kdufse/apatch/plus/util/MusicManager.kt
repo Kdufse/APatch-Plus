@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.kdufse.apatch.plus.ui.theme.MusicConfig
 import java.io.File
 
 object MusicManager : DefaultLifecycleObserver {
@@ -36,9 +35,29 @@ object MusicManager : DefaultLifecycleObserver {
     private val _duration = MutableStateFlow(0)
     val duration: StateFlow<Int> = _duration.asStateFlow()
 
+    // 添加 MusicConfig 的本地实现
+    private object MusicConfig {
+        var isMusicEnabled: Boolean = false
+        var isAutoPlayEnabled: Boolean = false
+        var volume: Float = 0.5f
+        
+        fun getMusicFile(context: Context): File? {
+            // 从 SharedPreferences 或其他存储加载音乐文件路径
+            val prefs = context.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
+            val path = prefs.getString("music_file_path", null)
+            return path?.let { File(it) }
+        }
+    }
+
     fun init(ctx: Context) {
         context = ctx.applicationContext
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        
+        // 从 SharedPreferences 加载音乐配置
+        val prefs = ctx.getSharedPreferences("music_prefs", Context.MODE_PRIVATE)
+        MusicConfig.isMusicEnabled = prefs.getBoolean("music_enabled", false)
+        MusicConfig.isAutoPlayEnabled = prefs.getBoolean("auto_play_enabled", false)
+        MusicConfig.volume = prefs.getFloat("volume", 0.5f)
         
         // Initial setup if enabled and auto-play is on
         if (MusicConfig.isMusicEnabled && MusicConfig.isAutoPlayEnabled) {

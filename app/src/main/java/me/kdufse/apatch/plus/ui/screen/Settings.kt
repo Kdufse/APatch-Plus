@@ -545,7 +545,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 }, modifier = Modifier.clickable {
                     showAppTitleDialog.value = true
                 }, supportingContent = {
-                    val currentTitle = prefs.getString("app_title", "APatch Plus")
+                    val currentTitle = prefs.getString("app_title", "folkpatch")
                     Text(
                         text = stringResource(appTitleNameToString(currentTitle.toString())),
                         style = MaterialTheme.typography.bodyMedium,
@@ -858,61 +858,45 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         BackgroundConfig.save(context)
                         refreshTheme.value = true
                     }
-if (BackgroundConfig.isMultiBackgroundEnabled) {
-    // 创建背景列表
-    val backgroundItems = listOf(
-        Pair(R.string.settings_select_home_background, "home"),
-        Pair(R.string.settings_select_kernel_background, "kernel"),
-        Pair(R.string.settings_select_superuser_background, "superuser"),
-        Pair(R.string.settings_select_system_module_background, "system"),
-        Pair(R.string.settings_select_settings_background, "settings")
-    )
-    
-    backgroundItems.forEach { (titleRes, type) ->
-        // 根据类型获取对应的 URI
-        val uri = when (type) {
-            "home" -> BackgroundConfig.homeBackgroundUri
-            "kernel" -> BackgroundConfig.kernelBackgroundUri
-            "superuser" -> BackgroundConfig.superuserBackgroundUri
-            "system" -> BackgroundConfig.systemModuleBackgroundUri
-            "settings" -> BackgroundConfig.settingsBackgroundUri
-            else -> null
-        }
-        
-        ListItem(
-            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-            headlineContent = { Text(text = stringResource(id = titleRes)) },
-            supportingContent = {
-                if (!uri.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(id = R.string.settings_background_selected),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
-            },
-            leadingContent = { 
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_custom_background), 
-                    contentDescription = null
-                ) 
-            },
-            modifier = Modifier.clickable {
-                if (PermissionUtils.hasExternalStoragePermission(context) && 
-                    PermissionUtils.hasWriteExternalStoragePermission(context)) {
-                    pickingType = type
-                    try {
-                        pickImageLauncher.launch("image/*")
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
-                }
-            }
-        )
-    }
-}
+                    
+                    if (BackgroundConfig.isMultiBackgroundEnabled) {
+                        // Multi selectors
+                        val items = listOf(
+                            Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
+                            Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
+                            Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
+                            Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
+                            Triple(R.string.settings_select_settings_background, "settings", BackgroundConfig.settingsBackgroundUri)
+                        )
+                        items.forEach { (titleRes, type, uri) ->
+                            ListItem(
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                headlineContent = { Text(text = stringResource(id = titleRes)) },
+                                supportingContent = {
+                                    if (!uri.isNullOrEmpty()) {
+                                        Text(
+                                            text = stringResource(id = R.string.settings_background_selected),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.outline
+                                        )
+                                    }
+                                },
+                                leadingContent = { Icon(painterResource(id = R.drawable.ic_custom_background), null) },
+                                modifier = Modifier.clickable {
+                                    if (PermissionUtils.hasExternalStoragePermission(context) && 
+                                        PermissionUtils.hasWriteExternalStoragePermission(context)) {
+                                        pickingType = type
+                                        try {
+                                            pickImageLauncher.launch("image/*")
+                                        } catch (e: ActivityNotFoundException) {
+                                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            )
+                        }
                     } else {
                         // Single Background Selector
                         ListItem(
@@ -1202,6 +1186,60 @@ if (BackgroundConfig.isMultiBackgroundEnabled) {
                     })
             }
 
+
+
+            // Module Category
+            SettingsCategory(icon = Icons.Filled.Extension, title = stringResource(R.string.settings_category_module)) {
+                if (aPatchReady) {
+                    SwitchItem(
+                        icon = Icons.Filled.Save,
+                        title = stringResource(id = R.string.settings_auto_backup_module),
+                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/FolkPatch/ModuleBackups",
+                        checked = autoBackupModule
+                    ) {
+                        prefs.edit { putBoolean("auto_backup_module", it) }
+                        autoBackupModule = it
+                    }
+
+                    if (autoBackupModule) {
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            headlineContent = { Text(stringResource(id = R.string.settings_open_backup_dir)) },
+                            modifier = Modifier.clickable {
+                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "FolkPatch/ModuleBackups")
+                                if (!backupDir.exists()) backupDir.mkdirs()
+
+                                try {
+                                    val intent = Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    try {
+                                        val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", backupDir)
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.setDataAndType(uri, "resource/folder")
+                                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        try {
+                                            context.startActivity(intent)
+                                        } catch (e2: Exception) {
+                                            val intent2 = Intent(Intent.ACTION_VIEW)
+                                            intent2.setDataAndType(uri, "*/*")
+                                            intent2.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                            intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            context.startActivity(Intent.createChooser(intent2, context.getString(R.string.settings_open_backup_dir)))
+                                        }
+                                    } catch (e3: Exception) {
+                                        Toast.makeText(context, R.string.backup_dir_open_failed, Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            },
+                            leadingContent = { Icon(Icons.Filled.Folder, null) }
+                        )
+                    }
+                }
+            }
+
             // Multimedia Category
             SettingsCategory(
                 title = stringResource(id = R.string.settings_category_multimedia),
@@ -1288,7 +1326,7 @@ if (BackgroundConfig.isMultiBackgroundEnabled) {
                     val duration by MusicManager.duration.collectAsState(initial = 0)
                     val isPlaying by MusicManager.isPlaying.collectAsState(initial = false)
 
-                    if (duration > 0) {
+                    if (MusicConfig.musicFilename != null) {
                         ListItem(
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = { Text(stringResource(id = R.string.settings_music_playback_control)) },
@@ -1299,7 +1337,7 @@ if (BackgroundConfig.isMultiBackgroundEnabled) {
                                         onValueChange = { 
                                             MusicManager.seekTo(it.toInt())
                                         },
-                                        valueRange = 0f..duration.toFloat(),
+                                        valueRange = 0f..duration.toFloat().coerceAtLeast(1f),
                                         colors = androidx.compose.material3.SliderDefaults.colors(
                                             thumbColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
                                             activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f)
@@ -1352,58 +1390,6 @@ if (BackgroundConfig.isMultiBackgroundEnabled) {
                                     content = context.getString(R.string.settings_clear_music_confirm)
                                 )
                             }
-                        )
-                    }
-                }
-            }
-
-            // Module Category
-            SettingsCategory(icon = Icons.Filled.Extension, title = stringResource(R.string.settings_category_module)) {
-                if (aPatchReady) {
-                    SwitchItem(
-                        icon = Icons.Filled.Save,
-                        title = stringResource(id = R.string.settings_auto_backup_module),
-                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APatch Plus/ModuleBackups",
-                        checked = autoBackupModule
-                    ) {
-                        prefs.edit { putBoolean("auto_backup_module", it) }
-                        autoBackupModule = it
-                    }
-
-                    if (autoBackupModule) {
-                        ListItem(
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            headlineContent = { Text(stringResource(id = R.string.settings_open_backup_dir)) },
-                            modifier = Modifier.clickable {
-                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "APatch Plus/ModuleBackups")
-                                if (!backupDir.exists()) backupDir.mkdirs()
-
-                                try {
-                                    val intent = Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS)
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    context.startActivity(intent)
-                                } catch (e: Exception) {
-                                    try {
-                                        val uri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", backupDir)
-                                        val intent = Intent(Intent.ACTION_VIEW)
-                                        intent.setDataAndType(uri, "resource/folder")
-                                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        try {
-                                            context.startActivity(intent)
-                                        } catch (e2: Exception) {
-                                            val intent2 = Intent(Intent.ACTION_VIEW)
-                                            intent2.setDataAndType(uri, "*/*")
-                                            intent2.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                            intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            context.startActivity(Intent.createChooser(intent2, context.getString(R.string.settings_open_backup_dir)))
-                                        }
-                                    } catch (e3: Exception) {
-                                        Toast.makeText(context, R.string.backup_dir_open_failed, Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            },
-                            leadingContent = { Icon(Icons.Filled.Folder, null) }
                         )
                     }
                 }
@@ -1762,7 +1748,7 @@ private data class AppTitle(
 
 private fun appTitleList(): List<AppTitle> {
     return listOf(
-        AppTitle("APatch Plus", R.string.app_title_apatchplus),
+        AppTitle("folkpatch", R.string.app_title_folkpatch),
         AppTitle("fpatch", R.string.app_title_fpatch),
         AppTitle("apatch_folk", R.string.app_title_apatch_folk),
         AppTitle("apatchx", R.string.app_title_apatchx),
@@ -1778,7 +1764,7 @@ private fun appTitleList(): List<AppTitle> {
 
 @Composable
 private fun appTitleNameToString(titleName: String): Int {
-    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_apatchplus
+    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_folkpatch
 }
 
 

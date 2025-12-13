@@ -194,44 +194,67 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 Scaffold(
-                    bottomBar = {
-    NavigationBar {
-        // 使用正确的 API 获取当前路由
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = backStackEntry?.destination?.route
+                    @Composable
+private fun BottomBar(navController: NavHostController) {
+    if (!APApplication.isSignatureValid) {
+        UnofficialVersionDialog()
+    }
+    val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
+    val navigator = navController.rememberDestinationsNavigator()
 
-        BottomBarDestination.entries.forEach { dest ->
-            val selected = currentRoute == dest.direction.route
-            
-            NavigationBarItem(
-                selected = selected,
-                onClick = {
-                    if (currentRoute != dest.direction.route) {
-                        navController.navigate(dest.direction.route) {
-                            // 使用正确的 API
-                            popUpTo(navController.graph.findStartDestination().id) {
+    Crossfade(
+        targetState = state,
+        label = "BottomBarStateCrossfade"
+    ) { state ->
+        val kPatchReady = state != APApplication.State.UNKNOWN_STATE
+        val aPatchReady = state == APApplication.State.ANDROIDPATCH_INSTALLED
+
+        NavigationBar(
+            tonalElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 8.dp,
+            containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                NavigationBarDefaults.containerColor
+            }
+        ) {
+            BottomBarDestination.entries.forEach { destination ->
+                val isCurrentDestOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
+
+                val hideDestination = (destination.kPatchRequired && !kPatchReady) || (destination.aPatchRequired && !aPatchReady)
+                if (hideDestination) return@forEach
+
+                NavigationBarItem(
+                    selected = isCurrentDestOnBackStack,
+                    onClick = {
+                        if (isCurrentDestOnBackStack) {
+                            navigator.popBackStack(destination.direction, false)
+                        }
+                        navigator.navigate(destination.direction) {
+                            popUpTo(NavGraphs.root) {
                                 saveState = true
                             }
                             launchSingleTop = true
                             restoreState = true
                         }
-                    }
-                },
-                icon = {
-                    Icon(
-                        // 确保 dest 有 icon 属性
-                        imageVector = dest.icon,
-                        contentDescription = stringResource(dest.label)
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(dest.label),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            )
+                    },
+                    icon = {
+                        if (isCurrentDestOnBackStack) {
+                            Icon(destination.iconSelected, stringResource(destination.label))
+                        } else {
+                            Icon(destination.iconNotSelected, stringResource(destination.label))
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(destination.label),
+                            overflow = TextOverflow.Visible,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    },
+                    alwaysShowLabel = false
+                )
+            }
         }
     }
 }

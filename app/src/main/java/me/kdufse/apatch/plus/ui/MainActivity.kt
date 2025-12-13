@@ -77,7 +77,7 @@ import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 import me.kdufse.apatch.plus.util.UpdateChecker
 import me.kdufse.apatch.plus.ui.component.UpdateDialog
-import me.kdufse.apatch.plus.ui.component.BottomBar
+import me.kdufse.apatch.plus.ui.component.MyBottomBar
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext

@@ -270,65 +270,66 @@ class MainActivity : AppCompatActivity() {
 
         isLoading = false
     }
+}
 
-    @Composable
-    private fun MyBottomBar(navController: NavHostController) {
-        val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
-        val navigator = navController.rememberDestinationsNavigator()
+// 将 MyBottomBar 函数移到类外部作为独立的 Composable 函数
+@Composable
+private fun MyBottomBar(navController: NavHostController) {
+    val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
+    val navigator = navController.rememberDestinationsNavigator()
 
-        Crossfade(
-            targetState = state,
-            label = "BottomBarStateCrossfade"
-        ) { state ->
-            val kPatchReady = state != APApplication.State.UNKNOWN_STATE
-            val aPatchReady = state == APApplication.State.ANDROIDPATCH_INSTALLED
+    Crossfade(
+        targetState = state,
+        label = "BottomBarStateCrossfade"
+    ) { state ->
+        val kPatchReady = state != APApplication.State.UNKNOWN_STATE
+        val aPatchReady = state == APApplication.State.ANDROIDPATCH_INSTALLED
 
-            NavigationBar(
-                tonalElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 8.dp,
-                containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
-                    MaterialTheme.colorScheme.surface
-                } else {
-                    NavigationBarDefaults.containerColor
-                }
-            ) {
-                BottomBarDestination.entries.forEach { destination ->
-                    val isCurrentDestOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
+        NavigationBar(
+            tonalElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 8.dp,
+            containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                NavigationBarDefaults.containerColor
+            }
+        ) {
+            BottomBarDestination.entries.forEach { destination ->
+                val isCurrentDestOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
 
-                    val hideDestination = (destination.kPatchRequired && !kPatchReady) || (destination.aPatchRequired && !aPatchReady)
-                    if (hideDestination) return@forEach
+                val hideDestination = (destination.kPatchRequired && !kPatchReady) || (destination.aPatchRequired && !aPatchReady)
+                if (hideDestination) return@forEach
 
-                    NavigationBarItem(
-                        selected = isCurrentDestOnBackStack,
-                        onClick = {
-                            if (isCurrentDestOnBackStack) {
-                                navigator.popBackStack(destination.direction, false)
+                NavigationBarItem(
+                    selected = isCurrentDestOnBackStack,
+                    onClick = {
+                        if (isCurrentDestOnBackStack) {
+                            navigator.popBackStack(destination.direction, false)
+                        }
+                        navigator.navigate(destination.direction) {
+                            popUpTo(NavGraphs.root) {
+                                saveState = true
                             }
-                            navigator.navigate(destination.direction) {
-                                popUpTo(NavGraphs.root) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            if (isCurrentDestOnBackStack) {
-                                Icon(destination.iconSelected, stringResource(destination.label))
-                            } else {
-                                Icon(destination.iconNotSelected, stringResource(destination.label))
-                            }
-                        },
-                        label = {
-                            Text(
-                                text = stringResource(destination.label),
-                                overflow = TextOverflow.Visible,
-                                maxLines = 1,
-                                softWrap = false
-                            )
-                        },
-                        alwaysShowLabel = false
-                    )
-                }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
+                    icon = {
+                        if (isCurrentDestOnBackStack) {
+                            Icon(destination.iconSelected, stringResource(destination.label))
+                        } else {
+                            Icon(destination.iconNotSelected, stringResource(destination.label))
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(destination.label),
+                            overflow = TextOverflow.Visible,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    },
+                    alwaysShowLabel = false
+                )
             }
         }
     }

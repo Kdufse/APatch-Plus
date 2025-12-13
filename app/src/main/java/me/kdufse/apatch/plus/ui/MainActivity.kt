@@ -194,7 +194,44 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 Scaffold(
-                    bottomBar = { BottomBar(navController) }
+                    bottomBar = {
+    NavigationBar {
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
+
+        BottomBarDestination.entries.forEach { destination ->
+            val selected = currentRoute == destination.direction.route
+            
+            NavigationBarItem(
+                selected = selected,
+                onClick = {
+                    if (currentRoute != destination.direction.route) {
+                        navController.navigate(destination.direction.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.label)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(destination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            )
+        }
+    }
+}
                 ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,

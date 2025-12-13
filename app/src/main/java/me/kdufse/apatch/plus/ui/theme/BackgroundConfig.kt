@@ -32,6 +32,20 @@ object BackgroundConfig {
         private set
     var gridWorkingCardBackgroundDim: Float by mutableStateOf(0.3f)
         private set
+
+    // Multi-Background Mode
+    var isMultiBackgroundEnabled: Boolean by mutableStateOf(false)
+        private set
+    var homeBackgroundUri: String? by mutableStateOf(null)
+        private set
+    var kernelBackgroundUri: String? by mutableStateOf(null)
+        private set
+    var superuserBackgroundUri: String? by mutableStateOf(null)
+        private set
+    var systemModuleBackgroundUri: String? by mutableStateOf(null)
+        private set
+    var settingsBackgroundUri: String? by mutableStateOf(null)
+        private set
     
     private const val PREFS_NAME = "background_settings"
     private const val KEY_CUSTOM_BACKGROUND_URI = "custom_background_uri"
@@ -43,6 +57,13 @@ object BackgroundConfig {
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED = "grid_working_card_background_enabled"
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY = "grid_working_card_background_opacity"
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_DIM = "grid_working_card_background_dim"
+
+    private const val KEY_MULTI_BACKGROUND_ENABLED = "multi_background_enabled"
+    private const val KEY_HOME_BACKGROUND_URI = "home_background_uri"
+    private const val KEY_KERNEL_BACKGROUND_URI = "kernel_background_uri"
+    private const val KEY_SUPERUSER_BACKGROUND_URI = "superuser_background_uri"
+    private const val KEY_SYSTEM_MODULE_BACKGROUND_URI = "system_module_background_uri"
+    private const val KEY_SETTINGS_BACKGROUND_URI = "settings_background_uri"
 
     private const val TAG = "BackgroundConfig"
     
@@ -103,6 +124,31 @@ object BackgroundConfig {
     fun setCustomBackgroundDimValue(dim: Float) {
         customBackgroundDim = dim
     }
+
+    // Multi-Background Setters
+    fun setMultiBackgroundEnabledState(enabled: Boolean) {
+        isMultiBackgroundEnabled = enabled
+    }
+
+    fun updateHomeBackgroundUri(uri: String?) {
+        homeBackgroundUri = uri
+    }
+
+    fun updateKernelBackgroundUri(uri: String?) {
+        kernelBackgroundUri = uri
+    }
+
+    fun updateSuperuserBackgroundUri(uri: String?) {
+        superuserBackgroundUri = uri
+    }
+
+    fun updateSystemModuleBackgroundUri(uri: String?) {
+        systemModuleBackgroundUri = uri
+    }
+
+    fun updateSettingsBackgroundUri(uri: String?) {
+        settingsBackgroundUri = uri
+    }
     
     /**
      * 保存配置到SharedPreferences
@@ -119,6 +165,13 @@ object BackgroundConfig {
             putBoolean(KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED, isGridWorkingCardBackgroundEnabled)
             putFloat(KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY, gridWorkingCardBackgroundOpacity)
             putFloat(KEY_GRID_WORKING_CARD_BACKGROUND_DIM, gridWorkingCardBackgroundDim)
+
+            putBoolean(KEY_MULTI_BACKGROUND_ENABLED, isMultiBackgroundEnabled)
+            putString(KEY_HOME_BACKGROUND_URI, homeBackgroundUri)
+            putString(KEY_KERNEL_BACKGROUND_URI, kernelBackgroundUri)
+            putString(KEY_SUPERUSER_BACKGROUND_URI, superuserBackgroundUri)
+            putString(KEY_SYSTEM_MODULE_BACKGROUND_URI, systemModuleBackgroundUri)
+            putString(KEY_SETTINGS_BACKGROUND_URI, settingsBackgroundUri)
             apply()
         }
     }
@@ -137,6 +190,13 @@ object BackgroundConfig {
         val gridEnabled = prefs.getBoolean(KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED, false)
         val gridOpacity = prefs.getFloat(KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY, 1.0f)
         val gridDim = prefs.getFloat(KEY_GRID_WORKING_CARD_BACKGROUND_DIM, 0.3f)
+
+        val multiEnabled = prefs.getBoolean(KEY_MULTI_BACKGROUND_ENABLED, false)
+        val homeUri = prefs.getString(KEY_HOME_BACKGROUND_URI, null)
+        val kernelUri = prefs.getString(KEY_KERNEL_BACKGROUND_URI, null)
+        val superuserUri = prefs.getString(KEY_SUPERUSER_BACKGROUND_URI, null)
+        val systemModuleUri = prefs.getString(KEY_SYSTEM_MODULE_BACKGROUND_URI, null)
+        val settingsUri = prefs.getString(KEY_SETTINGS_BACKGROUND_URI, null)
         
         Log.d(TAG, "加载背景配置: URI=$uri, enabled=$enabled, opacity=$opacity, dim=$dim")
         
@@ -149,6 +209,13 @@ object BackgroundConfig {
         isGridWorkingCardBackgroundEnabled = gridEnabled
         gridWorkingCardBackgroundOpacity = gridOpacity
         gridWorkingCardBackgroundDim = gridDim
+
+        isMultiBackgroundEnabled = multiEnabled
+        homeBackgroundUri = homeUri
+        kernelBackgroundUri = kernelUri
+        superuserBackgroundUri = superuserUri
+        systemModuleBackgroundUri = systemModuleUri
+        settingsBackgroundUri = settingsUri
     }
     
     /**
@@ -164,6 +231,13 @@ object BackgroundConfig {
         isGridWorkingCardBackgroundEnabled = false
         gridWorkingCardBackgroundOpacity = 1.0f
         gridWorkingCardBackgroundDim = 0.3f
+
+        isMultiBackgroundEnabled = false
+        homeBackgroundUri = null
+        kernelBackgroundUri = null
+        superuserBackgroundUri = null
+        systemModuleBackgroundUri = null
+        settingsBackgroundUri = null
     }
 }
 
@@ -174,6 +248,13 @@ object BackgroundManager {
     private const val TAG = "BackgroundManager"
     private const val BACKGROUND_FILENAME = "background.jpg"
     private const val GRID_WORKING_CARD_BACKGROUND_FILENAME = "grid_working_card_background.jpg"
+
+    // Multi-Background Filenames
+    private const val HOME_BACKGROUND_FILENAME = "background_home"
+    private const val KERNEL_BACKGROUND_FILENAME = "background_kernel"
+    private const val SUPERUSER_BACKGROUND_FILENAME = "background_superuser"
+    private const val SYSTEM_MODULE_BACKGROUND_FILENAME = "background_system_module"
+    private const val SETTINGS_BACKGROUND_FILENAME = "background_settings"
 
     /**
      * 获取文件扩展名
@@ -306,6 +387,91 @@ object BackgroundManager {
             Log.e(TAG, "清除Grid卡片自定义背景失败: ${e.message}", e)
         }
     }
+    
+    /**
+     * Clear generic background
+     */
+    private fun clearGenericBackground(
+        context: Context,
+        filenameBase: String,
+        updateConfigAction: (String?) -> Unit
+    ) {
+        try {
+            clearOldFiles(context, filenameBase)
+            updateConfigAction(null)
+            BackgroundConfig.save(context)
+        } catch (e: Exception) {
+            Log.e(TAG, "清除 $filenameBase 失败: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Save and apply generic background
+     */
+    private suspend fun saveAndApplyGenericBackground(
+        context: Context,
+        uri: Uri,
+        filenameBase: String,
+        updateConfigAction: (String) -> Unit
+    ): Boolean {
+        return try {
+            withContext(Dispatchers.IO) {
+                val extension = getFileExtension(context, uri)
+                clearOldFiles(context, filenameBase)
+                
+                val targetFile = File(context.filesDir, "$filenameBase$extension")
+                val savedUri = saveImageToInternalStorage(context, uri, targetFile)
+                
+                if (savedUri != null) {
+                    Log.d(TAG, "$filenameBase 图片保存成功，URI: $savedUri")
+                    updateConfigAction(savedUri.toString())
+                    BackgroundConfig.save(context)
+                    true
+                } else {
+                    Log.e(TAG, "$filenameBase 图片保存失败")
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "保存 $filenameBase 失败: ${e.message}", e)
+            false
+        }
+    }
+
+    // Home Background
+    suspend fun saveAndApplyHomeBackground(context: Context, uri: Uri) = 
+        saveAndApplyGenericBackground(context, uri, HOME_BACKGROUND_FILENAME) { BackgroundConfig.updateHomeBackgroundUri(it) }
+    
+    fun clearHomeBackground(context: Context) = 
+        clearGenericBackground(context, HOME_BACKGROUND_FILENAME) { BackgroundConfig.updateHomeBackgroundUri(it) }
+
+    // Kernel Background
+    suspend fun saveAndApplyKernelBackground(context: Context, uri: Uri) = 
+        saveAndApplyGenericBackground(context, uri, KERNEL_BACKGROUND_FILENAME) { BackgroundConfig.updateKernelBackgroundUri(it) }
+    
+    fun clearKernelBackground(context: Context) = 
+        clearGenericBackground(context, KERNEL_BACKGROUND_FILENAME) { BackgroundConfig.updateKernelBackgroundUri(it) }
+
+    // Superuser Background
+    suspend fun saveAndApplySuperuserBackground(context: Context, uri: Uri) = 
+        saveAndApplyGenericBackground(context, uri, SUPERUSER_BACKGROUND_FILENAME) { BackgroundConfig.updateSuperuserBackgroundUri(it) }
+    
+    fun clearSuperuserBackground(context: Context) = 
+        clearGenericBackground(context, SUPERUSER_BACKGROUND_FILENAME) { BackgroundConfig.updateSuperuserBackgroundUri(it) }
+
+    // System Module Background
+    suspend fun saveAndApplySystemModuleBackground(context: Context, uri: Uri) = 
+        saveAndApplyGenericBackground(context, uri, SYSTEM_MODULE_BACKGROUND_FILENAME) { BackgroundConfig.updateSystemModuleBackgroundUri(it) }
+    
+    fun clearSystemModuleBackground(context: Context) = 
+        clearGenericBackground(context, SYSTEM_MODULE_BACKGROUND_FILENAME) { BackgroundConfig.updateSystemModuleBackgroundUri(it) }
+
+    // Settings Background
+    suspend fun saveAndApplySettingsBackground(context: Context, uri: Uri) = 
+        saveAndApplyGenericBackground(context, uri, SETTINGS_BACKGROUND_FILENAME) { BackgroundConfig.updateSettingsBackgroundUri(it) }
+    
+    fun clearSettingsBackground(context: Context) = 
+        clearGenericBackground(context, SETTINGS_BACKGROUND_FILENAME) { BackgroundConfig.updateSettingsBackgroundUri(it) }
     
     /**
      * 加载自定义背景

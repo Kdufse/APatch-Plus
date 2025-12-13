@@ -25,7 +25,7 @@ object ModuleBackupUtils {
                     return@withContext null
                 }
 
-                val backupDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "FolkPatch/ModuleBackups")
+                val backupDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "APatchPlus/ModuleBackups")
                 if (!backupDir.exists()) backupDir.mkdirs()
 
                 // Calculate hash of the incoming file

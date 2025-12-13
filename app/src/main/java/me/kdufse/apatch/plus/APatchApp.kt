@@ -16,6 +16,8 @@ import me.kdufse.apatch.plus.ui.CrashHandleActivity
 import me.kdufse.apatch.plus.ui.component.KpmAutoLoadManager
 import me.kdufse.apatch.plus.util.APatchCli
 import me.kdufse.apatch.plus.util.APatchKeyHelper
+import me.kdufse.apatch.plus.ui.theme.MusicConfig
+import me.kdufse.apatch.plus.util.MusicManager
 import me.kdufse.apatch.plus.util.Version
 import me.kdufse.apatch.plus.util.getRootShell
 import me.kdufse.apatch.plus.util.rootShellForResult
@@ -75,7 +77,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         const val APATCH_FOLDER = "/data/adb/ap/"
         private const val APATCH_BIN_FOLDER = APATCH_FOLDER + "bin/"
         private const val APATCH_LOG_FOLDER = APATCH_FOLDER + "log/"
-        private const val APD_LINK_PATH = APATCH_BIN_FOLDER + "aplusd"
+        private const val APD_LINK_PATH = APATCH_BIN_FOLDER + "apd"
         const val PACKAGE_CONFIG_FILE = APATCH_FOLDER + "package_config"
         const val SU_PATH_FILE = APATCH_FOLDER + "su_path"
         const val SAFEMODE_FILE = "/dev/.safemode"
@@ -85,7 +87,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         const val FORCE_OVERLAYFS_FILE = "/data/adb/.overlayfs_enable"
         const val KPMS_DIR = APATCH_FOLDER + "kpms/"
 
-        @Deprecated("Use 'aplusd -V'")
+        @Deprecated("Use 'apd -V'")
         const val APATCH_VERSION_PATH = APATCH_FOLDER + "version"
         private const val MAGISKPOLICY_BIN_PATH = APATCH_BIN_FOLDER + "magiskpolicy"
         private const val BUSYBOX_BIN_PATH = APATCH_BIN_FOLDER + "busybox"
@@ -155,9 +157,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                 "mkdir -p $APATCH_BIN_FOLDER",
                 "mkdir -p $APATCH_LOG_FOLDER",
 
-                "cp -f ${nativeDir}/libaplusd.so $APD_PATH",
-                "touch /data/adb/.overlayfs_enable",
-                "chmod 000 /proc/fs/ext4",
+                "cp -f ${nativeDir}/libapd.so $APD_PATH",
                 "chmod +x $APD_PATH",
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
@@ -242,7 +242,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                     // AndroidPatch version
                     val mgv = Version.getManagerVersion().second
                     val installedApdVInt = Version.installedApdVUInt()
-                    Log.d(TAG, "manager version: $mgv, installed aplus version: $installedApdVInt")
+                    Log.d(TAG, "manager version: $mgv, installed apd version: $installedApdVInt")
 
                     if (Version.installedApdVInt > 0) {
                         _apStateLiveData.postValue(State.ANDROIDPATCH_INSTALLED)
@@ -320,6 +320,10 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                             .header("Accept-Language", Locale.getDefault().toLanguageTag()).build()
                     )
                 }.build()
+
+        // Initialize Music
+        MusicConfig.load(this)
+        MusicManager.init(this)
         
         Log.d(TAG, "APApplication onCreate completed")
     }

@@ -38,6 +38,10 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ramcosta.composedestinations.generated.destinations.SettingScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.KPModuleScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.SuperUserScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.APModuleScreenDestination
 
 @Composable
 private fun SystemBarStyle(
@@ -222,8 +226,9 @@ fun APatchThemeWithBackground(
 ) {
     val context = LocalContext.current
     
-    // 检查当前是否在设置页面
-    val isSettingsScreen = navController?.currentBackStackEntryAsState()?.value?.destination?.route == SettingScreenDestination.route
+    // Check current route
+    val currentRoute = navController?.currentBackStackEntryAsState()?.value?.destination?.route
+    val isSettingsScreen = currentRoute == SettingScreenDestination.route
     
     // 立即加载背景配置，不使用LaunchedEffect
     BackgroundManager.loadCustomBackground(context)
@@ -242,7 +247,7 @@ fun APatchThemeWithBackground(
     APatchTheme(isSettingsScreen = isSettingsScreen) {
         Box(modifier = Modifier.fillMaxSize()) {
             // Always show background layer if enabled
-            BackgroundLayer()
+            BackgroundLayer(currentRoute)
             
             // Content layer - add zIndex to ensure it's above the background
             Box(modifier = Modifier.fillMaxSize().zIndex(1f)) {
@@ -253,7 +258,7 @@ fun APatchThemeWithBackground(
 }
 
 @Composable
-fun BackgroundLayer() {
+fun BackgroundLayer(currentRoute: String? = null) {
     val context = LocalContext.current
     
     // 获取当前主题模式
@@ -265,9 +270,23 @@ fun BackgroundLayer() {
     } else {
         nightModeEnabled
     }
+
+    // Determine target URI
+    val targetUri = if (BackgroundConfig.isMultiBackgroundEnabled) {
+        when (currentRoute) {
+            HomeScreenDestination.route -> BackgroundConfig.homeBackgroundUri
+            KPModuleScreenDestination.route -> BackgroundConfig.kernelBackgroundUri
+            SuperUserScreenDestination.route -> BackgroundConfig.superuserBackgroundUri
+            APModuleScreenDestination.route -> BackgroundConfig.systemModuleBackgroundUri
+            SettingScreenDestination.route -> BackgroundConfig.settingsBackgroundUri
+            else -> BackgroundConfig.homeBackgroundUri
+        }
+    } else {
+        BackgroundConfig.customBackgroundUri
+    }
     
     // 添加日志以便调试
-    android.util.Log.d("BackgroundLayer", "背景状态: 启用=${BackgroundConfig.isCustomBackgroundEnabled}, URI=${BackgroundConfig.customBackgroundUri}, 深色模式=$darkTheme")
+    android.util.Log.d("BackgroundLayer", "背景状态: 启用=${BackgroundConfig.isCustomBackgroundEnabled}, URI=$targetUri, Route=$currentRoute")
     
     // 默认背景
     Box(
@@ -278,12 +297,12 @@ fun BackgroundLayer() {
     )
     
     // 如果启用了自定义背景，显示背景图片
-    if (BackgroundConfig.isCustomBackgroundEnabled && !BackgroundConfig.customBackgroundUri.isNullOrEmpty()) {
+    if (BackgroundConfig.isCustomBackgroundEnabled && !targetUri.isNullOrEmpty()) {
         android.util.Log.d("BackgroundLayer", "显示自定义背景图片")
         
         // 使用AsyncImagePainter加载图片
         val painter = rememberAsyncImagePainter(
-            model = BackgroundConfig.customBackgroundUri,
+            model = targetUri,
             onError = { error ->
                 android.util.Log.e("BackgroundLayer", "背景加载失败: ${error.result.throwable.message}")
             },

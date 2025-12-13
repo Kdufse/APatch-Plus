@@ -28,6 +28,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Pause
+import me.kdufse.apatch.plus.ui.theme.MusicConfig
+import me.kdufse.apatch.plus.util.MusicManager
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Block
 import androidx.compose.material.icons.outlined.Cached
@@ -58,6 +62,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -420,6 +425,16 @@ private fun TopBar(
     TopAppBar(title = {
         Text(stringResource(titleResId))
     }, actions = {
+        if (MusicConfig.isMusicEnabled) {
+            val isPlaying by MusicManager.isPlaying.collectAsState()
+            IconButton(onClick = { MusicManager.toggle() }) {
+                Icon(
+                    imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                    contentDescription = "Music Control"
+                )
+            }
+        }
+
         IconButton(onClick = onInstallClick) {
             Icon(
                 imageVector = Icons.Filled.InstallMobile,
@@ -480,7 +495,7 @@ private fun TopBar(
                         text = { Text(stringResource(R.string.home_more_menu_feedback_or_suggestion)) },
                         onClick = {
                             showDropdownMoreOptions = false
-                            uriHandler.openUri("https://github.com/Kdufse/APatch-Plus/issues/new/choose")
+                            uriHandler.openUri("https://github.com/matsuzaka-yuki/FolkPatch/issues/new/choose")
                         }
                     )
                     WallpaperAwareDropdownMenuItem(
@@ -539,7 +554,6 @@ private fun KStatusCard(
     }
 
     val prefs = APApplication.sharedPreferences
-    val simpleKernelVersionMode = remember { mutableStateOf(prefs.getBoolean("simple_kernel_version_mode", false)) }
     val darkThemeFollowSys = prefs.getBoolean("night_mode_follow_sys", true)
     val nightModeEnabled = prefs.getBoolean("night_mode_enabled", false)
     val isDarkTheme = if (darkThemeFollowSys) {
@@ -593,7 +607,7 @@ private fun KStatusCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(if (simpleKernelVersionMode.value) 0.dp else 12.dp),
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (kpState == APApplication.State.KERNELPATCH_NEED_UPDATE) {
@@ -607,7 +621,7 @@ private fun KStatusCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(if (simpleKernelVersionMode.value) 12.dp else 10.dp),
+                    .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 when (kpState) {
@@ -668,7 +682,7 @@ private fun KStatusCard(
                             )
                         }
                     }
-                    if (kpState != APApplication.State.UNKNOWN_STATE && kpState != APApplication.State.KERNELPATCH_NEED_UPDATE && kpState != APApplication.State.KERNELPATCH_NEED_REBOOT && !simpleKernelVersionMode.value) {
+                    if (kpState != APApplication.State.UNKNOWN_STATE && kpState != APApplication.State.KERNELPATCH_NEED_UPDATE && kpState != APApplication.State.KERNELPATCH_NEED_REBOOT) {
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = "${Version.installedKPVString()} (${managerVersion.second}) - " + if (apState != APApplication.State.ANDROIDPATCH_NOT_INSTALLED) "Full" else "KernelPatch",
@@ -713,68 +727,42 @@ private fun KStatusCard(
                         }
                     }
 
-                    if (simpleKernelVersionMode.value) {
-                        IconButton(onClick = { onAction() }) {
-                            when (kpState) {
-                                APApplication.State.UNKNOWN_STATE -> {
-                                    Icon(Icons.Filled.Warning, contentDescription = stringResource(id = R.string.super_key))
-                                }
+                    Button(onClick = { onAction() }, colors = if (BackgroundConfig.isCustomBackgroundEnabled && kpState == APApplication.State.KERNELPATCH_INSTALLED) {
+                        val opacity = BackgroundConfig.customBackgroundOpacity
+                        val contentColor = if (opacity <= 0.1f) {
+                            if (isDarkTheme) Color.White else Color.Black
+                        } else {
+                            MaterialTheme.colorScheme.onPrimary
+                        }
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = opacity),
+                            contentColor = contentColor
+                        )
+                    } else {
+                        ButtonDefaults.buttonColors()
+                    }, content = {
+                        when (kpState) {
+                            APApplication.State.UNKNOWN_STATE -> {
+                                Text(text = stringResource(id = R.string.super_key))
+                            }
 
-                                APApplication.State.KERNELPATCH_NEED_UPDATE -> {
-                                    Icon(Icons.Outlined.SystemUpdate, contentDescription = stringResource(id = R.string.home_kp_cando_update))
-                                }
+                            APApplication.State.KERNELPATCH_NEED_UPDATE -> {
+                                Text(text = stringResource(id = R.string.home_kp_cando_update))
+                            }
 
-                                APApplication.State.KERNELPATCH_NEED_REBOOT -> {
-                                    Icon(Icons.Filled.Refresh, contentDescription = stringResource(id = R.string.home_ap_cando_reboot))
-                                }
+                            APApplication.State.KERNELPATCH_NEED_REBOOT -> {
+                                Text(text = stringResource(id = R.string.home_ap_cando_reboot))
+                            }
 
-                                APApplication.State.KERNELPATCH_UNINSTALLING -> {
-                                    Icon(Icons.Outlined.Cached, contentDescription = "busy")
-                                }
+                            APApplication.State.KERNELPATCH_UNINSTALLING -> {
+                                Icon(Icons.Outlined.Cached, contentDescription = "busy")
+                            }
 
-                                else -> {
-                                    Icon(Icons.Outlined.Delete, contentDescription = stringResource(id = R.string.home_ap_cando_uninstall))
-                                }
+                            else -> {
+                                Text(text = stringResource(id = R.string.home_ap_cando_uninstall))
                             }
                         }
-                    } else {
-                        Button(onClick = { onAction() }, colors = if (BackgroundConfig.isCustomBackgroundEnabled && kpState == APApplication.State.KERNELPATCH_INSTALLED) {
-                            val opacity = BackgroundConfig.customBackgroundOpacity
-                            val contentColor = if (opacity <= 0.1f) {
-                                if (isDarkTheme) Color.White else Color.Black
-                            } else {
-                                MaterialTheme.colorScheme.onPrimary
-                            }
-                            ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = opacity),
-                                contentColor = contentColor
-                            )
-                        } else {
-                            ButtonDefaults.buttonColors()
-                        }, content = {
-                            when (kpState) {
-                                APApplication.State.UNKNOWN_STATE -> {
-                                    Text(text = stringResource(id = R.string.super_key))
-                                }
-
-                                APApplication.State.KERNELPATCH_NEED_UPDATE -> {
-                                    Text(text = stringResource(id = R.string.home_kp_cando_update))
-                                }
-
-                                APApplication.State.KERNELPATCH_NEED_REBOOT -> {
-                                    Text(text = stringResource(id = R.string.home_ap_cando_reboot))
-                                }
-
-                                APApplication.State.KERNELPATCH_UNINSTALLING -> {
-                                    Icon(Icons.Outlined.Cached, contentDescription = "busy")
-                                }
-
-                                else -> {
-                                    Text(text = stringResource(id = R.string.home_ap_cando_uninstall))
-                                }
-                            }
-                        })
-                    }
+                    })
                 }
             }
         }

@@ -196,9 +196,6 @@ class MainActivity : AppCompatActivity() {
                 Scaffold(
                     @Composable
 private fun BottomBar(navController: NavHostController) {
-    if (!APApplication.isSignatureValid) {
-        UnofficialVersionDialog()
-    }
     val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
     val navigator = navController.rememberDestinationsNavigator()
 

@@ -193,54 +193,9 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                @Composable
-private fun BottomBar(navController: NavHostController) {
-    // 使用Compose Destinations的API来获取当前路由状态
-    val currentDestination: com.ramcosta.composedestinations.spec.Destination? =
-        rememberDestinationsNavigator().let { navigator ->
-            navigator.appCurrentDestinationAsState().value
-        }
-    
-    // 或者使用原始的NavController API
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    NavigationBar {
-        BottomBarDestination.entries.forEach { destination ->
-            val selected = currentRoute == destination.direction.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = {
-                    navController.navigate(destination.direction.route) {
-                        // 避免重复添加相同的destination
-                        launchSingleTop = true
-                        // 恢复保存的状态
-                        restoreState = true
-                        // 如果已经存在，弹出到起始destination
-                        navController.graph.findStartDestination()?.let { startDestination ->
-                            popUpTo(startDestination.id) {
-                                saveState = true
-                            }
-                        }
-                    }
-                },
-                icon = {
-                    Icon(
-                        imageVector = destination.icon,
-                        contentDescription = stringResource(destination.label)
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(destination.label),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            )
-        }
-    }
-} { _ ->
+                Scaffold(
+                    bottomBar = { BottomBar(navController) }
+                ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {

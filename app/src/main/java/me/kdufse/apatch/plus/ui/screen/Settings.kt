@@ -284,7 +284,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         if (refreshThemeObserver) {
             nightModeFollowSys = prefs.getBoolean("night_mode_follow_sys", true)
             nightModeEnabled = prefs.getBoolean("night_mode_enabled", false)
-            useSystemDynamicColor = prefs.getBoolean("use_system_color_theme", false)
+            useSystemDynamicColor = prefs.getBoolean("use_system_color_theme", true)
         }
 
         // Background Launchers

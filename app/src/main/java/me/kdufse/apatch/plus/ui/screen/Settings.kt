@@ -278,13 +278,13 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         var nightModeEnabled by rememberSaveable { mutableStateOf(prefs.getBoolean("night_mode_enabled", false)) }
         
         val isDynamicColorSupport = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-        var useSystemDynamicColor by rememberSaveable { mutableStateOf(prefs.getBoolean("use_system_color_theme", true)) }
+        var useSystemDynamicColor by rememberSaveable { mutableStateOf(prefs.getBoolean("use_system_color_theme", false)) }
 
         val refreshThemeObserver by refreshTheme.observeAsState(false)
         if (refreshThemeObserver) {
             nightModeFollowSys = prefs.getBoolean("night_mode_follow_sys", true)
             nightModeEnabled = prefs.getBoolean("night_mode_enabled", false)
-            useSystemDynamicColor = prefs.getBoolean("use_system_color_theme", true)
+            useSystemDynamicColor = prefs.getBoolean("use_system_color_theme", false)
         }
 
         // Background Launchers

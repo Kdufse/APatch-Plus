@@ -6,21 +6,21 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,11 +28,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,30 +42,18 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
-import me.kdufse.apatch.plus.APApplication
-import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
-import androidx.compose.material3.MaterialTheme
-import me.kdufse.apatch.plus.util.PermissionRequestHandler
-import me.kdufse.apatch.plus.util.PermissionUtils
-import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
-import me.zhanghai.android.appiconloader.coil.AppIconFetcher
-import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.zhanghai.android.appiconloader.coil.AppIconKeyer
-import me.kdufse.apatch.plus.util.UpdateChecker
-import me.kdufse.apatch.plus.ui.component.UpdateDialog
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.vector.ImageVector
+import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.R
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import me.kdufse.apatch.plus.ui.component.UpdateDialog
+import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
+import me.kdufse.apatch.plus.util.PermissionRequestHandler
+import me.kdufse.apatch.plus.util.PermissionUtils
+import me.kdufse.apatch.plus.util.UpdateChecker
+import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
+import me.zhanghai.android.appiconloader.coil.AppIconFetcher
+import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 
 class MainActivity : AppCompatActivity() {
 
@@ -146,9 +136,39 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
-            // 底部导航栏的路由列表
+            
+            // 使用 Material Icons 作为图标
+            val bottomBarDestinations = remember {
+                listOf(
+                    BottomBarItem(
+                        route = "home",
+                        label = "首页",
+                        selectedIcon = Icons.Filled.Home,
+                        unselectedIcon = Icons.Filled.Home
+                    ),
+                    BottomBarItem(
+                        route = "apps",
+                        label = "应用",
+                        selectedIcon = Icons.Filled.Apps,
+                        unselectedIcon = Icons.Filled.Apps
+                    ),
+                    BottomBarItem(
+                        route = "patches",
+                        label = "补丁",
+                        selectedIcon = Icons.Filled.Build,
+                        unselectedIcon = Icons.Filled.Build
+                    ),
+                    BottomBarItem(
+                        route = "settings",
+                        label = "设置",
+                        selectedIcon = Icons.Filled.Settings,
+                        unselectedIcon = Icons.Filled.Settings
+                    )
+                )
+            }
+            
             val bottomBarRoutes = remember {
-                listOf("home", "apps", "patches", "settings").toSet()
+                bottomBarDestinations.map { it.route }.toSet()
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -182,13 +202,16 @@ class MainActivity : AppCompatActivity() {
 
                 Scaffold(
                     bottomBar = {
-                        MyBottomBar(navController = navController)
+                        MyBottomBar(
+                            navController = navController,
+                            destinations = bottomBarDestinations
+                        )
                     }
                 ) { paddingValues ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
-                        // 使用标准的 NavHost，不依赖 Compose Destinations
+                        // 使用标准的 NavHost
                         NavHost(
                             navController = navController,
                             startDestination = "home",
@@ -197,20 +220,16 @@ class MainActivity : AppCompatActivity() {
                             // 这里添加你的屏幕组合函数
                             // 你需要创建这些屏幕并在这里引用它们
                             composable("home") {
-                                // HomeScreen()
-                                PlaceholderScreen("Home Screen")
+                                PlaceholderScreen("首页")
                             }
                             composable("apps") {
-                                // AppsScreen()
-                                PlaceholderScreen("Apps Screen")
+                                PlaceholderScreen("应用管理")
                             }
                             composable("patches") {
-                                // PatchesScreen()
-                                PlaceholderScreen("Patches Screen")
+                                PlaceholderScreen("补丁管理")
                             }
                             composable("settings") {
-                                // SettingsScreen()
-                                PlaceholderScreen("Settings Screen")
+                                PlaceholderScreen("设置")
                             }
                         }
                     }
@@ -233,25 +252,22 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-// 底部导航目的地定义
-sealed class BottomBarDestination(
-    val route: String,
-    val labelResId: Int,
-    val iconResId: Int
-) {
-    object Home : BottomBarDestination("home", R.string.home, R.drawable.ic_home)
-    object Apps : BottomBarDestination("apps", R.string.apps, R.drawable.ic_apps)
-    object Patches : BottomBarDestination("patches", R.string.patches, R.drawable.ic_patches)
-    object Settings : BottomBarDestination("settings", R.string.settings, R.drawable.ic_settings)
+// 添加缺失的导入
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 
-    companion object {
-        val items = listOf(Home, Apps, Patches, Settings)
-    }
-}
+// 底部导航项数据类
+data class BottomBarItem(
+    val route: String,
+    val label: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector
+)
 
 @Composable
 fun MyBottomBar(
-    navController: NavHostController
+    navController: NavHostController,
+    destinations: List<BottomBarItem>
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -262,7 +278,7 @@ fun MyBottomBar(
         tonalElevation = 8.dp
     ) {
         // 遍历所有底部栏目的地
-        BottomBarDestination.items.forEach { destination ->
+        destinations.forEach { destination ->
             val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             
             NavigationBarItem(
@@ -281,13 +297,13 @@ fun MyBottomBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = androidx.compose.ui.res.vectorResource(destination.iconResId),
-                        contentDescription = stringResource(destination.labelResId)
+                        imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
+                        contentDescription = destination.label
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.labelResId),
+                        text = destination.label,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -301,14 +317,18 @@ fun MyBottomBar(
 // 占位符屏幕，用于测试
 @Composable
 fun PlaceholderScreen(screenName: String) {
-    androidx.compose.material3.Surface(
+    Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        androidx.compose.material3.Text(
-            text = screenName,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.align(Alignment.Center)
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = screenName,
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
     }
 }

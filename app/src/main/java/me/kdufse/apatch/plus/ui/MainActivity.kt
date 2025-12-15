@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
@@ -26,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
@@ -44,55 +45,27 @@ import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationSty
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
-import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
-import me.kdufse.apatch.plus.ui.theme.APatchTheme
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
-import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.MaterialTheme
 import me.kdufse.apatch.plus.util.PermissionRequestHandler
 import me.kdufse.apatch.plus.util.PermissionUtils
 import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.Button
-import androidx.compose.material3.Surface
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialogDefaults
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.window.DialogProperties
-import me.kdufse.apatch.plus.R
 import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
 import me.kdufse.apatch.plus.util.UpdateChecker
 import me.kdufse.apatch.plus.ui.component.UpdateDialog
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.setValue
-import me.kdufse.apatch.plus.ui.screen.destinations.AppsScreenDestination
-import me.kdufse.apatch.plus.ui.screen.destinations.HomeScreenDestination
-import me.kdufse.apatch.plus.ui.screen.destinations.PatchesScreenDestination
-import me.kdufse.apatch.plus.ui.screen.destinations.SettingsScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.navigate
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import me.kdufse.apatch.plus.R
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 
 class MainActivity : AppCompatActivity() {
 
@@ -176,7 +149,7 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             val bottomBarRoutes = remember {
-                BottomBarDestination.entries.map { it.direction.route }.toSet()
+                BottomBarDestination.entries.map { it.route }.toSet()
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -216,57 +189,74 @@ class MainActivity : AppCompatActivity() {
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
-                        DestinationsNavHost(
-                            modifier = Modifier.padding(bottom = 80.dp),
-                            navGraph = NavGraphs.root,
-                            navController = navController,
-                            engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
-                            defaultTransitions = object : NavHostAnimatedDestinationStyle() {
-                                override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                    {
-                                        // If the target is a detail page (not a bottom navigation page), slide in from the right
-                                        if (targetState.destination.route !in bottomBarRoutes) {
-                                            slideInHorizontally(initialOffsetX = { it })
-                                        } else {
-                                            // Otherwise (switching between bottom navigation pages), use fade in
-                                            fadeIn(animationSpec = tween(340))
+                        // 检查是否使用 Compose Destinations，如果没有生成代码则使用标准导航
+                        try {
+                            DestinationsNavHost(
+                                modifier = Modifier.padding(bottom = 80.dp),
+                                navGraph = NavGraphs.root,
+                                navController = navController,
+                                engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
+                                defaultTransitions = object : NavHostAnimatedDestinationStyle() {
+                                    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                        {
+                                            // If the target is a detail page (not a bottom navigation page), slide in from the right
+                                            if (targetState.destination.route !in bottomBarRoutes) {
+                                                slideInHorizontally(initialOffsetX = { it })
+                                            } else {
+                                                // Otherwise (switching between bottom navigation pages), use fade in
+                                                fadeIn(animationSpec = tween(340))
+                                            }
                                         }
-                                    }
 
-                                override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                    {
-                                        // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
-                                        if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
-                                            slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
-                                        } else {
-                                            // Otherwise (switching between bottom navigation pages), use fade out
-                                            fadeOut(animationSpec = tween(340))
+                                    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                        {
+                                            // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
+                                            if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
+                                                slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
+                                            } else {
+                                                // Otherwise (switching between bottom navigation pages), use fade out
+                                                fadeOut(animationSpec = tween(340))
+                                            }
                                         }
-                                    }
 
-                                override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                    {
-                                        // If returning to the home page (bottom navigation page), slide in from the left
-                                        if (targetState.destination.route in bottomBarRoutes) {
-                                            slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
-                                        } else {
-                                            // Otherwise (e.g., returning between multiple detail pages), use default fade in
-                                            fadeIn(animationSpec = tween(340))
+                                    override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                        {
+                                            // If returning to the home page (bottom navigation page), slide in from the left
+                                            if (targetState.destination.route in bottomBarRoutes) {
+                                                slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
+                                            } else {
+                                                // Otherwise (e.g., returning between multiple detail pages), use default fade in
+                                                fadeIn(animationSpec = tween(340))
+                                            }
                                         }
-                                    }
 
-                                override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                    {
-                                        // If returning from a detail page (not a bottom navigation page), scale down and fade out
-                                        if (initialState.destination.route !in bottomBarRoutes) {
-                                            scaleOut(targetScale = 0.9f) + fadeOut()
-                                        } else {
-                                            // Otherwise, use default fade out
-                                            fadeOut(animationSpec = tween(340))
+                                    override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                        {
+                                            // If returning from a detail page (not a bottom navigation page), scale down and fade out
+                                            if (initialState.destination.route !in bottomBarRoutes) {
+                                                scaleOut(targetScale = 0.9f) + fadeOut()
+                                            } else {
+                                                // Otherwise, use default fade out
+                                                fadeOut(animationSpec = tween(340))
+                                            }
                                         }
-                                    }
+                                }
+                            )
+                        } catch (e: Exception) {
+                            // 如果 Compose Destinations 没有生成代码，使用标准的 NavHost
+                            NavHost(
+                                navController = navController,
+                                startDestination = BottomBarDestination.Home.route,
+                                modifier = Modifier.padding(bottom = 80.dp)
+                            ) {
+                                // 这里添加你的屏幕组合函数
+                                // 例如：
+                                // composable(BottomBarDestination.Home.route) { HomeScreen() }
+                                // composable(BottomBarDestination.Apps.route) { AppsScreen() }
+                                // composable(BottomBarDestination.Patches.route) { PatchesScreen() }
+                                // composable(BottomBarDestination.Settings.route) { SettingsScreen() }
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -291,28 +281,24 @@ class MainActivity : AppCompatActivity() {
 fun MyBottomBar(
     navController: NavHostController
 ) {
-    val currentDestination = navController.currentDestination
-    val currentRoute = currentDestination?.route
-    
-    // 获取所有底部栏目的地
-    val bottomBarDestinations = BottomBarDestination.entries
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 8.dp
     ) {
-        bottomBarDestinations.forEach { destination ->
-            val isSelected = currentRoute == destination.direction.route
-            val isOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
+        BottomBarDestination.entries.forEach { destination ->
+            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             
             NavigationBarItem(
-                selected = isSelected,
+                selected = selected,
                 onClick = {
-                    if (!isSelected) {
-                        navController.navigate(destination.direction.route) {
+                    if (!selected) {
+                        navController.navigate(destination.route) {
                             // 清除返回栈，避免重复堆叠相同的页面
-                            popUpTo(navController.graph.startDestinationId) {
+                            popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -322,13 +308,13 @@ fun MyBottomBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = destination.icon,
-                        contentDescription = stringResource(destination.label)
+                        imageVector = ImageVector.vectorResource(destination.iconRes),
+                        contentDescription = stringResource(destination.labelRes)
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.label),
+                        text = stringResource(destination.labelRes),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -339,30 +325,18 @@ fun MyBottomBar(
     }
 }
 
-// 如果 BottomBarDestination 不在正确的包中，这里是一个备用定义
-// enum class BottomBarDestination(
-//     val direction: DirectionDestinationSpec,
-//     val icon: ImageVector,
-//     val label: Int
-// ) {
-//     Home(
-//         direction = HomeScreenDestination,
-//         icon = Icons.Default.Home,
-//         label = R.string.home
-//     ),
-//     Apps(
-//         direction = AppsScreenDestination,
-//         icon = Icons.Default.Apps,
-//         label = R.string.apps
-//     ),
-//     Patches(
-//         direction = PatchesScreenDestination,
-//         icon = Icons.Default.Build,
-//         label = R.string.patches
-//     ),
-//     Settings(
-//         direction = SettingsScreenDestination,
-//         icon = Icons.Default.Settings,
-//         label = R.string.settings
-//     )
-// }
+// 如果 BottomBarDestination 不存在，这里是完整的定义
+sealed class BottomBarDestination(
+    val route: String,
+    val iconRes: Int,
+    val labelRes: Int
+) {
+    object Home : BottomBarDestination("home", R.drawable.ic_home, R.string.home)
+    object Apps : BottomBarDestination("apps", R.drawable.ic_apps, R.string.apps)
+    object Patches : BottomBarDestination("patches", R.drawable.ic_patches, R.string.patches)
+    object Settings : BottomBarDestination("settings", R.drawable.ic_settings, R.string.settings)
+
+    companion object {
+        val entries = listOf(Home, Apps, Patches, Settings)
+    }
+}

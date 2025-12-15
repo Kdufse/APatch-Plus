@@ -1,5 +1,6 @@
 package me.kdufse.apatch.plus.ui.screen
 
+import me.kdufse.apatch.plus.ui.component.FilePickerDialog
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -153,6 +154,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.filled.Dashboard
 import me.kdufse.apatch.plus.util.UpdateChecker
 import me.kdufse.apatch.plus.ui.component.UpdateDialog
@@ -278,7 +280,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         var nightModeEnabled by rememberSaveable { mutableStateOf(prefs.getBoolean("night_mode_enabled", false)) }
         
         val isDynamicColorSupport = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-        var useSystemDynamicColor by rememberSaveable { mutableStateOf(prefs.getBoolean("use_system_color_theme", false)) }
+        var useSystemDynamicColor by rememberSaveable { mutableStateOf(prefs.getBoolean("use_system_color_theme", true)) }
 
         val refreshThemeObserver by refreshTheme.observeAsState(false)
         if (refreshThemeObserver) {
@@ -311,6 +313,24 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         snackBarHost.showSnackbar(message = context.getString(R.string.settings_custom_background_error))
                     }
                     pickingType = null
+                }
+            }
+        }
+
+        val pickVideoLauncher = rememberLauncherForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri: Uri? ->
+            uri?.let {
+                scope.launch {
+                    loadingDialog.show()
+                    val success = BackgroundManager.saveAndApplyVideoBackground(context, it)
+                    loadingDialog.hide()
+                    if (success) {
+                        snackBarHost.showSnackbar(message = context.getString(R.string.settings_video_selected))
+                        refreshTheme.value = true
+                    } else {
+                        snackBarHost.showSnackbar(message = context.getString(R.string.settings_custom_background_error))
+                    }
                 }
             }
         }
@@ -373,21 +393,8 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         // Theme Export/Import
         var pendingExportMetadata by remember { mutableStateOf<ThemeManager.ThemeMetadata?>(null) }
         val showExportDialog = remember { mutableStateOf(false) }
-        val exportThemeLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.CreateDocument("application/octet-stream")
-        ) { uri: Uri? ->
-            if (uri != null && pendingExportMetadata != null) {
-                scope.launch {
-                    loadingDialog.show()
-                    val success = ThemeManager.exportTheme(context, uri, pendingExportMetadata!!)
-                    loadingDialog.hide()
-                    snackBarHost.showSnackbar(
-                        message = if (success) context.getString(R.string.settings_theme_saved) else context.getString(R.string.settings_theme_save_failed)
-                    )
-                    pendingExportMetadata = null
-                }
-            }
-        }
+
+        // Removed exportThemeLauncher as we are now saving directly to a fixed path
 
         var pendingImportUri by remember { mutableStateOf<Uri?>(null) }
         var pendingImportMetadata by remember { mutableStateOf<ThemeManager.ThemeMetadata?>(null) }
@@ -415,6 +422,35 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     }
                 }
             }
+        }
+        
+        val showFilePicker = remember { mutableStateOf(false) }
+        if (showFilePicker.value) {
+            FilePickerDialog(
+                onDismissRequest = { showFilePicker.value = false },
+                onFileSelected = { file ->
+                    showFilePicker.value = false
+                    val uri = Uri.fromFile(file)
+                    scope.launch {
+                        loadingDialog.show()
+                        val metadata = ThemeManager.readThemeMetadata(context, uri)
+                        loadingDialog.hide()
+                        
+                        if (metadata != null) {
+                            pendingImportUri = uri
+                            pendingImportMetadata = metadata
+                            showImportDialog.value = true
+                        } else {
+                            loadingDialog.show()
+                            val success = ThemeManager.importTheme(context, uri)
+                            loadingDialog.hide()
+                            snackBarHost.showSnackbar(
+                                message = if (success) context.getString(R.string.settings_theme_imported) else context.getString(R.string.settings_theme_import_failed)
+                            )
+                        }
+                    }
+                }
+            )
         }
 
         // Behavior
@@ -676,7 +712,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 }, modifier = Modifier.clickable {
                     showHomeLayoutChooseDialog.value = true
                 }, supportingContent = {
-                    val currentStyle = prefs.getString("home_layout_style", "default")
+                    val currentStyle = prefs.getString("home_layout_style", "focus")
                     Text(
                         text = stringResource(homeLayoutStyleToString(currentStyle.toString())),
                         style = MaterialTheme.typography.bodyMedium,
@@ -685,7 +721,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 }, leadingContent = { Icon(Icons.Filled.Dashboard, null) })
 
                 // Grid Layout Background
-                if (prefs.getString("home_layout_style", "default") == "kernelsu") {
+                if (prefs.getString("home_layout_style", "kernelsu") == "kernelsu") {
                     SwitchItem(
                         icon = Icons.Filled.Image,
                         title = stringResource(id = R.string.settings_grid_working_card_background),
@@ -846,34 +882,123 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             )
                         }
                     )
-                    
-                    // Multi-background Mode
+
+                    // Video Background
                     SwitchItem(
-                        icon = Icons.Filled.Dashboard,
-                        title = stringResource(id = R.string.settings_multi_background_mode),
-                        summary = stringResource(id = R.string.settings_multi_background_mode_summary),
-                        checked = BackgroundConfig.isMultiBackgroundEnabled
+                        icon = Icons.Filled.PlayArrow,
+                        title = stringResource(id = R.string.settings_video_background),
+                        summary = stringResource(id = R.string.settings_video_background_summary),
+                        checked = BackgroundConfig.isVideoBackgroundEnabled
                     ) {
-                        BackgroundConfig.setMultiBackgroundEnabledState(it)
+                        BackgroundConfig.setVideoBackgroundEnabledState(it)
                         BackgroundConfig.save(context)
                         refreshTheme.value = true
                     }
-                    
-                    if (BackgroundConfig.isMultiBackgroundEnabled) {
-                        // Multi selectors
-                        val items = listOf(
-                            Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
-                            Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
-                            Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
-                            Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
-                            Triple(R.string.settings_select_settings_background, "settings", BackgroundConfig.settingsBackgroundUri)
+
+                    if (BackgroundConfig.isVideoBackgroundEnabled) {
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            headlineContent = { Text(text = stringResource(id = R.string.settings_select_video)) },
+                            supportingContent = {
+                                if (!BackgroundConfig.videoBackgroundUri.isNullOrEmpty()) {
+                                    Text(
+                                        text = stringResource(id = R.string.settings_video_selected),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                }
+                            },
+                            leadingContent = { Icon(Icons.Filled.PlayArrow, null) },
+                            modifier = Modifier.clickable {
+                                if (PermissionUtils.hasExternalStoragePermission(context)) {
+                                    try {
+                                        pickVideoLauncher.launch("video/*")
+                                    } catch (e: ActivityNotFoundException) {
+                                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                                    }
+                                } else {
+                                    Toast.makeText(context, "请先授予存储权限才能选择背景视频", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         )
-                        items.forEach { (titleRes, type, uri) ->
+                        
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            headlineContent = { Text(stringResource(id = R.string.settings_video_volume)) },
+                            supportingContent = {
+                                androidx.compose.material3.Slider(
+                                    value = BackgroundConfig.videoVolume,
+                                    onValueChange = { BackgroundConfig.setVideoVolumeValue(it) },
+                                    onValueChangeFinished = { BackgroundConfig.save(context) },
+                                    valueRange = 0f..1f,
+                                    colors = androidx.compose.material3.SliderDefaults.colors(
+                                        thumbColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                                        activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f)
+                                    )
+                                )
+                            },
+                            leadingContent = { Icon(Icons.Filled.VolumeUp, null) }
+                        )
+                    }
+
+                    if (!BackgroundConfig.isVideoBackgroundEnabled) {
+                        // Multi-background Mode
+                        SwitchItem(
+                            icon = Icons.Filled.Dashboard,
+                            title = stringResource(id = R.string.settings_multi_background_mode),
+                            summary = stringResource(id = R.string.settings_multi_background_mode_summary),
+                            checked = BackgroundConfig.isMultiBackgroundEnabled
+                        ) {
+                            BackgroundConfig.setMultiBackgroundEnabledState(it)
+                            BackgroundConfig.save(context)
+                            refreshTheme.value = true
+                        }
+                        
+                        if (BackgroundConfig.isMultiBackgroundEnabled) {
+                            // Multi selectors
+                            val items = listOf(
+                                Triple(R.string.settings_select_home_background, "home", BackgroundConfig.homeBackgroundUri),
+                                Triple(R.string.settings_select_kernel_background, "kernel", BackgroundConfig.kernelBackgroundUri),
+                                Triple(R.string.settings_select_superuser_background, "superuser", BackgroundConfig.superuserBackgroundUri),
+                                Triple(R.string.settings_select_system_module_background, "system", BackgroundConfig.systemModuleBackgroundUri),
+                                Triple(R.string.settings_select_settings_background, "settings", BackgroundConfig.settingsBackgroundUri)
+                            )
+                            items.forEach { (titleRes, type, uri) ->
+                                ListItem(
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    headlineContent = { Text(text = stringResource(id = titleRes)) },
+                                    supportingContent = {
+                                        if (!uri.isNullOrEmpty()) {
+                                            Text(
+                                                text = stringResource(id = R.string.settings_background_selected),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.outline
+                                            )
+                                        }
+                                    },
+                                    leadingContent = { Icon(painterResource(id = R.drawable.ic_custom_background), null) },
+                                    modifier = Modifier.clickable {
+                                        if (PermissionUtils.hasExternalStoragePermission(context) && 
+                                            PermissionUtils.hasWriteExternalStoragePermission(context)) {
+                                            pickingType = type
+                                            try {
+                                                pickImageLauncher.launch("image/*")
+                                            } catch (e: ActivityNotFoundException) {
+                                                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                                            }
+                                        } else {
+                                            Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                )
+                            }
+                        } else {
+                            // Single Background Selector
                             ListItem(
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                headlineContent = { Text(text = stringResource(id = titleRes)) },
+                                headlineContent = { Text(text = stringResource(id = R.string.settings_select_background_image)) },
                                 supportingContent = {
-                                    if (!uri.isNullOrEmpty()) {
+                                    if (!BackgroundConfig.customBackgroundUri.isNullOrEmpty()) {
                                         Text(
                                             text = stringResource(id = R.string.settings_background_selected),
                                             style = MaterialTheme.typography.bodyMedium,
@@ -885,7 +1010,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                 modifier = Modifier.clickable {
                                     if (PermissionUtils.hasExternalStoragePermission(context) && 
                                         PermissionUtils.hasWriteExternalStoragePermission(context)) {
-                                        pickingType = type
+                                        pickingType = "default"
                                         try {
                                             pickImageLauncher.launch("image/*")
                                         } catch (e: ActivityNotFoundException) {
@@ -896,59 +1021,30 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                     }
                                 }
                             )
-                        }
-                    } else {
-                        // Single Background Selector
-                        ListItem(
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                            headlineContent = { Text(text = stringResource(id = R.string.settings_select_background_image)) },
-                            supportingContent = {
-                                if (!BackgroundConfig.customBackgroundUri.isNullOrEmpty()) {
-                                    Text(
-                                        text = stringResource(id = R.string.settings_background_selected),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.outline
-                                    )
-                                }
-                            },
-                            leadingContent = { Icon(painterResource(id = R.drawable.ic_custom_background), null) },
-                            modifier = Modifier.clickable {
-                                if (PermissionUtils.hasExternalStoragePermission(context) && 
-                                    PermissionUtils.hasWriteExternalStoragePermission(context)) {
-                                    pickingType = "default"
-                                    try {
-                                        pickImageLauncher.launch("image/*")
-                                    } catch (e: ActivityNotFoundException) {
-                                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            // Clear button (Single mode only)
+                            if (!BackgroundConfig.customBackgroundUri.isNullOrEmpty()) {
+                                val clearBackgroundDialog = rememberConfirmDialog(
+                                    onConfirm = {
+                                        scope.launch {
+                                            loadingDialog.show()
+                                            BackgroundManager.clearCustomBackground(context)
+                                            loadingDialog.hide()
+                                            snackBarHost.showSnackbar(message = context.getString(R.string.settings_background_image_cleared))
+                                            refreshTheme.value = true
+                                        }
                                     }
-                                } else {
-                                    Toast.makeText(context, "请先授予存储权限才能选择背景图片", Toast.LENGTH_SHORT).show()
-                                }
+                                )
+                                val clearTitle = stringResource(id = R.string.settings_clear_background)
+                                val clearConfirm = stringResource(id = R.string.settings_clear_background_confirm)
+                                ListItem(
+                                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                    headlineContent = { Text(text = clearTitle) },
+                                    leadingContent = { Icon(painterResource(id = R.drawable.ic_clear_background), null) },
+                                    modifier = Modifier.clickable {
+                                        clearBackgroundDialog.showConfirm(title = clearTitle, content = clearConfirm, markdown = false)
+                                    }
+                                )
                             }
-                        )
-                        // Clear button (Single mode only)
-                        if (!BackgroundConfig.customBackgroundUri.isNullOrEmpty()) {
-                            val clearBackgroundDialog = rememberConfirmDialog(
-                                onConfirm = {
-                                    scope.launch {
-                                        loadingDialog.show()
-                                        BackgroundManager.clearCustomBackground(context)
-                                        loadingDialog.hide()
-                                        snackBarHost.showSnackbar(message = context.getString(R.string.settings_background_image_cleared))
-                                        refreshTheme.value = true
-                                    }
-                                }
-                            )
-                            val clearTitle = stringResource(id = R.string.settings_clear_background)
-                            val clearConfirm = stringResource(id = R.string.settings_clear_background_confirm)
-                            ListItem(
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                                headlineContent = { Text(text = clearTitle) },
-                                leadingContent = { Icon(painterResource(id = R.drawable.ic_clear_background), null) },
-                                modifier = Modifier.clickable {
-                                    clearBackgroundDialog.showConfirm(title = clearTitle, content = clearConfirm, markdown = false)
-                                }
-                            )
                         }
                     }
                 }
@@ -1039,11 +1135,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     headlineContent = { Text(text = stringResource(id = R.string.settings_import_theme)) },
                     modifier = Modifier.clickable {
-                        try {
-                            importThemeLauncher.launch(arrayOf("application/octet-stream", "*/*"))
-                        } catch (e: ActivityNotFoundException) {
-                            Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                        }
+                        showFilePicker.value = true
                     },
                     leadingContent = { Icon(Icons.Filled.Folder, null) }
                 )
@@ -1194,7 +1286,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     SwitchItem(
                         icon = Icons.Filled.Save,
                         title = stringResource(id = R.string.settings_auto_backup_module),
-                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APatchPlus/ModuleBackups",
+                        summary = stringResource(id = R.string.settings_auto_backup_module_summary) + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/FolkPatch/ModuleBackups",
                         checked = autoBackupModule
                     ) {
                         prefs.edit { putBoolean("auto_backup_module", it) }
@@ -1206,7 +1298,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = { Text(stringResource(id = R.string.settings_open_backup_dir)) },
                             modifier = Modifier.clickable {
-                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "APatchPlus/ModuleBackups")
+                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "FolkPatch/ModuleBackups")
                                 if (!backupDir.exists()) backupDir.mkdirs()
 
                                 try {
@@ -1298,6 +1390,18 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     ) {
                         MusicConfig.setAutoPlayEnabledState(it)
                         MusicConfig.save(context)
+                    }
+
+                    // Loop Play
+                    SwitchItem(
+                        icon = Icons.Filled.Refresh,
+                        title = stringResource(id = R.string.settings_music_looping),
+                        summary = stringResource(id = R.string.settings_music_looping_summary),
+                        checked = MusicConfig.isLoopingEnabled
+                    ) {
+                        MusicConfig.setLoopingEnabledState(it)
+                        MusicConfig.save(context)
+                        MusicManager.updateLooping(it)
                     }
 
                     // Volume
@@ -1418,10 +1522,29 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                 showDialog = showExportDialog,
                 onConfirm = { metadata ->
                     pendingExportMetadata = metadata
-                    try {
-                        exportThemeLauncher.launch("theme.fpt")
-                    } catch (e: ActivityNotFoundException) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    scope.launch {
+                        loadingDialog.show()
+                        try {
+                            val exportDir = java.io.File("/storage/emulated/0/Download/FolkPatch/Themes/")
+                             if (!exportDir.exists()) {
+                                 exportDir.mkdirs()
+                             }
+                             val safeName = metadata.name.replace("[\\\\/:*?\"<>|]".toRegex(), "_")
+                             val fileName = "$safeName.fpt"
+                             val file = java.io.File(exportDir, fileName)
+                             val uri = Uri.fromFile(file)
+                            
+                            val success = ThemeManager.exportTheme(context, uri, metadata)
+                            
+                            loadingDialog.hide()
+                            snackBarHost.showSnackbar(
+                                message = if (success) context.getString(R.string.settings_theme_saved) + ": ${file.absolutePath}" else context.getString(R.string.settings_theme_save_failed)
+                            )
+                        } catch (e: Exception) {
+                            loadingDialog.hide()
+                            snackBarHost.showSnackbar(message = context.getString(R.string.settings_theme_save_failed) + ": ${e.message}")
+                        }
+                        pendingExportMetadata = null
                     }
                 }
             )
@@ -1748,7 +1871,7 @@ private data class AppTitle(
 
 private fun appTitleList(): List<AppTitle> {
     return listOf(
-        AppTitle("folkpatch", R.string.app_title_apatchplus),
+        AppTitle("folkpatch", R.string.app_title_folkpatch),
         AppTitle("fpatch", R.string.app_title_fpatch),
         AppTitle("apatch_folk", R.string.app_title_apatch_folk),
         AppTitle("apatchx", R.string.app_title_apatchx),
@@ -1764,7 +1887,7 @@ private fun appTitleList(): List<AppTitle> {
 
 @Composable
 private fun appTitleNameToString(titleName: String): Int {
-    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_apatchplus
+    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_folkpatch
 }
 
 
@@ -1918,6 +2041,7 @@ private fun iconNameToString(iconName: String): Int {
 private fun homeLayoutStyleToString(style: String): Int {
     return when (style) {
         "kernelsu" -> R.string.settings_home_layout_grid
+        "focus" -> R.string.settings_home_layout_focus
         else -> R.string.settings_home_layout_default
     }
 }
@@ -1948,7 +2072,7 @@ fun HomeLayoutChooseDialog(showDialog: MutableState<Boolean>) {
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
                 
-                val currentStyle = prefs.getString("home_layout_style", "default")
+                val currentStyle = prefs.getString("home_layout_style", "focus")
                 
                 Surface(
                     shape = RoundedCornerShape(12.dp),
@@ -1980,6 +2104,20 @@ fun HomeLayoutChooseDialog(showDialog: MutableState<Boolean>) {
                             },
                             modifier = Modifier.clickable {
                                 prefs.edit().putString("home_layout_style", "kernelsu").apply()
+                                showDialog.value = false
+                            }
+                        )
+                        
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_home_layout_focus)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentStyle == "focus",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("home_layout_style", "focus").apply()
                                 showDialog.value = false
                             }
                         )

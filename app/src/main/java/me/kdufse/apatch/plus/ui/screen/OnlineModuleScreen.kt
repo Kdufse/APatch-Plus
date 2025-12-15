@@ -8,11 +8,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +37,7 @@ import me.kdufse.apatch.plus.util.DownloadListener
 fun OnlineModuleScreen(navigator: DestinationsNavigator) {
     val viewModel = viewModel<OnlineModuleViewModel>()
     val context = LocalContext.current
+    var isSearchActive by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (viewModel.modules.isEmpty()) {
@@ -44,10 +48,49 @@ fun OnlineModuleScreen(navigator: DestinationsNavigator) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.online_module_title)) },
+                title = {
+                    if (isSearchActive) {
+                        TextField(
+                            value = viewModel.searchQuery,
+                            onValueChange = { viewModel.onSearchQueryChange(it) },
+                            placeholder = { Text(stringResource(R.string.theme_store_search_hint)) },
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor =  Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text(stringResource(R.string.online_module_title))
+                    }
+                },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.popBackStack() }) {
+                    IconButton(onClick = {
+                        if (isSearchActive) {
+                            isSearchActive = false
+                            viewModel.onSearchQueryChange("")
+                        } else {
+                            navigator.popBackStack()
+                        }
+                    }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (isSearchActive) {
+                        if (viewModel.searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
+                                Icon(Icons.Filled.Close, contentDescription = "Clear")
+                            }
+                        }
+                    } else {
+                        IconButton(onClick = { isSearchActive = true }) {
+                            Icon(Icons.Filled.Search, contentDescription = "Search")
+                        }
                     }
                 }
             )

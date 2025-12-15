@@ -42,17 +42,55 @@ class ThemeStoreViewModel : ViewModel() {
     var searchQuery by mutableStateOf("")
         private set
 
+    var filterAuthor by mutableStateOf("")
+        private set
+    var filterSource by mutableStateOf("all") // all, official, third_party
+        private set
+    var filterTypePhone by mutableStateOf(true)
+        private set
+    var filterTypeTablet by mutableStateOf(true)
+        private set
+
+    fun updateFilters(author: String, source: String, phone: Boolean, tablet: Boolean) {
+        filterAuthor = author
+        filterSource = source
+        filterTypePhone = phone
+        filterTypeTablet = tablet
+        applyFilters()
+    }
+
+    private fun applyFilters() {
+        themes = allThemes.filter { theme ->
+            // Search Query Logic
+            val matchesSearch = if (searchQuery.isBlank()) true else {
+                theme.name.contains(searchQuery, ignoreCase = true) ||
+                theme.author.contains(searchQuery, ignoreCase = true) ||
+                theme.description.contains(searchQuery, ignoreCase = true)
+            }
+
+            // Author Filter
+            val matchesAuthor = if (filterAuthor.isBlank()) true else {
+                theme.author.contains(filterAuthor, ignoreCase = true)
+            }
+
+            // Source Filter
+            val matchesSource = when (filterSource) {
+                "official" -> theme.source == "official"
+                "third_party" -> theme.source != "official"
+                else -> true
+            }
+
+            // Type Filter
+            val matchesType = (filterTypePhone && theme.type == "phone") ||
+                              (filterTypeTablet && theme.type == "tablet")
+
+            matchesSearch && matchesAuthor && matchesSource && matchesType
+        }
+    }
+
     fun onSearchQueryChange(query: String) {
         searchQuery = query
-        if (query.isBlank()) {
-            themes = allThemes
-        } else {
-            themes = allThemes.filter {
-                it.name.contains(query, ignoreCase = true) ||
-                it.author.contains(query, ignoreCase = true) ||
-                it.description.contains(query, ignoreCase = true)
-            }
-        }
+        applyFilters()
     }
 
     var isRefreshing by mutableStateOf(false)

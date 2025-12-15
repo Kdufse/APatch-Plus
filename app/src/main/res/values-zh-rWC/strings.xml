@@ -274,7 +274,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_folkpatch">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -492,10 +492,56 @@
     <string name="settings_clear_music_confirm">是否确定涤除当前仙音缭绕？</string>
     <string name="settings_music_auto_play">仙音自鸣</string>
     <string name="settings_music_auto_play_summary">踏入仙门时，仙音自鸣相伴</string>
+    <string name="settings_music_looping">仙音轮回</string>
+    <string name="settings_music_looping_summary">仙音缭绕不绝于耳</string>
     <string name="settings_music_volume">仙音响度</string>
     <string name="settings_music_saved">仙音玉简已封存</string>
     <string name="settings_music_save_error">仙音玉简封存失败</string>
     <string name="settings_music_cleared">仙音已涤除</string>
     <string name="settings_category_multimedia">仙音阁</string>
     <string name="settings_music_playback_control">仙音法阵</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">筛选仙法</string>
+    <string name="theme_store_filter_author">仙师</string>
+    <string name="theme_store_filter_author_hint">输入仙师名号</string>
+    <string name="theme_store_filter_source">仙源</string>
+    <string name="theme_store_filter_source_all">万法</string>
+    <string name="theme_store_filter_type">仙器类型</string>
+    <string name="theme_store_filter_apply">施法</string>
+    <string name="theme_store_filter_reset">重炼</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">影像仙幕</string>
+    <string name="settings_video_background_summary">以影像为仙幕</string>
+    <string name="settings_select_video">择影像</string>
+    <string name="settings_video_selected">影像已择</string>
+    <string name="settings_video_background_enabled">影像仙幕已启</string>
+    <string name="settings_video_volume">影像音量</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">需道友赐法</string>
+    <string name="file_picker_permission_desc">为查阅仙门典籍，请道友授予\"乾坤万物访问\"仙法。</string>
+    <string name="file_picker_grant_permission">授予仙法</string>
+    <string name="file_picker_cancel">作罢</string>
+    <string name="file_picker_internal_storage">乾坤宝阁</string>
+    <string name="file_picker_no_files">宝阁空空如也</string>
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">仙府状态</string>
+    <string name="home_device_status_battery_temp">灵气温</string>
+    <string name="home_device_status_cpu_load">道力负载</string>
+    <string name="home_device_status_battery_level">灵力值</string>
+    <string name="home_storage_title">仙府宝库</string>
+    <string name="home_storage_internal">乾坤宝阁</string>
+    <string name="home_storage_ram">灵念内存</string>
+    <string name="home_storage_zram">灵力压缩</string>
+    <string name="home_storage_swap">灵力交换</string>
+    <string name="home_info_kernel">道核</string>
+    <string name="home_info_superkey">登仙秘钥</string>
+    <string name="home_info_auth_auth">已验证</string>
+    <string name="home_info_auth_na">不可用</string>
+    <string name="home_info_device_slot">灵根槽位</string>
+    <string name="home_info_device_model">仙府形态</string>
+    <string name="home_info_running_mode">修炼模式</string>
+    <string name="home_info_mode_full">圆满</string>
+    <string name="home_info_mode_half">残缺</string>
+    <string name="home_zygisk_implement">Zygisk 仙人指路</string>
 </resources>

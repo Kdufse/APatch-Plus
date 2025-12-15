@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -24,10 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.MutableLiveData
-import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import android.net.Uri
@@ -256,74 +257,4 @@ fun APatchThemeWithBackground(
     }
 }
 
-@Composable
-fun BackgroundLayer(currentRoute: String? = null) {
-    val context = LocalContext.current
-    
-    // 获取当前主题模式
-    val prefs = APApplication.sharedPreferences
-    val darkThemeFollowSys = prefs.getBoolean("night_mode_follow_sys", true)
-    val nightModeEnabled = prefs.getBoolean("night_mode_enabled", false)
-    val darkTheme = if (darkThemeFollowSys) {
-        isSystemInDarkTheme()
-    } else {
-        nightModeEnabled
-    }
 
-    // Determine target URI
-    val targetUri = if (BackgroundConfig.isMultiBackgroundEnabled) {
-        when (currentRoute) {
-            HomeScreenDestination.route -> BackgroundConfig.homeBackgroundUri
-            KPModuleScreenDestination.route -> BackgroundConfig.kernelBackgroundUri
-            SuperUserScreenDestination.route -> BackgroundConfig.superuserBackgroundUri
-            APModuleScreenDestination.route -> BackgroundConfig.systemModuleBackgroundUri
-            SettingScreenDestination.route -> BackgroundConfig.settingsBackgroundUri
-            else -> BackgroundConfig.homeBackgroundUri
-        }
-    } else {
-        BackgroundConfig.customBackgroundUri
-    }
-    
-    // 添加日志以便调试
-    android.util.Log.d("BackgroundLayer", "背景状态: 启用=${BackgroundConfig.isCustomBackgroundEnabled}, URI=$targetUri, Route=$currentRoute")
-    
-    // 默认背景
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .zIndex(-2f)
-            .background(MaterialTheme.colorScheme.background)
-    )
-    
-    // 如果启用了自定义背景，显示背景图片
-    if (BackgroundConfig.isCustomBackgroundEnabled && !targetUri.isNullOrEmpty()) {
-        android.util.Log.d("BackgroundLayer", "显示自定义背景图片")
-        
-        // 使用AsyncImagePainter加载图片
-        val painter = rememberAsyncImagePainter(
-            model = targetUri,
-            onError = { error ->
-                android.util.Log.e("BackgroundLayer", "背景加载失败: ${error.result.throwable.message}")
-            },
-            onSuccess = {
-                android.util.Log.d("BackgroundLayer", "背景加载成功")
-            }
-        )
-        
-        // 背景图片
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(-2f)
-                .paint(painter = painter, contentScale = ContentScale.Crop)
-        )
-        
-        // 遮罩层
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(-1f)
-                .background(Color.Black.copy(alpha = BackgroundConfig.customBackgroundDim))
-        )
-    }
-}

@@ -6,7 +6,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import me.kdufse.apatch.plus.APApplication
+import me.kdufse.apatch.plus.util.MusicManager
 import org.json.JSONObject
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -46,10 +49,23 @@ object ThemeManager {
         val homeLayoutStyle: String,
         val nightModeEnabled: Boolean,
         val nightModeFollowSys: Boolean,
+        val useSystemDynamicColor: Boolean,
+        val appLanguage: String?,
         // Grid Working Card Background
         val isGridWorkingCardBackgroundEnabled: Boolean = false,
         val gridWorkingCardBackgroundOpacity: Float = 1.0f,
-        val gridWorkingCardBackgroundDim: Float = 0.3f
+        val gridWorkingCardBackgroundDim: Float = 0.3f,
+        // Multi-Background Mode
+        val isMultiBackgroundEnabled: Boolean = false,
+        // Music Config
+        val isMusicEnabled: Boolean = false,
+        val musicVolume: Float = 1.0f,
+        val isAutoPlayEnabled: Boolean = false,
+        val isLoopingEnabled: Boolean = false,
+        val musicFilename: String? = null,
+        // Video Background
+        val isVideoBackgroundEnabled: Boolean = false,
+        val videoVolume: Float = 0f
     )
 
     data class ThemeMetadata(
@@ -78,9 +94,19 @@ object ThemeManager {
                     homeLayoutStyle = prefs.getString("home_layout_style", "default") ?: "default",
                     nightModeEnabled = prefs.getBoolean("night_mode_enabled", false),
                     nightModeFollowSys = prefs.getBoolean("night_mode_follow_sys", true),
+                    useSystemDynamicColor = prefs.getBoolean("use_system_color_theme", true),
+                    appLanguage = AppCompatDelegate.getApplicationLocales().toLanguageTags(),
                     isGridWorkingCardBackgroundEnabled = BackgroundConfig.isGridWorkingCardBackgroundEnabled,
                     gridWorkingCardBackgroundOpacity = BackgroundConfig.gridWorkingCardBackgroundOpacity,
-                    gridWorkingCardBackgroundDim = BackgroundConfig.gridWorkingCardBackgroundDim
+                    gridWorkingCardBackgroundDim = BackgroundConfig.gridWorkingCardBackgroundDim,
+                    isMultiBackgroundEnabled = BackgroundConfig.isMultiBackgroundEnabled,
+                    isMusicEnabled = MusicConfig.isMusicEnabled,
+                    musicVolume = MusicConfig.volume,
+                    isAutoPlayEnabled = MusicConfig.isAutoPlayEnabled,
+                    isLoopingEnabled = MusicConfig.isLoopingEnabled,
+                    musicFilename = MusicConfig.musicFilename,
+                    isVideoBackgroundEnabled = BackgroundConfig.isVideoBackgroundEnabled,
+                    videoVolume = BackgroundConfig.videoVolume
                 )
 
                 // 2. Write Config JSON
@@ -93,11 +119,27 @@ object ThemeManager {
                     put("homeLayoutStyle", config.homeLayoutStyle)
                     put("nightModeEnabled", config.nightModeEnabled)
                     put("nightModeFollowSys", config.nightModeFollowSys)
+                    put("useSystemDynamicColor", config.useSystemDynamicColor)
+                    put("appLanguage", config.appLanguage)
                     
                     // Grid Working Card Background
                     put("isGridWorkingCardBackgroundEnabled", config.isGridWorkingCardBackgroundEnabled)
                     put("gridWorkingCardBackgroundOpacity", config.gridWorkingCardBackgroundOpacity.toDouble())
                     put("gridWorkingCardBackgroundDim", config.gridWorkingCardBackgroundDim.toDouble())
+
+                    // Multi-Background Mode
+                    put("isMultiBackgroundEnabled", config.isMultiBackgroundEnabled)
+
+                    // Music Config
+                    put("isMusicEnabled", config.isMusicEnabled)
+                    put("musicVolume", config.musicVolume.toDouble())
+                    put("isAutoPlayEnabled", config.isAutoPlayEnabled)
+                    put("isLoopingEnabled", config.isLoopingEnabled)
+                    put("musicFilename", config.musicFilename)
+
+                    // Video Background
+                    put("isVideoBackgroundEnabled", config.isVideoBackgroundEnabled)
+                    put("videoVolume", config.videoVolume.toDouble())
 
                     // Add metadata
                     put("meta_name", metadata.name)
@@ -133,6 +175,28 @@ object ThemeManager {
                     }
                 }
 
+                // Copy Multi-Backgrounds if enabled
+                if (config.isMultiBackgroundEnabled) {
+                    val multiBackgrounds = listOf(
+                        "background_home",
+                        "background_kernel",
+                        "background_superuser",
+                        "background_system_module",
+                        "background_settings"
+                    )
+                    val extensions = listOf(".jpg", ".png", ".gif", ".webp")
+                    
+                    for (bgName in multiBackgrounds) {
+                        for (ext in extensions) {
+                            val bgFile = File(context.filesDir, "$bgName$ext")
+                            if (bgFile.exists()) {
+                                bgFile.copyTo(File(cacheDir, "$bgName$ext"))
+                                break
+                            }
+                        }
+                    }
+                }
+
                 // 4. Copy Font if enabled
                 if (config.isFontEnabled) {
                     val fontName = FontConfig.customFontFilename
@@ -144,7 +208,30 @@ object ThemeManager {
                     }
                 }
 
-                // 5. Encrypt and Zip to Uri
+                // 6. Copy Music if enabled
+                if (config.isMusicEnabled) {
+                    val musicName = config.musicFilename
+                    if (musicName != null) {
+                        val musicFile = MusicConfig.getMusicFile(context)
+                        if (musicFile != null && musicFile.exists()) {
+                            musicFile.copyTo(File(cacheDir, musicName))
+                        }
+                    }
+                }
+
+                // 7. Copy Video Background if enabled
+                if (config.isVideoBackgroundEnabled) {
+                    val extensions = listOf(".mp4", ".webm", ".mkv")
+                    for (ext in extensions) {
+                        val videoFile = File(context.filesDir, "video_background$ext")
+                        if (videoFile.exists()) {
+                            videoFile.copyTo(File(cacheDir, "video_background$ext"))
+                            break
+                        }
+                    }
+                }
+
+                // 8. Encrypt and Zip to Uri
                 context.contentResolver.openOutputStream(uri)?.use { os ->
                     // Init Cipher
                     val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
@@ -261,11 +348,27 @@ object ThemeManager {
                 val homeLayoutStyle = json.optString("homeLayoutStyle", "default")
                 val nightModeEnabled = json.optBoolean("nightModeEnabled", false)
                 val nightModeFollowSys = json.optBoolean("nightModeFollowSys", true)
+                val useSystemDynamicColor = json.optBoolean("useSystemDynamicColor", true)
+                val appLanguage = json.optString("appLanguage", "")
                 
                 // Grid Working Card Background
                 val isGridWorkingCardBackgroundEnabled = json.optBoolean("isGridWorkingCardBackgroundEnabled", false)
                 val gridWorkingCardBackgroundOpacity = json.optDouble("gridWorkingCardBackgroundOpacity", 1.0).toFloat()
                 val gridWorkingCardBackgroundDim = json.optDouble("gridWorkingCardBackgroundDim", 0.3).toFloat()
+
+                // Video Background
+                val isVideoBackgroundEnabled = json.optBoolean("isVideoBackgroundEnabled", false)
+                val videoVolume = json.optDouble("videoVolume", 0.0).toFloat()
+
+                // Multi-Background Mode
+                val isMultiBackgroundEnabled = json.optBoolean("isMultiBackgroundEnabled", false)
+
+                // Music Config
+                val isMusicEnabled = json.optBoolean("isMusicEnabled", false)
+                val musicVolume = json.optDouble("musicVolume", 1.0).toFloat()
+                val isAutoPlayEnabled = json.optBoolean("isAutoPlayEnabled", false)
+                val isLoopingEnabled = json.optBoolean("isLoopingEnabled", false)
+                val musicFilename = json.optString("musicFilename", null)
 
                 // 3. Apply Background
                 BackgroundConfig.setCustomBackgroundOpacityValue(backgroundOpacity)
@@ -332,7 +435,109 @@ object ThemeManager {
                     }
                 }
                 
+                // Apply Multi-Background Mode
+                BackgroundConfig.setMultiBackgroundEnabledState(isMultiBackgroundEnabled)
+                
+                if (isMultiBackgroundEnabled) {
+                    val multiBackgrounds = listOf(
+                        "background_home" to { uri: String? -> BackgroundConfig.updateHomeBackgroundUri(uri) },
+                        "background_kernel" to { uri: String? -> BackgroundConfig.updateKernelBackgroundUri(uri) },
+                        "background_superuser" to { uri: String? -> BackgroundConfig.updateSuperuserBackgroundUri(uri) },
+                        "background_system_module" to { uri: String? -> BackgroundConfig.updateSystemModuleBackgroundUri(uri) },
+                        "background_settings" to { uri: String? -> BackgroundConfig.updateSettingsBackgroundUri(uri) }
+                    )
+                    val extensions = listOf(".jpg", ".png", ".gif", ".webp")
+
+                    for ((bgName, updateAction) in multiBackgrounds) {
+                        var bgFound = false
+                        for (ext in extensions) {
+                            val bgFile = File(cacheDir, "$bgName$ext")
+                            if (bgFile.exists()) {
+                                // Clear old files
+                                for (oldExt in extensions) {
+                                    val oldFile = File(context.filesDir, "$bgName$oldExt")
+                                    if (oldFile.exists()) oldFile.delete()
+                                }
+                                
+                                val destFile = File(context.filesDir, "$bgName$ext")
+                                bgFile.copyTo(destFile, overwrite = true)
+                                
+                                val fileUri = Uri.fromFile(destFile).buildUpon()
+                                    .appendQueryParameter("t", System.currentTimeMillis().toString())
+                                    .build()
+                                updateAction(fileUri.toString())
+                                bgFound = true
+                                break
+                            }
+                        }
+                        
+                        if (!bgFound) {
+                             // Clear existing if not found in theme
+                             for (oldExt in extensions) {
+                                val oldFile = File(context.filesDir, "$bgName$oldExt")
+                                if (oldFile.exists()) oldFile.delete()
+                            }
+                            updateAction(null)
+                        }
+                    }
+                } else {
+                    // If multi-background is disabled in the theme, disable it here.
+                    // We might also want to clear the files or at least reset the URIs in config?
+                    // BackgroundConfig.setMultiBackgroundEnabledState(false) is already called above.
+                    // We don't necessarily delete the files, just like other background settings don't strictly delete files when disabled.
+                }
+
+                // Apply Video Background
+                BackgroundConfig.setVideoBackgroundEnabledState(isVideoBackgroundEnabled)
+                BackgroundConfig.setVideoVolumeValue(videoVolume)
+
+                if (isVideoBackgroundEnabled) {
+                    val extensions = listOf(".mp4", ".webm", ".mkv")
+                    for (ext in extensions) {
+                        val videoFile = File(cacheDir, "video_background$ext")
+                        if (videoFile.exists()) {
+                            // Clear old files
+                            BackgroundManager.clearVideoBackground(context)
+                            
+                            val destFile = File(context.filesDir, "video_background$ext")
+                            videoFile.copyTo(destFile, overwrite = true)
+                            
+                            val fileUri = Uri.fromFile(destFile).toString()
+                            BackgroundConfig.updateVideoBackgroundUri(fileUri)
+                            // Restore enabled state as clearVideoBackground resets it
+                            BackgroundConfig.setVideoBackgroundEnabledState(true)
+                            break
+                        }
+                    }
+                }
+
                 BackgroundConfig.save(context)
+
+                // Apply Music Config
+                // First clear existing music to remove old file
+                MusicConfig.clearMusic(context)
+                
+                // Set new configuration
+                MusicConfig.setMusicEnabledState(isMusicEnabled)
+                MusicConfig.setVolumeValue(musicVolume)
+                MusicConfig.setAutoPlayEnabledState(isAutoPlayEnabled)
+                MusicConfig.setLoopingEnabledState(isLoopingEnabled)
+
+                if (isMusicEnabled && musicFilename != null && musicFilename != "null") {
+                    val musicFile = File(cacheDir, musicFilename)
+                    if (musicFile.exists()) {
+                         val destFile = File(MusicConfig.getMusicDir(context), musicFilename)
+                         musicFile.copyTo(destFile, overwrite = true)
+                         MusicConfig.setMusicFilenameValue(musicFilename)
+                    }
+                }
+                MusicConfig.save(context)
+
+                if (isMusicEnabled && isAutoPlayEnabled) {
+                    withContext(Dispatchers.Main) {
+                        MusicManager.reload()
+                    }
+                }
 
                 // 4. Apply Font
                 if (isFontEnabled) {
@@ -345,11 +550,27 @@ object ThemeManager {
                 }
                 
                 // 5. Apply Color and Home Layout Style
+                withContext(Dispatchers.Main) {
+                    if (appLanguage.isNotEmpty()) {
+                        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(appLanguage))
+                    } else {
+                        // If empty, it might mean default/system or old theme file. 
+                        // We can choose to leave it as is or reset to empty (system default).
+                        // Let's assume we keep current user preference if theme doesn't specify.
+                        // Or if explicit empty string was saved (system default), we apply it.
+                        // But json.optString returns "" if key missing.
+                        if (json.has("appLanguage")) {
+                             AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+                        }
+                    }
+                }
+
                 APApplication.sharedPreferences.edit()
                     .putString("custom_color", customColor)
                     .putString("home_layout_style", homeLayoutStyle)
                     .putBoolean("night_mode_enabled", nightModeEnabled)
                     .putBoolean("night_mode_follow_sys", nightModeFollowSys)
+                    .putBoolean("use_system_color_theme", useSystemDynamicColor)
                     .apply()
                 
                 // 6. Refresh Theme

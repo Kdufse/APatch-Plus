@@ -337,6 +337,14 @@
     <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">Video Background</string>
+    <string name="settings_video_background_summary">Use a video as background</string>
+    <string name="settings_select_video">Select Video</string>
+    <string name="settings_video_selected">Video Selected</string>
+    <string name="settings_video_background_enabled">Video Background Enabled</string>
+    <string name="settings_video_volume">Video Volume</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
     <string name="launcher_icon_kitsune">Kitsune Mask</string>
     <string name="launcher_icon_magisk">Magisk</string>
@@ -421,6 +429,7 @@
     <string name="settings_home_layout_style">Home Layout Style</string>
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
+    <string name="settings_home_layout_focus">FocusUI</string>
     <string name="unofficial_version_title">Unofficial Version</string>
     <string name="unofficial_version_message">You are using APatch Plus which is not an official app, please download the official app!</string>
     <string name="go_to_github">Go to Github</string>
@@ -501,10 +510,51 @@
     <string name="settings_clear_music_confirm">Are you sure you want to clear the background music?</string>
     <string name="settings_music_auto_play">Auto play</string>
     <string name="settings_music_auto_play_summary">Automatically play music when app opens</string>
+    <string name="settings_music_looping">Loop play</string>
+    <string name="settings_music_looping_summary">Repeat the current song</string>
     <string name="settings_music_volume">Volume</string>
     <string name="settings_music_saved">Music file saved</string>
     <string name="settings_music_save_error">Failed to save music file</string>
     <string name="settings_music_cleared">Music cleared</string>
     <string name="settings_category_multimedia">Multimedia</string>
     <string name="settings_music_playback_control">Playback Control</string>
+
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">Filter Themes</string>
+    <string name="theme_store_filter_author">Author</string>
+    <string name="theme_store_filter_author_hint">Enter author name</string>
+    <string name="theme_store_filter_source">Source</string>
+    <string name="theme_store_filter_source_all">All</string>
+    <string name="theme_store_filter_type">Device Type</string>
+    <string name="theme_store_filter_apply">Apply</string>
+    <string name="theme_store_filter_reset">Reset</string>
+
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">Permission Required</string>
+    <string name="file_picker_permission_desc">To browse files, please grant \'All files access\' permission.</string>
+    <string name="file_picker_grant_permission">Grant Permission</string>
+    <string name="file_picker_cancel">Cancel</string>
+    <string name="file_picker_internal_storage">Internal Storage</string>
+    <string name="file_picker_no_files">No files</string>
+
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">Device Status</string>
+    <string name="home_device_status_battery_temp">Battery Temp</string>
+    <string name="home_device_status_cpu_load">CPU Load</string>
+    <string name="home_device_status_battery_level">Battery Level</string>
+    <string name="home_storage_title">Storage</string>
+    <string name="home_storage_internal">Internal Storage</string>
+    <string name="home_storage_ram">RAM</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">Swap File</string>
+    <string name="home_info_kernel">Kernel</string>
+    <string name="home_info_superkey">SuperKey</string>
+    <string name="home_info_auth_auth">Auth</string>
+    <string name="home_info_auth_na">N/A</string>
+    <string name="home_info_device_slot">Device Slot</string>
+    <string name="home_info_device_model">Device Model</string>
+    <string name="home_info_running_mode">Running Mode</string>
+    <string name="home_info_mode_full">Full</string>
+    <string name="home_info_mode_half">Half</string>
+    <string name="home_zygisk_implement">Zygisk Implement</string>
 </resources>

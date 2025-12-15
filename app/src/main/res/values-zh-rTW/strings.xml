@@ -489,10 +489,57 @@
     <string name="settings_clear_music_confirm">確定要清除背景音樂嗎？</string>
     <string name="settings_music_auto_play">自動播放</string>
     <string name="settings_music_auto_play_summary">應用打開時自動播放音樂</string>
+    <string name="settings_music_looping">循環播放</string>
+    <string name="settings_music_looping_summary">循環播放當前歌曲</string>
     <string name="settings_music_volume">音量</string>
     <string name="settings_music_saved">音樂檔案已保存</string>
     <string name="settings_music_save_error">音樂檔案保存失敗</string>
     <string name="settings_music_cleared">音樂已清除</string>
     <string name="settings_category_multimedia">多媒體</string>
     <string name="settings_music_playback_control">播放控制</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">篩選主題</string>
+    <string name="theme_store_filter_author">作者</string>
+    <string name="theme_store_filter_author_hint">輸入作者名稱</string>
+    <string name="theme_store_filter_source">來源</string>
+    <string name="theme_store_filter_source_all">全部</string>
+    <string name="theme_store_filter_type">裝置類型</string>
+    <string name="theme_store_filter_apply">應用</string>
+    <string name="theme_store_filter_reset">重置</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">影片背景</string>
+    <string name="settings_video_background_summary">使用影片作為背景</string>
+    <string name="settings_select_video">選擇影片</string>
+    <string name="settings_video_selected">已選擇影片</string>
+    <string name="settings_video_background_enabled">影片背景已啟用</string>
+    <string name="settings_video_volume">影片音量</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">需要權限</string>
+    <string name="file_picker_permission_desc">為了瀏覽檔案，請授予「所有檔案存取」權限。</string>
+    <string name="file_picker_grant_permission">授予權限</string>
+    <string name="file_picker_cancel">取消</string>
+    <string name="file_picker_internal_storage">內部儲存</string>
+    <string name="file_picker_no_files">無檔案</string>
+
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">設備狀態</string>
+    <string name="home_device_status_battery_temp">電池溫度</string>
+    <string name="home_device_status_cpu_load">CPU 負載</string>
+    <string name="home_device_status_battery_level">電池電量</string>
+    <string name="home_storage_title">儲存資訊</string>
+    <string name="home_storage_internal">內部儲存</string>
+    <string name="home_storage_ram">運行記憶體</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">交換檔案</string>
+    <string name="home_info_kernel">核心</string>
+    <string name="home_info_superkey">超級密鑰</string>
+    <string name="home_info_auth_auth">已認證</string>
+    <string name="home_info_auth_na">不可用</string>
+    <string name="home_info_device_slot">設備槽位</string>
+    <string name="home_info_device_model">設備型號</string>
+    <string name="home_info_running_mode">運行模式</string>
+    <string name="home_info_mode_full">完整</string>
+    <string name="home_info_mode_half">不完全</string>
+    <string name="home_zygisk_implement">Zygisk 實現</string>
 </resources>

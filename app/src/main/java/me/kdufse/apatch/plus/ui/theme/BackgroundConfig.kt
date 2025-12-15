@@ -13,14 +13,22 @@ import java.io.FileOutputStream
 /**
  * 背景配置管理类
  */
-object BackgroundConfig {
-    var customBackgroundUri: String? by mutableStateOf(null)
+object BackgroundConfig {// State
+    var customBackgroundUri: String? by mutableStateOf("background.png")
         private set
-    var isCustomBackgroundEnabled: Boolean by mutableStateOf(false)
+    var isCustomBackgroundEnabled: Boolean by mutableStateOf(true)
         private set
     var customBackgroundOpacity: Float by mutableStateOf(0.5f)
         private set
     var customBackgroundDim: Float by mutableStateOf(0.2f)
+        private set
+
+    // Video Background
+    var videoBackgroundUri: String? by mutableStateOf(null)
+        private set
+    var isVideoBackgroundEnabled: Boolean by mutableStateOf(false)
+        private set
+    var videoVolume: Float by mutableStateOf(0f)
         private set
 
     // Grid Layout Working Card Background
@@ -53,6 +61,10 @@ object BackgroundConfig {
     private const val KEY_CUSTOM_BACKGROUND_OPACITY = "custom_background_opacity"
     private const val KEY_CUSTOM_BACKGROUND_DIM = "custom_background_dim"
     
+    private const val KEY_VIDEO_BACKGROUND_URI = "video_background_uri"
+    private const val KEY_VIDEO_BACKGROUND_ENABLED = "video_background_enabled"
+    private const val KEY_VIDEO_VOLUME = "video_volume"
+
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_URI = "grid_working_card_background_uri"
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED = "grid_working_card_background_enabled"
     private const val KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY = "grid_working_card_background_opacity"
@@ -73,6 +85,28 @@ object BackgroundConfig {
     fun updateCustomBackgroundUri(uri: String?) {
         customBackgroundUri = uri
         isCustomBackgroundEnabled = uri != null
+    }
+
+    /**
+     * 更新视频背景URI
+     */
+    fun updateVideoBackgroundUri(uri: String?) {
+        videoBackgroundUri = uri
+        isVideoBackgroundEnabled = uri != null
+    }
+
+    /**
+     * 启用/禁用视频背景
+     */
+    fun setVideoBackgroundEnabledState(enabled: Boolean) {
+        isVideoBackgroundEnabled = enabled
+    }
+
+    /**
+     * 设置视频背景音量
+     */
+    fun setVideoVolumeValue(volume: Float) {
+        videoVolume = volume
     }
 
     /**
@@ -161,6 +195,10 @@ object BackgroundConfig {
             putFloat(KEY_CUSTOM_BACKGROUND_OPACITY, customBackgroundOpacity)
             putFloat(KEY_CUSTOM_BACKGROUND_DIM, customBackgroundDim)
             
+            putString(KEY_VIDEO_BACKGROUND_URI, videoBackgroundUri)
+            putBoolean(KEY_VIDEO_BACKGROUND_ENABLED, isVideoBackgroundEnabled)
+            putFloat(KEY_VIDEO_VOLUME, videoVolume)
+
             putString(KEY_GRID_WORKING_CARD_BACKGROUND_URI, gridWorkingCardBackgroundUri)
             putBoolean(KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED, isGridWorkingCardBackgroundEnabled)
             putFloat(KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY, gridWorkingCardBackgroundOpacity)
@@ -181,11 +219,15 @@ object BackgroundConfig {
      */
     fun load(context: Context) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val uri = prefs.getString(KEY_CUSTOM_BACKGROUND_URI, null)
-        val enabled = prefs.getBoolean(KEY_CUSTOM_BACKGROUND_ENABLED, false)
+        val uri = prefs.getString(KEY_CUSTOM_BACKGROUND_URI, "background.png")
+        val enabled = prefs.getBoolean(KEY_CUSTOM_BACKGROUND_ENABLED, true)
         val opacity = prefs.getFloat(KEY_CUSTOM_BACKGROUND_OPACITY, 0.5f)
         val dim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_DIM, 0.2f)
         
+        val videoUri = prefs.getString(KEY_VIDEO_BACKGROUND_URI, null)
+        val videoEnabled = prefs.getBoolean(KEY_VIDEO_BACKGROUND_ENABLED, false)
+        val videoVol = prefs.getFloat(KEY_VIDEO_VOLUME, 0f)
+
         val gridUri = prefs.getString(KEY_GRID_WORKING_CARD_BACKGROUND_URI, null)
         val gridEnabled = prefs.getBoolean(KEY_GRID_WORKING_CARD_BACKGROUND_ENABLED, false)
         val gridOpacity = prefs.getFloat(KEY_GRID_WORKING_CARD_BACKGROUND_OPACITY, 1.0f)
@@ -205,6 +247,10 @@ object BackgroundConfig {
         customBackgroundOpacity = opacity
         customBackgroundDim = dim
         
+        videoBackgroundUri = videoUri
+        isVideoBackgroundEnabled = videoEnabled
+        videoVolume = videoVol
+        
         gridWorkingCardBackgroundUri = gridUri
         isGridWorkingCardBackgroundEnabled = gridEnabled
         gridWorkingCardBackgroundOpacity = gridOpacity
@@ -222,10 +268,15 @@ object BackgroundConfig {
      * 重置配置
      */
     fun reset() {
-        customBackgroundUri = null
-        isCustomBackgroundEnabled = false
+        // Default to custom background enabled with "background.png"
+        customBackgroundUri = "background.png"
+        isCustomBackgroundEnabled = true
         customBackgroundOpacity = 0.5f
         customBackgroundDim = 0.2f
+        
+        videoBackgroundUri = null
+        isVideoBackgroundEnabled = false
+        videoVolume = 0f
         
         gridWorkingCardBackgroundUri = null
         isGridWorkingCardBackgroundEnabled = false
@@ -247,6 +298,7 @@ object BackgroundConfig {
 object BackgroundManager {
     private const val TAG = "BackgroundManager"
     private const val BACKGROUND_FILENAME = "background.jpg"
+    private const val VIDEO_BACKGROUND_FILENAME_BASE = "video_background"
     private const val GRID_WORKING_CARD_BACKGROUND_FILENAME = "grid_working_card_background.jpg"
 
     // Multi-Background Filenames
@@ -266,6 +318,9 @@ object BackgroundManager {
                 mimeType?.contains("gif", true) == true -> ".gif"
                 mimeType?.contains("png", true) == true -> ".png"
                 mimeType?.contains("webp", true) == true -> ".webp"
+                mimeType?.contains("video/mp4", true) == true -> ".mp4"
+                mimeType?.contains("video/webm", true) == true -> ".webm"
+                mimeType?.contains("video/x-matroska", true) == true -> ".mkv"
                 else -> ".jpg"
             }
         } catch (e: Exception) {
@@ -288,7 +343,7 @@ object BackgroundManager {
      * 清理旧的背景文件
      */
     private fun clearOldFiles(context: Context, baseName: String) {
-        val extensions = listOf(".jpg", ".png", ".gif", ".webp")
+        val extensions = listOf(".jpg", ".png", ".gif", ".webp", ".mp4", ".webm", ".mkv")
         extensions.forEach { ext ->
             val file = File(context.filesDir, "$baseName$ext")
             if (file.exists()) {
@@ -321,6 +376,34 @@ object BackgroundManager {
             }
         } catch (e: Exception) {
             Log.e(TAG, "保存自定义背景失败: ${e.message}", e)
+            false
+        }
+    }
+
+    /**
+     * 保存并应用视频背景
+     */
+    suspend fun saveAndApplyVideoBackground(context: Context, uri: Uri): Boolean {
+        return try {
+            withContext(Dispatchers.IO) {
+                val extension = getFileExtension(context, uri)
+                // 清理旧文件
+                clearOldFiles(context, VIDEO_BACKGROUND_FILENAME_BASE)
+                
+                val targetFile = File(context.filesDir, "$VIDEO_BACKGROUND_FILENAME_BASE$extension")
+                val savedUri = saveImageToInternalStorage(context, uri, targetFile)
+                if (savedUri != null) {
+                    Log.d(TAG, "视频保存成功，URI: $savedUri")
+                    BackgroundConfig.updateVideoBackgroundUri(savedUri.toString())
+                    BackgroundConfig.save(context)
+                    true
+                } else {
+                    Log.e(TAG, "视频保存失败")
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "保存视频背景失败: ${e.message}", e)
             false
         }
     }
@@ -366,6 +449,19 @@ object BackgroundManager {
             BackgroundConfig.save(context)
         } catch (e: Exception) {
             Log.e(TAG, "清除自定义背景失败: ${e.message}", e)
+        }
+    }
+
+    /**
+     * 清除视频背景
+     */
+    fun clearVideoBackground(context: Context) {
+        try {
+            clearOldFiles(context, VIDEO_BACKGROUND_FILENAME_BASE)
+            BackgroundConfig.updateVideoBackgroundUri(null)
+            BackgroundConfig.save(context)
+        } catch (e: Exception) {
+            Log.e(TAG, "清除视频背景失败: ${e.message}", e)
         }
     }
 

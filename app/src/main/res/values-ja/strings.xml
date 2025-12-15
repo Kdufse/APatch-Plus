@@ -462,4 +462,50 @@
     <string name="settings_music_cleared">音楽がクリアされました</string>
     <string name="settings_category_multimedia">マルチメディア</string>
     <string name="settings_music_playback_control">再生コントロール</string>
+    <string name="settings_music_looping">ループ再生</string>
+    <string name="settings_music_looping_summary">現在の曲をリピート再生します</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">テーマをフィルタ</string>
+    <string name="theme_store_filter_author">作者</string>
+    <string name="theme_store_filter_author_hint">作者名を入力</string>
+    <string name="theme_store_filter_source">ソース</string>
+    <string name="theme_store_filter_source_all">すべて</string>
+    <string name="theme_store_filter_type">デバイスタイプ</string>
+    <string name="theme_store_filter_apply">適用</string>
+    <string name="theme_store_filter_reset">リセット</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">ビデオ背景</string>
+    <string name="settings_video_background_summary">ビデオを背景として使用</string>
+    <string name="settings_select_video">ビデオを選択</string>
+    <string name="settings_video_selected">ビデオが選択されました</string>
+    <string name="settings_video_background_enabled">ビデオ背景が有効</string>
+    <string name="settings_video_volume">ビデオ音量</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">権限が必要です</string>
+    <string name="file_picker_permission_desc">ファイルを参照するには、「すべてのファイルへのアクセス」権限を許可してください。</string>
+    <string name="file_picker_grant_permission">権限を許可</string>
+    <string name="file_picker_cancel">キャンセル</string>
+    <string name="file_picker_internal_storage">内部ストレージ</string>
+    <string name="file_picker_no_files">ファイルがありません</string>
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">デバイス状態</string>
+    <string name="home_device_status_battery_temp">バッテリー温度</string>
+    <string name="home_device_status_cpu_load">CPU負荷</string>
+    <string name="home_device_status_battery_level">バッテリーレベル</string>
+    <string name="home_storage_title">ストレージ</string>
+    <string name="home_storage_internal">内部ストレージ</string>
+    <string name="home_storage_ram">RAM</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">スワップファイル</string>
+    <string name="home_info_kernel">カーネル</string>
+    <string name="home_info_superkey">SuperKey</string>
+    <string name="home_info_auth_auth">認証</string>
+    <string name="home_info_auth_na">N/A</string>
+    <string name="home_info_device_slot">デバイススロット</string>
+    <string name="home_info_device_model">デバイスモデル</string>
+    <string name="home_info_running_mode">実行モード</string>
+    <string name="home_info_mode_full">完全</string>
+    <string name="home_info_mode_half">不完全</string>
+    <string name="home_zygisk_implement">Zygisk 実装</string>
 </resources>

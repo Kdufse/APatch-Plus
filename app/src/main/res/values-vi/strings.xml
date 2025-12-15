@@ -502,4 +502,50 @@
     <string name="settings_music_cleared">Nhạc đã được xóa</string>
     <string name="settings_category_multimedia">Đa phương tiện</string>
     <string name="settings_music_playback_control">Điều khiển phát nhạc</string>
+    <string name="settings_music_looping">Lặp lại</string>
+    <string name="settings_music_looping_summary">Lặp lại bài hát hiện tại</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">Lọc Chủ Đề</string>
+    <string name="theme_store_filter_author">Tác Giả</string>
+    <string name="theme_store_filter_author_hint">Nhập tên tác giả</string>
+    <string name="theme_store_filter_source">Nguồn</string>
+    <string name="theme_store_filter_source_all">Tất Cả</string>
+    <string name="theme_store_filter_type">Loại Thiết Bị</string>
+    <string name="theme_store_filter_apply">Áp Dụng</string>
+    <string name="theme_store_filter_reset">Đặt Lại</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">Nền Video</string>
+    <string name="settings_video_background_summary">Sử dụng video làm nền</string>
+    <string name="settings_select_video">Chọn Video</string>
+    <string name="settings_video_selected">Đã Chọn Video</string>
+    <string name="settings_video_background_enabled">Nền Video Đã Bật</string>
+    <string name="settings_video_volume">Âm Lượng Video</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">Cần quyền truy cập</string>
+    <string name="file_picker_permission_desc">Để duyệt tệp, vui lòng cấp quyền \'Truy cập tất cả các tệp\'.</string>
+    <string name="file_picker_grant_permission">Cấp quyền</string>
+    <string name="file_picker_cancel">Hủy</string>
+    <string name="file_picker_internal_storage">Bộ nhớ trong</string>
+    <string name="file_picker_no_files">Không có tệp</string>
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">Trạng thái thiết bị</string>
+    <string name="home_device_status_battery_temp">Nhiệt độ pin</string>
+    <string name="home_device_status_cpu_load">Tải CPU</string>
+    <string name="home_device_status_battery_level">Mức pin</string>
+    <string name="home_storage_title">Lưu trữ</string>
+    <string name="home_storage_internal">Bộ nhớ trong</string>
+    <string name="home_storage_ram">RAM</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">Tệp trao đổi</string>
+    <string name="home_info_kernel">Nhân</string>
+    <string name="home_info_superkey">Khóa siêu cấp</string>
+    <string name="home_info_auth_auth">Xác thực</string>
+    <string name="home_info_auth_na">N/A</string>
+    <string name="home_info_device_slot">Khe thiết bị</string>
+    <string name="home_info_device_model">Mô hình thiết bị</string>
+    <string name="home_info_running_mode">Chế độ chạy</string>
+    <string name="home_info_mode_full">Đầy đủ</string>
+    <string name="home_info_mode_half">Một phần</string>
+    <string name="home_zygisk_implement">Triển khai Zygisk</string>
 </resources>

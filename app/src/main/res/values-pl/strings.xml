@@ -503,4 +503,50 @@
     <string name="settings_music_cleared">Muzyka wyczyszczona</string>
     <string name="settings_category_multimedia">Multimedia</string>
     <string name="settings_music_playback_control">Sterowanie odtwarzaniem</string>
+    <string name="settings_music_looping">Odtwarzanie w pętli</string>
+    <string name="settings_music_looping_summary">Powtarzaj bieżący utwór</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">Filtruj Motywy</string>
+    <string name="theme_store_filter_author">Autor</string>
+    <string name="theme_store_filter_author_hint">Wprowadź nazwę autora</string>
+    <string name="theme_store_filter_source">Źródło</string>
+    <string name="theme_store_filter_source_all">Wszystkie</string>
+    <string name="theme_store_filter_type">Typ Urządzenia</string>
+    <string name="theme_store_filter_apply">Zastosuj</string>
+    <string name="theme_store_filter_reset">Resetuj</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">Tło Wideo</string>
+    <string name="settings_video_background_summary">Użyj wideo jako tło</string>
+    <string name="settings_select_video">Wybierz Wideo</string>
+    <string name="settings_video_selected">Wideo Wybrane</string>
+    <string name="settings_video_background_enabled">Tło Wideo Włączone</string>
+    <string name="settings_video_volume">Głośność Wideo</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">Wymagane uprawnienia</string>
+    <string name="file_picker_permission_desc">Aby przeglądać pliki, przyznaj uprawnienia \"Dostęp do wszystkich plików\".</string>
+    <string name="file_picker_grant_permission">Przyznaj uprawnienia</string>
+    <string name="file_picker_cancel">Anuluj</string>
+    <string name="file_picker_internal_storage">Pamięć wewnętrzna</string>
+    <string name="file_picker_no_files">Brak plików</string>
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">Status urządzenia</string>
+    <string name="home_device_status_battery_temp">Temperatura baterii</string>
+    <string name="home_device_status_cpu_load">Obciążenie CPU</string>
+    <string name="home_device_status_battery_level">Poziom baterii</string>
+    <string name="home_storage_title">Pamięć</string>
+    <string name="home_storage_internal">Pamięć wewnętrzna</string>
+    <string name="home_storage_ram">RAM</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">Plik swap</string>
+    <string name="home_info_kernel">Jądro</string>
+    <string name="home_info_superkey">SuperKlucz</string>
+    <string name="home_info_auth_auth">Aut</string>
+    <string name="home_info_auth_na">N/D</string>
+    <string name="home_info_device_slot">Slot urządzenia</string>
+    <string name="home_info_device_model">Model urządzenia</string>
+    <string name="home_info_running_mode">Tryb działania</string>
+    <string name="home_info_mode_full">Pełny</string>
+    <string name="home_info_mode_half">Częściowy</string>
+    <string name="home_zygisk_implement">Implementacja Zygisk</string>
 </resources>

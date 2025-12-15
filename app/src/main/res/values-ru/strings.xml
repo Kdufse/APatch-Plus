@@ -505,4 +505,50 @@
     <string name="settings_music_cleared">Музыка очищена</string>
     <string name="settings_category_multimedia">Мультимедиа</string>
     <string name="settings_music_playback_control">Управление воспроизведением</string>
+    <string name="settings_music_looping">Зациклить</string>
+    <string name="settings_music_looping_summary">Повторять текущую композицию</string>
+    <!-- Theme Store Filter -->
+    <string name="theme_store_filter_title">Фильтровать Темы</string>
+    <string name="theme_store_filter_author">Автор</string>
+    <string name="theme_store_filter_author_hint">Введите имя автора</string>
+    <string name="theme_store_filter_source">Источник</string>
+    <string name="theme_store_filter_source_all">Все</string>
+    <string name="theme_store_filter_type">Тип Устройства</string>
+    <string name="theme_store_filter_apply">Применить</string>
+    <string name="theme_store_filter_reset">Сброс</string>
+
+    <!-- Video Background Settings -->
+    <string name="settings_video_background">Видеофон</string>
+    <string name="settings_video_background_summary">Использовать видео в качестве фона</string>
+    <string name="settings_select_video">Выбрать Видео</string>
+    <string name="settings_video_selected">Видео Выбрано</string>
+    <string name="settings_video_background_enabled">Видеофон Включен</string>
+    <string name="settings_video_volume">Громкость Видео</string>
+    <!-- File Picker -->
+    <string name="file_picker_permission_required">Требуется разрешение</string>
+    <string name="file_picker_permission_desc">Для просмотра файлов предоставьте разрешение \'Доступ ко всем файлам\'.</string>
+    <string name="file_picker_grant_permission">Предоставить разрешение</string>
+    <string name="file_picker_cancel">Отмена</string>
+    <string name="file_picker_internal_storage">Внутреннее хранилище</string>
+    <string name="file_picker_no_files">Нет файлов</string>
+    <!-- HomeV3 Strings -->
+    <string name="home_device_status_title">Состояние устройства</string>
+    <string name="home_device_status_battery_temp">Температура батареи</string>
+    <string name="home_device_status_cpu_load">Нагрузка ЦПУ</string>
+    <string name="home_device_status_battery_level">Уровень батареи</string>
+    <string name="home_storage_title">Хранилище</string>
+    <string name="home_storage_internal">Внутреннее хранилище</string>
+    <string name="home_storage_ram">ОЗУ</string>
+    <string name="home_storage_zram">ZRAM</string>
+    <string name="home_storage_swap">Файл подкачки</string>
+    <string name="home_info_kernel">Ядро</string>
+    <string name="home_info_superkey">SuperKey</string>
+    <string name="home_info_auth_auth">Аут</string>
+    <string name="home_info_auth_na">Н/Д</string>
+    <string name="home_info_device_slot">Слот устройства</string>
+    <string name="home_info_device_model">Модель устройства</string>
+    <string name="home_info_running_mode">Режим работы</string>
+    <string name="home_info_mode_full">Полный</string>
+    <string name="home_info_mode_half">Частичный</string>
+    <string name="home_zygisk_implement">Реализация Zygisk</string>
 </resources>

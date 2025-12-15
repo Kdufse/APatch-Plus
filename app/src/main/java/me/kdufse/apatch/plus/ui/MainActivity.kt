@@ -200,7 +200,7 @@ class MainActivity : AppCompatActivity() {
 
             Scaffold(
                 bottomBar = {
-                    MyBottomBar(navController = navController)
+                    BottomBar(navController = navController)
                 }
             ) { innerPadding ->
                 CompositionLocalProvider(

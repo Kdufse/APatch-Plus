@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -140,38 +141,30 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             
-            // 使用 Material Icons 作为图标
+            // 底部导航目的地
             val bottomBarDestinations = remember {
                 listOf(
-                    BottomBarItem(
+                    NavDestination(
                         route = "home",
-                        label = "首页",
-                        selectedIcon = Icons.Filled.Home,
-                        unselectedIcon = Icons.Filled.Home
+                        labelResId = R.string.home,
+                        icon = Icons.Filled.Home
                     ),
-                    BottomBarItem(
+                    NavDestination(
                         route = "apps",
-                        label = "应用",
-                        selectedIcon = Icons.Filled.Apps,
-                        unselectedIcon = Icons.Filled.Apps
+                        labelResId = R.string.apps,
+                        icon = Icons.Filled.Apps
                     ),
-                    BottomBarItem(
+                    NavDestination(
                         route = "patches",
-                        label = "补丁",
-                        selectedIcon = Icons.Filled.Build,
-                        unselectedIcon = Icons.Filled.Build
+                        labelResId = R.string.patches,
+                        icon = Icons.Filled.Build
                     ),
-                    BottomBarItem(
+                    NavDestination(
                         route = "settings",
-                        label = "设置",
-                        selectedIcon = Icons.Filled.Settings,
-                        unselectedIcon = Icons.Filled.Settings
+                        labelResId = R.string.settings,
+                        icon = Icons.Filled.Settings
                     )
                 )
-            }
-            
-            val bottomBarRoutes = remember {
-                bottomBarDestinations.map { it.route }.toSet()
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -183,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                     val prefs = APApplication.sharedPreferences
                     if (prefs.getBoolean("auto_update_check", true)) {
                         withContext(Dispatchers.IO) {
-                            // Delay a bit to wait for network connection
+                            // 等待网络连接
                             kotlinx.coroutines.delay(2000)
                             val hasUpdate = UpdateChecker.checkUpdate()
                             if (hasUpdate) {
@@ -205,7 +198,7 @@ class MainActivity : AppCompatActivity() {
 
                 Scaffold(
                     bottomBar = {
-                        MyBottomBar(
+                        BottomNavigationBar(
                             navController = navController,
                             destinations = bottomBarDestinations
                         )
@@ -214,25 +207,22 @@ class MainActivity : AppCompatActivity() {
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
-                        // 使用标准的 NavHost
                         NavHost(
                             navController = navController,
                             startDestination = "home",
                             modifier = Modifier.padding(bottom = 80.dp)
                         ) {
-                            // 这里添加你的屏幕组合函数
-                            // 你需要创建这些屏幕并在这里引用它们
                             composable("home") {
-                                PlaceholderScreen("首页")
+                                PlaceholderScreen(R.string.home)
                             }
                             composable("apps") {
-                                PlaceholderScreen("应用管理")
+                                PlaceholderScreen(R.string.apps)
                             }
                             composable("patches") {
-                                PlaceholderScreen("补丁管理")
+                                PlaceholderScreen(R.string.patches)
                             }
                             composable("settings") {
-                                PlaceholderScreen("设置")
+                                PlaceholderScreen(R.string.settings)
                             }
                         }
                     }
@@ -255,18 +245,17 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-// 底部导航项数据类
-data class BottomBarItem(
+// 导航目的地数据类
+data class NavDestination(
     val route: String,
-    val label: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val labelResId: Int,
+    val icon: ImageVector
 )
 
 @Composable
-fun MyBottomBar(
+fun BottomNavigationBar(
     navController: NavHostController,
-    destinations: List<BottomBarItem>
+    destinations: List<NavDestination>
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -276,7 +265,6 @@ fun MyBottomBar(
         contentColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 8.dp
     ) {
-        // 遍历所有底部栏目的地
         destinations.forEach { destination ->
             val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             
@@ -296,13 +284,13 @@ fun MyBottomBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = if (selected) destination.selectedIcon else destination.unselectedIcon,
-                        contentDescription = destination.label
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.labelResId)
                     )
                 },
                 label = {
                     Text(
-                        text = destination.label,
+                        text = stringResource(destination.labelResId),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -313,9 +301,9 @@ fun MyBottomBar(
     }
 }
 
-// 占位符屏幕，用于测试
+// 占位符屏幕
 @Composable
-fun PlaceholderScreen(screenName: String) {
+fun PlaceholderScreen(labelResId: Int) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -325,7 +313,7 @@ fun PlaceholderScreen(screenName: String) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = screenName,
+                text = stringResource(labelResId),
                 style = MaterialTheme.typography.headlineMedium
             )
         }

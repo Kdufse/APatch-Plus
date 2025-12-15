@@ -40,12 +40,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.rememberNavHostEngine
 import me.kdufse.apatch.plus.APApplication
-import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
 import androidx.compose.material3.MaterialTheme
 import me.kdufse.apatch.plus.util.PermissionRequestHandler
@@ -64,7 +59,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import me.kdufse.apatch.plus.R
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.compose.runtime.MutableState
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 
 class MainActivity : AppCompatActivity() {
 
@@ -147,9 +146,9 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
-            // 从 BottomBarDestination 获取路由列表
+            // 底部导航栏的路由列表
             val bottomBarRoutes = remember {
-                BottomBarDestination.values().map { it.direction.route }.toSet()
+                listOf("home", "apps", "patches", "settings").toSet()
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -189,72 +188,29 @@ class MainActivity : AppCompatActivity() {
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
-                        // 检查是否使用 Compose Destinations
-                        if (::NavGraphs.isInitialized) {
-                            DestinationsNavHost(
-                                modifier = Modifier.padding(bottom = 80.dp),
-                                navGraph = NavGraphs.root,
-                                navController = navController,
-                                engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
-                                defaultTransitions = object : NavHostAnimatedDestinationStyle() {
-                                    override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                        {
-                                            // If the target is a detail page (not a bottom navigation page), slide in from the right
-                                            if (targetState.destination.route !in bottomBarRoutes) {
-                                                slideInHorizontally(initialOffsetX = { it })
-                                            } else {
-                                                // Otherwise (switching between bottom navigation pages), use fade in
-                                                fadeIn(animationSpec = tween(340))
-                                            }
-                                        }
-
-                                    override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                        {
-                                            // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
-                                            if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
-                                                slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
-                                            } else {
-                                                // Otherwise (switching between bottom navigation pages), use fade out
-                                                fadeOut(animationSpec = tween(340))
-                                            }
-                                        }
-
-                                    override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                        {
-                                            // If returning to the home page (bottom navigation page), slide in from the left
-                                            if (targetState.destination.route in bottomBarRoutes) {
-                                                slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
-                                            } else {
-                                                // Otherwise (e.g., returning between multiple detail pages), use default fade in
-                                                fadeIn(animationSpec = tween(340))
-                                            }
-                                        }
-
-                                    override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                        {
-                                            // If returning from a detail page (not a bottom navigation page), scale down and fade out
-                                            if (initialState.destination.route !in bottomBarRoutes) {
-                                                scaleOut(targetScale = 0.9f) + fadeOut()
-                                            } else {
-                                                // Otherwise, use default fade out
-                                                fadeOut(animationSpec = tween(340))
-                                            }
-                                        }
-                                }
-                            )
-                        } else {
-                            // 如果 Compose Destinations 没有生成代码，使用标准的 NavHost
-                            NavHost(
-                                navController = navController,
-                                startDestination = BottomBarDestination.HOME.direction.route,
-                                modifier = Modifier.padding(bottom = 80.dp)
-                            ) {
-                                // 这里添加你的屏幕组合函数
-                                // 例如：
-                                // composable(BottomBarDestination.HOME.direction.route) { HomeScreen() }
-                                // composable(BottomBarDestination.APPS.direction.route) { AppsScreen() }
-                                // composable(BottomBarDestination.PATCHES.direction.route) { PatchesScreen() }
-                                // composable(BottomBarDestination.SETTINGS.direction.route) { SettingsScreen() }
+                        // 使用标准的 NavHost，不依赖 Compose Destinations
+                        NavHost(
+                            navController = navController,
+                            startDestination = "home",
+                            modifier = Modifier.padding(bottom = 80.dp)
+                        ) {
+                            // 这里添加你的屏幕组合函数
+                            // 你需要创建这些屏幕并在这里引用它们
+                            composable("home") {
+                                // HomeScreen()
+                                PlaceholderScreen("Home Screen")
+                            }
+                            composable("apps") {
+                                // AppsScreen()
+                                PlaceholderScreen("Apps Screen")
+                            }
+                            composable("patches") {
+                                // PatchesScreen()
+                                PlaceholderScreen("Patches Screen")
+                            }
+                            composable("settings") {
+                                // SettingsScreen()
+                                PlaceholderScreen("Settings Screen")
                             }
                         }
                     }
@@ -277,6 +233,22 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+// 底部导航目的地定义
+sealed class BottomBarDestination(
+    val route: String,
+    val labelResId: Int,
+    val iconResId: Int
+) {
+    object Home : BottomBarDestination("home", R.string.home, R.drawable.ic_home)
+    object Apps : BottomBarDestination("apps", R.string.apps, R.drawable.ic_apps)
+    object Patches : BottomBarDestination("patches", R.string.patches, R.drawable.ic_patches)
+    object Settings : BottomBarDestination("settings", R.string.settings, R.drawable.ic_settings)
+
+    companion object {
+        val items = listOf(Home, Apps, Patches, Settings)
+    }
+}
+
 @Composable
 fun MyBottomBar(
     navController: NavHostController
@@ -290,15 +262,14 @@ fun MyBottomBar(
         tonalElevation = 8.dp
     ) {
         // 遍历所有底部栏目的地
-        for (destination in BottomBarDestination.values()) {
-            val selected = currentDestination?.hierarchy?.any { it.route == destination.direction.route } == true
+        BottomBarDestination.items.forEach { destination ->
+            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             
             NavigationBarItem(
                 selected = selected,
                 onClick = {
                     if (!selected) {
-                        // 使用 Compose Destinations 的导航
-                        navController.navigate(destination.direction.route) {
+                        navController.navigate(destination.route) {
                             // 清除返回栈，避免重复堆叠相同的页面
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -310,13 +281,13 @@ fun MyBottomBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = if (selected) destination.iconSelected else destination.iconNotSelected,
-                        contentDescription = stringResource(destination.label)
+                        imageVector = androidx.compose.ui.res.vectorResource(destination.iconResId),
+                        contentDescription = stringResource(destination.labelResId)
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.label),
+                        text = stringResource(destination.labelResId),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -327,14 +298,17 @@ fun MyBottomBar(
     }
 }
 
-// 备用：如果没有 BottomBarDestination，使用这个简单的版本
-// enum class SimpleBottomBarDestination(
-//     val route: String,
-//     val iconRes: Int,
-//     val labelRes: Int
-// ) {
-//     HOME("home", R.drawable.ic_home, R.string.home),
-//     APPS("apps", R.drawable.ic_apps, R.string.apps),
-//     PATCHES("patches", R.drawable.ic_patches, R.string.patches),
-//     SETTINGS("settings", R.drawable.ic_settings, R.string.settings)
-// }
+// 占位符屏幕，用于测试
+@Composable
+fun PlaceholderScreen(screenName: String) {
+    androidx.compose.material3.Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        androidx.compose.material3.Text(
+            text = screenName,
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}

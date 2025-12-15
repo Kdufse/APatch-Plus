@@ -36,12 +36,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavDestination as AndroidxNavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
@@ -140,27 +140,27 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             
-            // 底部导航目的地 - 使用重命名后的类名
+            // 底部导航目的地
             val bottomBarDestinations = remember {
                 listOf(
                     AppNavDestination(
                         route = "home",
-                        labelResId = R.string.home,
+                        label = "Home",
                         icon = Icons.Filled.Home
                     ),
                     AppNavDestination(
                         route = "apps",
-                        labelResId = R.string.apps,
+                        label = "Apps",
                         icon = Icons.Filled.Apps
                     ),
                     AppNavDestination(
                         route = "patches",
-                        labelResId = R.string.patches,
+                        label = "Patches",
                         icon = Icons.Filled.Build
                     ),
                     AppNavDestination(
                         route = "settings",
-                        labelResId = R.string.settings,
+                        label = "Settings",
                         icon = Icons.Filled.Settings
                     )
                 )
@@ -212,16 +212,16 @@ class MainActivity : AppCompatActivity() {
                             modifier = Modifier.padding(bottom = 80.dp)
                         ) {
                             composable("home") {
-                                PlaceholderScreen(R.string.home)
+                                PlaceholderScreen("Home")
                             }
                             composable("apps") {
-                                PlaceholderScreen(R.string.apps)
+                                PlaceholderScreen("Apps")
                             }
                             composable("patches") {
-                                PlaceholderScreen(R.string.patches)
+                                PlaceholderScreen("Patches")
                             }
                             composable("settings") {
-                                PlaceholderScreen(R.string.settings)
+                                PlaceholderScreen("Settings")
                             }
                         }
                     }
@@ -244,10 +244,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-// 重命名导航目的地数据类，避免与 Android Navigation 库冲突
+// 自定义导航目的地数据类
 data class AppNavDestination(
     val route: String,
-    val labelResId: Int,
+    val label: String,
     val icon: ImageVector
 )
 
@@ -265,8 +265,8 @@ fun BottomNavigationBar(
         tonalElevation = 8.dp
     ) {
         destinations.forEach { destination ->
-            // 修复：使用非空断言操作符 !! 确保 route 不为 null
-            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
+            // 修复：使用简单的路由比较而不是 hierarchy
+            val selected = currentDestination?.route == destination.route
             
             NavigationBarItem(
                 selected = selected,
@@ -285,12 +285,12 @@ fun BottomNavigationBar(
                 icon = {
                     Icon(
                         imageVector = destination.icon,
-                        contentDescription = stringResource(destination.labelResId)
+                        contentDescription = destination.label
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.labelResId),
+                        text = destination.label,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -303,7 +303,7 @@ fun BottomNavigationBar(
 
 // 占位符屏幕
 @Composable
-fun PlaceholderScreen(labelResId: Int) {
+fun PlaceholderScreen(label: String) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -313,7 +313,7 @@ fun PlaceholderScreen(labelResId: Int) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(labelResId),
+                text = label,
                 style = MaterialTheme.typography.headlineMedium
             )
         }

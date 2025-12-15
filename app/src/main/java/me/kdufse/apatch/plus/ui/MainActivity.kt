@@ -44,7 +44,6 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.rememberNavHostEngine
-import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
@@ -62,10 +61,10 @@ import me.kdufse.apatch.plus.ui.component.UpdateDialog
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import me.kdufse.apatch.plus.R
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.compose.runtime.MutableState
 
 class MainActivity : AppCompatActivity() {
 
@@ -148,8 +147,9 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
+            // 从 BottomBarDestination 获取路由列表
             val bottomBarRoutes = remember {
-                BottomBarDestination.entries.map { it.route }.toSet()
+                BottomBarDestination.values().map { it.direction.route }.toSet()
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -189,8 +189,8 @@ class MainActivity : AppCompatActivity() {
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
-                        // 检查是否使用 Compose Destinations，如果没有生成代码则使用标准导航
-                        try {
+                        // 检查是否使用 Compose Destinations
+                        if (::NavGraphs.isInitialized) {
                             DestinationsNavHost(
                                 modifier = Modifier.padding(bottom = 80.dp),
                                 navGraph = NavGraphs.root,
@@ -242,19 +242,19 @@ class MainActivity : AppCompatActivity() {
                                         }
                                 }
                             )
-                        } catch (e: Exception) {
+                        } else {
                             // 如果 Compose Destinations 没有生成代码，使用标准的 NavHost
                             NavHost(
                                 navController = navController,
-                                startDestination = BottomBarDestination.Home.route,
+                                startDestination = BottomBarDestination.HOME.direction.route,
                                 modifier = Modifier.padding(bottom = 80.dp)
                             ) {
                                 // 这里添加你的屏幕组合函数
                                 // 例如：
-                                // composable(BottomBarDestination.Home.route) { HomeScreen() }
-                                // composable(BottomBarDestination.Apps.route) { AppsScreen() }
-                                // composable(BottomBarDestination.Patches.route) { PatchesScreen() }
-                                // composable(BottomBarDestination.Settings.route) { SettingsScreen() }
+                                // composable(BottomBarDestination.HOME.direction.route) { HomeScreen() }
+                                // composable(BottomBarDestination.APPS.direction.route) { AppsScreen() }
+                                // composable(BottomBarDestination.PATCHES.direction.route) { PatchesScreen() }
+                                // composable(BottomBarDestination.SETTINGS.direction.route) { SettingsScreen() }
                             }
                         }
                     }
@@ -289,14 +289,16 @@ fun MyBottomBar(
         contentColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 8.dp
     ) {
-        BottomBarDestination.entries.forEach { destination ->
-            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
+        // 遍历所有底部栏目的地
+        for (destination in BottomBarDestination.values()) {
+            val selected = currentDestination?.hierarchy?.any { it.route == destination.direction.route } == true
             
             NavigationBarItem(
                 selected = selected,
                 onClick = {
                     if (!selected) {
-                        navController.navigate(destination.route) {
+                        // 使用 Compose Destinations 的导航
+                        navController.navigate(destination.direction.route) {
                             // 清除返回栈，避免重复堆叠相同的页面
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -308,13 +310,13 @@ fun MyBottomBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = ImageVector.vectorResource(destination.iconRes),
-                        contentDescription = stringResource(destination.labelRes)
+                        imageVector = if (selected) destination.iconSelected else destination.iconNotSelected,
+                        contentDescription = stringResource(destination.label)
                     )
                 },
                 label = {
                     Text(
-                        text = stringResource(destination.labelRes),
+                        text = stringResource(destination.label),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -325,18 +327,14 @@ fun MyBottomBar(
     }
 }
 
-// 如果 BottomBarDestination 不存在，这里是完整的定义
-sealed class BottomBarDestination(
-    val route: String,
-    val iconRes: Int,
-    val labelRes: Int
-) {
-    object Home : BottomBarDestination("home", R.drawable.ic_home, R.string.home)
-    object Apps : BottomBarDestination("apps", R.drawable.ic_apps, R.string.apps)
-    object Patches : BottomBarDestination("patches", R.drawable.ic_patches, R.string.patches)
-    object Settings : BottomBarDestination("settings", R.drawable.ic_settings, R.string.settings)
-
-    companion object {
-        val entries = listOf(Home, Apps, Patches, Settings)
-    }
-}
+// 备用：如果没有 BottomBarDestination，使用这个简单的版本
+// enum class SimpleBottomBarDestination(
+//     val route: String,
+//     val iconRes: Int,
+//     val labelRes: Int
+// ) {
+//     HOME("home", R.drawable.ic_home, R.string.home),
+//     APPS("apps", R.drawable.ic_apps, R.string.apps),
+//     PATCHES("patches", R.drawable.ic_patches, R.string.patches),
+//     SETTINGS("settings", R.drawable.ic_settings, R.string.settings)
+// }

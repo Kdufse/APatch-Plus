@@ -198,10 +198,9 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                bottomBar = {
-                    // 使用本地的 MyBottomBar 函数
-                    MyBottomBar(navController = navController)
-                } { _ ->
+                Scaffold(
+                    bottomBar = { BottomBar(navController) }
+                ) { _ ->
                     CompositionLocalProvider(
                         LocalSnackbarHost provides snackBarHostState,
                     ) {
@@ -327,9 +326,11 @@ fun UnofficialVersionDialog() {
     }
 }
 
-// 将 MyBottomBar 函数移到类外部作为独立的 Composable 函数
 @Composable
-private fun MainActivity.MyBottomBar(navController: NavHostController) {
+private fun BottomBar(navController: NavHostController) {
+    if (!APApplication.isSignatureValid) {
+        UnofficialVersionDialog()
+    }
     val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
     val navigator = navController.rememberDestinationsNavigator()
 
@@ -343,7 +344,7 @@ private fun MainActivity.MyBottomBar(navController: NavHostController) {
         NavigationBar(
             tonalElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 8.dp,
             containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
-                MaterialTheme.colorScheme.surface
+                MaterialTheme.colorScheme.surface.copy(alpha = BackgroundConfig.customBackgroundOpacity)
             } else {
                 NavigationBarDefaults.containerColor
             }

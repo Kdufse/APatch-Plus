@@ -6,57 +6,82 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.runtime.remember
 import androidx.navigation.compose.rememberNavController
 import coil.Coil
 import coil.ImageLoader
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.NavHostAnimatedDestinationStyle
+import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.rememberNavHostEngine
+import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
+import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import me.kdufse.apatch.plus.APApplication
-import me.kdufse.apatch.plus.R
-import me.kdufse.apatch.plus.ui.component.UpdateDialog
+import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
+import androidx.compose.material3.NavigationBarDefaults
+import androidx.compose.material3.MaterialTheme
 import me.kdufse.apatch.plus.util.PermissionRequestHandler
 import me.kdufse.apatch.plus.util.PermissionUtils
-import me.kdufse.apatch.plus.util.UpdateChecker
 import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.window.DialogProperties
+import me.kdufse.apatch.plus.R
+import androidx.compose.runtime.LaunchedEffect
+import kotlinx.coroutines.delay
+import kotlin.system.exitProcess
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer
+import me.kdufse.apatch.plus.util.UpdateChecker
+import me.kdufse.apatch.plus.ui.component.UpdateDialog
+// 移除这行导入，因为我们要使用本地的 MyBottomBar
+// import me.kdufse.apatch.plus.ui.component.MyBottomBar
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -137,96 +162,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            val navController = rememberNavController()
-            val snackBarHostState = remember { SnackbarHostState() }
-            
-            // 底部导航目的地
-            val bottomBarDestinations = remember {
-                listOf(
-                    AppNavDestination(
-                        route = "home",
-                        label = "Home",
-                        icon = Icons.Filled.Home
-                    ),
-                    AppNavDestination(
-                        route = "apps",
-                        label = "Apps",
-                        icon = Icons.Filled.Apps
-                    ),
-                    AppNavDestination(
-                        route = "patches",
-                        label = "Patches",
-                        icon = Icons.Filled.Build
-                    ),
-                    AppNavDestination(
-                        route = "settings",
-                        label = "Settings",
-                        icon = Icons.Filled.Settings
-                    )
-                )
-            }
-
-            APatchThemeWithBackground(navController = navController) {
-                
-                val showUpdateDialog = remember { mutableStateOf(false) }
-                val context = LocalContext.current
-                
-                LaunchedEffect(Unit) {
-                    val prefs = APApplication.sharedPreferences
-                    if (prefs.getBoolean("auto_update_check", true)) {
-                        withContext(Dispatchers.IO) {
-                            // 等待网络连接
-                            kotlinx.coroutines.delay(2000)
-                            val hasUpdate = UpdateChecker.checkUpdate()
-                            if (hasUpdate) {
-                                showUpdateDialog.value = true
-                            }
-                        }
-                    }
-                }
-
-                if (showUpdateDialog.value) {
-                    UpdateDialog(
-                        onDismiss = { showUpdateDialog.value = false },
-                        onUpdate = {
-                            showUpdateDialog.value = false
-                            UpdateChecker.openUpdateUrl(context)
-                        }
-                    )
-                }
-
-                Scaffold(
-                    bottomBar = {
-                        BottomNavigationBar(
-                            navController = navController,
-                            destinations = bottomBarDestinations
-                        )
-                    }
-                ) { paddingValues ->
-                    CompositionLocalProvider(
-                        LocalSnackbarHost provides snackBarHostState,
-                    ) {
-                        NavHost(
-                            navController = navController,
-                            startDestination = "home",
-                            modifier = Modifier.padding(bottom = 80.dp)
-                        ) {
-                            composable("home") {
-                                PlaceholderScreen("Home")
-                            }
-                            composable("apps") {
-                                PlaceholderScreen("Apps")
-                            }
-                            composable("patches") {
-                                PlaceholderScreen("Patches")
-                            }
-                            composable("settings") {
-                                PlaceholderScreen("Settings")
-                            }
-                        }
-                    }
-                }
-            }
+            MainContent()
         }
 
         // Initialize Coil
@@ -242,80 +178,165 @@ class MainActivity : AppCompatActivity() {
 
         isLoading = false
     }
+
+    @Composable
+    private fun MainContent() {
+        val navController = rememberNavController()
+        val snackBarHostState = remember { SnackbarHostState() }
+        val bottomBarRoutes = remember {
+            BottomBarDestination.entries.map { it.direction.route }.toSet()
+        }
+
+        APatchThemeWithBackground(navController = navController) {
+            
+            val showUpdateDialog = remember { mutableStateOf(false) }
+            val context = LocalContext.current
+            
+            LaunchedEffect(Unit) {
+                val prefs = APApplication.sharedPreferences
+                if (prefs.getBoolean("auto_update_check", false)) {
+                     val hasUpdate = UpdateChecker.checkUpdate()
+                     if (hasUpdate) {
+                         showUpdateDialog.value = true
+                     }
+                }
+            }
+
+            if (showUpdateDialog.value) {
+                UpdateDialog(
+                    onDismiss = { showUpdateDialog.value = false },
+                    onUpdate = {
+                        showUpdateDialog.value = false
+                        UpdateChecker.openUpdateUrl(context)
+                    }
+                )
+            }
+
+            Scaffold(
+                bottomBar = {
+                    // 使用本地的 MyBottomBar 函数
+                    MyBottomBar(navController = navController)
+                }
+            ) { _ ->
+                CompositionLocalProvider(
+                    LocalSnackbarHost provides snackBarHostState,
+                ) {
+                    DestinationsNavHost(
+                        modifier = Modifier.padding(bottom = 80.dp),
+                        navGraph = NavGraphs.root,
+                        navController = navController,
+                        engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
+                        defaultTransitions = object : NavHostAnimatedDestinationStyle() {
+                            override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                {
+                                    // If the target is a detail page (not a bottom navigation page), slide in from the right
+                                    if (targetState.destination.route !in bottomBarRoutes) {
+                                        slideInHorizontally(initialOffsetX = { it })
+                                    } else {
+                                        // Otherwise (switching between bottom navigation pages), use fade in
+                                        fadeIn(animationSpec = tween(340))
+                                    }
+                                }
+
+                            override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                {
+                                    // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
+                                    if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
+                                        slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
+                                    } else {
+                                        // Otherwise (switching between bottom navigation pages), use fade out
+                                        fadeOut(animationSpec = tween(340))
+                                    }
+                                }
+
+                            override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                {
+                                    // If returning to the home page (bottom navigation page), slide in from the left
+                                    if (targetState.destination.route in bottomBarRoutes) {
+                                        slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
+                                    } else {
+                                        // Otherwise (e.g., returning between multiple detail pages), use default fade in
+                                        fadeIn(animationSpec = tween(340))
+                                    }
+                                }
+
+                            override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                {
+                                    // If returning from a detail page (not a bottom navigation page), scale down and fade out
+                                    if (initialState.destination.route !in bottomBarRoutes) {
+                                        scaleOut(targetScale = 0.9f) + fadeOut()
+                                    } else {
+                                        // Otherwise, use default fade out
+                                        fadeOut(animationSpec = tween(340))
+                                    }
+                                }
+                        }
+                    )
+                }
+            }
+        }
+    }
 }
 
-// 自定义导航目的地数据类
-data class AppNavDestination(
-    val route: String,
-    val label: String,
-    val icon: ImageVector
-)
-
+// 将 MyBottomBar 函数移到类外部作为独立的 Composable 函数
 @Composable
-fun BottomNavigationBar(
-    navController: NavHostController,
-    destinations: List<AppNavDestination>
-) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-    
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        tonalElevation = 8.dp
-    ) {
-        destinations.forEach { destination ->
-            // 修复：使用简单的路由比较而不是 hierarchy
-            val selected = currentDestination?.route == destination.route
-            
-            NavigationBarItem(
-                selected = selected,
-                onClick = {
-                    if (!selected) {
-                        navController.navigate(destination.route) {
-                            // 清除返回栈，避免重复堆叠相同的页面
-                            popUpTo(navController.graph.findStartDestination().id) {
+private fun MainActivity.MyBottomBar(navController: NavHostController) {
+    val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
+    val navigator = navController.rememberDestinationsNavigator()
+
+    Crossfade(
+        targetState = state,
+        label = "BottomBarStateCrossfade"
+    ) { state ->
+        val kPatchReady = state != APApplication.State.UNKNOWN_STATE
+        val aPatchReady = state == APApplication.State.ANDROIDPATCH_INSTALLED
+
+        NavigationBar(
+            tonalElevation = if (BackgroundConfig.isCustomBackgroundEnabled) 0.dp else 8.dp,
+            containerColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                NavigationBarDefaults.containerColor
+            }
+        ) {
+            BottomBarDestination.entries.forEach { destination ->
+                val isCurrentDestOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
+
+                val hideDestination = (destination.kPatchRequired && !kPatchReady) || (destination.aPatchRequired && !aPatchReady)
+                if (hideDestination) return@forEach
+
+                NavigationBarItem(
+                    selected = isCurrentDestOnBackStack,
+                    onClick = {
+                        if (isCurrentDestOnBackStack) {
+                            navigator.popBackStack(destination.direction, false)
+                        }
+                        navigator.navigate(destination.direction) {
+                            popUpTo(NavGraphs.root) {
                                 saveState = true
                             }
                             launchSingleTop = true
                             restoreState = true
                         }
-                    }
-                },
-                icon = {
-                    Icon(
-                        imageVector = destination.icon,
-                        contentDescription = destination.label
-                    )
-                },
-                label = {
-                    Text(
-                        text = destination.label,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                alwaysShowLabel = true
-            )
-        }
-    }
-}
-
-// 占位符屏幕
-@Composable
-fun PlaceholderScreen(label: String) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.headlineMedium
-            )
+                    },
+                    icon = {
+                        if (isCurrentDestOnBackStack) {
+                            Icon(destination.iconSelected, stringResource(destination.label))
+                        } else {
+                            Icon(destination.iconNotSelected, stringResource(destination.label))
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(destination.label),
+                            overflow = TextOverflow.Visible,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    },
+                    alwaysShowLabel = false
+                )
+            }
         }
     }
 }

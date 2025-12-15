@@ -24,11 +24,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -180,12 +183,12 @@ class MainActivity : AppCompatActivity() {
                     val prefs = APApplication.sharedPreferences
                     if (prefs.getBoolean("auto_update_check", true)) {
                         withContext(Dispatchers.IO) {
-                             // Delay a bit to wait for network connection
-                             kotlinx.coroutines.delay(2000)
-                             val hasUpdate = me.kdufse.apatch.plus.util.UpdateChecker.checkUpdate()
-                             if (hasUpdate) {
-                                 showUpdateDialog.value = true
-                             }
+                            // Delay a bit to wait for network connection
+                            kotlinx.coroutines.delay(2000)
+                            val hasUpdate = UpdateChecker.checkUpdate()
+                            if (hasUpdate) {
+                                showUpdateDialog.value = true
+                            }
                         }
                     }
                 }
@@ -251,10 +254,6 @@ class MainActivity : AppCompatActivity() {
         isLoading = false
     }
 }
-
-// 添加缺失的导入
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 
 // 底部导航项数据类
 data class BottomBarItem(

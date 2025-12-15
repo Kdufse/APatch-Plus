@@ -1401,7 +1401,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     ) {
                         MusicConfig.setLoopingEnabledState(it)
                         MusicConfig.save(context)
-                        MusicManager.updateLooping(it)
                     }
 
                     // Volume

@@ -36,8 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavDestination as AndroidxNavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -141,25 +140,25 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val snackBarHostState = remember { SnackbarHostState() }
             
-            // 底部导航目的地
+            // 底部导航目的地 - 使用重命名后的类名
             val bottomBarDestinations = remember {
                 listOf(
-                    NavDestination(
+                    AppNavDestination(
                         route = "home",
                         labelResId = R.string.home,
                         icon = Icons.Filled.Home
                     ),
-                    NavDestination(
+                    AppNavDestination(
                         route = "apps",
                         labelResId = R.string.apps,
                         icon = Icons.Filled.Apps
                     ),
-                    NavDestination(
+                    AppNavDestination(
                         route = "patches",
                         labelResId = R.string.patches,
                         icon = Icons.Filled.Build
                     ),
-                    NavDestination(
+                    AppNavDestination(
                         route = "settings",
                         labelResId = R.string.settings,
                         icon = Icons.Filled.Settings
@@ -245,8 +244,8 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-// 导航目的地数据类
-data class NavDestination(
+// 重命名导航目的地数据类，避免与 Android Navigation 库冲突
+data class AppNavDestination(
     val route: String,
     val labelResId: Int,
     val icon: ImageVector
@@ -255,7 +254,7 @@ data class NavDestination(
 @Composable
 fun BottomNavigationBar(
     navController: NavHostController,
-    destinations: List<NavDestination>
+    destinations: List<AppNavDestination>
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -266,6 +265,7 @@ fun BottomNavigationBar(
         tonalElevation = 8.dp
     ) {
         destinations.forEach { destination ->
+            // 修复：使用非空断言操作符 !! 确保 route 不为 null
             val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             
             NavigationBarItem(

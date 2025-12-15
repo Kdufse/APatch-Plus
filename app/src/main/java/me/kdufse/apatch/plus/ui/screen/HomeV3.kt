@@ -231,7 +231,7 @@ private fun DeviceStatusCard(isWallpaperMode: Boolean) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             StatusCircle(
-                value = "${batteryTemp}?",
+                value = "${batteryTemp}¡æ",
                 label = stringResource(R.string.home_device_status_battery_temp),
                 progress = (batteryTemp / 50f).coerceIn(0f, 1f),
                 color = MaterialTheme.colorScheme.primary

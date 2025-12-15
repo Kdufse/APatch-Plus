@@ -83,6 +83,16 @@ import me.kdufse.apatch.plus.ui.component.UpdateDialog
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.setValue
+import me.kdufse.apatch.plus.ui.screen.destinations.AppsScreenDestination
+import me.kdufse.apatch.plus.ui.screen.destinations.HomeScreenDestination
+import me.kdufse.apatch.plus.ui.screen.destinations.PatchesScreenDestination
+import me.kdufse.apatch.plus.ui.screen.destinations.SettingsScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.navigate
 
 class MainActivity : AppCompatActivity() {
 
@@ -144,137 +154,215 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-    
-    // Load DPI settings
-    me.kdufse.apatch.plus.util.DPIUtils.load(this)
-    me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
-    
-    // 检查并请求权限
-    if (!PermissionUtils.hasExternalStoragePermission(this) || 
-        !PermissionUtils.hasWriteExternalStoragePermission(this)) {
-        permissionHandler.requestPermissions(
-            onGranted = {
-                // 权限已授予
-            },
-            onDenied = {
-                // 权限被拒绝，可以显示一个提示
-            }
-        )
-    }
-
-    setContent {
-        val navController = rememberNavController()
-        val snackBarHostState = remember { SnackbarHostState() }
-        val bottomBarRoutes = remember {
-            BottomBarDestination.entries.map { it.direction.route }.toSet()
+        
+        // Load DPI settings
+        me.kdufse.apatch.plus.util.DPIUtils.load(this)
+        me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
+        
+        // 检查并请求权限
+        if (!PermissionUtils.hasExternalStoragePermission(this) || 
+            !PermissionUtils.hasWriteExternalStoragePermission(this)) {
+            permissionHandler.requestPermissions(
+                onGranted = {
+                    // 权限已授予
+                },
+                onDenied = {
+                    // 权限被拒绝，可以显示一个提示
+                }
+            )
         }
 
-        APatchThemeWithBackground(navController = navController) {
-            
-            val showUpdateDialog = remember { mutableStateOf(false) }
-            val context = LocalContext.current
-            
-            LaunchedEffect(Unit) {
-                val prefs = APApplication.sharedPreferences
-                if (prefs.getBoolean("auto_update_check", true)) {
-                    withContext(Dispatchers.IO) {
-                         // Delay a bit to wait for network connection
-                         kotlinx.coroutines.delay(2000)
-                         val hasUpdate = me.kdufse.apatch.plus.util.UpdateChecker.checkUpdate()
-                         if (hasUpdate) {
-                             showUpdateDialog.value = true
-                         }
-                    }
-                }
+        setContent {
+            val navController = rememberNavController()
+            val snackBarHostState = remember { SnackbarHostState() }
+            val bottomBarRoutes = remember {
+                BottomBarDestination.entries.map { it.direction.route }.toSet()
             }
 
-            if (showUpdateDialog.value) {
-                UpdateDialog(
-                    onDismiss = { showUpdateDialog.value = false },
-                    onUpdate = {
-                        showUpdateDialog.value = false
-                        UpdateChecker.openUpdateUrl(context)
+            APatchThemeWithBackground(navController = navController) {
+                
+                val showUpdateDialog = remember { mutableStateOf(false) }
+                val context = LocalContext.current
+                
+                LaunchedEffect(Unit) {
+                    val prefs = APApplication.sharedPreferences
+                    if (prefs.getBoolean("auto_update_check", true)) {
+                        withContext(Dispatchers.IO) {
+                             // Delay a bit to wait for network connection
+                             kotlinx.coroutines.delay(2000)
+                             val hasUpdate = me.kdufse.apatch.plus.util.UpdateChecker.checkUpdate()
+                             if (hasUpdate) {
+                                 showUpdateDialog.value = true
+                             }
+                        }
                     }
-                )
-            }
-
-            Scaffold(
-                bottomBar = {
-                    BottomBar(navController = navController)
                 }
-            ) { innerPadding ->
-                CompositionLocalProvider(
-                    LocalSnackbarHost provides snackBarHostState,
-                ) {
-                    DestinationsNavHost(
-                        modifier = Modifier
-                            .padding(bottom = 80.dp)
-                            .padding(innerPadding),
-                        navGraph = NavGraphs.root,
-                        navController = navController,
-                        engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
-                        defaultTransitions = object : NavHostAnimatedDestinationStyle() {
-                            override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                {
-                                    // If the target is a detail page (not a bottom navigation page), slide in from the right
-                                    if (targetState.destination.route !in bottomBarRoutes) {
-                                        slideInHorizontally(initialOffsetX = { it })
-                                    } else {
-                                        // Otherwise (switching between bottom navigation pages), use fade in
-                                        fadeIn(animationSpec = tween(340))
-                                    }
-                                }
 
-                            override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                {
-                                    // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
-                                    if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
-                                        slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
-                                    } else {
-                                        // Otherwise (switching between bottom navigation pages), use fade out
-                                        fadeOut(animationSpec = tween(340))
-                                    }
-                                }
-
-                            override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
-                                {
-                                    // If returning to the home page (bottom navigation page), slide in from the left
-                                    if (targetState.destination.route in bottomBarRoutes) {
-                                        slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
-                                    } else {
-                                        // Otherwise (e.g., returning between multiple detail pages), use default fade in
-                                        fadeIn(animationSpec = tween(340))
-                                    }
-                                }
-
-                            override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
-                                {
-                                    // If returning from a detail page (not a bottom navigation page), scale down and fade out
-                                    if (initialState.destination.route !in bottomBarRoutes) {
-                                        scaleOut(targetScale = 0.9f) + fadeOut()
-                                    } else {
-                                        // Otherwise, use default fade out
-                                        fadeOut(animationSpec = tween(340))
-                                    }
-                                }
+                if (showUpdateDialog.value) {
+                    UpdateDialog(
+                        onDismiss = { showUpdateDialog.value = false },
+                        onUpdate = {
+                            showUpdateDialog.value = false
+                            UpdateChecker.openUpdateUrl(context)
                         }
                     )
                 }
+
+                Scaffold(
+                    bottomBar = {
+                        MyBottomBar(navController = navController)
+                    }
+                ) { paddingValues ->
+                    CompositionLocalProvider(
+                        LocalSnackbarHost provides snackBarHostState,
+                    ) {
+                        DestinationsNavHost(
+                            modifier = Modifier.padding(bottom = 80.dp),
+                            navGraph = NavGraphs.root,
+                            navController = navController,
+                            engine = rememberNavHostEngine(navHostContentAlignment = Alignment.TopCenter),
+                            defaultTransitions = object : NavHostAnimatedDestinationStyle() {
+                                override val enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                    {
+                                        // If the target is a detail page (not a bottom navigation page), slide in from the right
+                                        if (targetState.destination.route !in bottomBarRoutes) {
+                                            slideInHorizontally(initialOffsetX = { it })
+                                        } else {
+                                            // Otherwise (switching between bottom navigation pages), use fade in
+                                            fadeIn(animationSpec = tween(340))
+                                        }
+                                    }
+
+                                override val exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                    {
+                                        // If navigating from the home page (bottom navigation page) to a detail page, slide out to the left
+                                        if (initialState.destination.route in bottomBarRoutes && targetState.destination.route !in bottomBarRoutes) {
+                                            slideOutHorizontally(targetOffsetX = { -it / 4 }) + fadeOut()
+                                        } else {
+                                            // Otherwise (switching between bottom navigation pages), use fade out
+                                            fadeOut(animationSpec = tween(340))
+                                        }
+                                    }
+
+                                override val popEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition =
+                                    {
+                                        // If returning to the home page (bottom navigation page), slide in from the left
+                                        if (targetState.destination.route in bottomBarRoutes) {
+                                            slideInHorizontally(initialOffsetX = { -it / 4 }) + fadeIn()
+                                        } else {
+                                            // Otherwise (e.g., returning between multiple detail pages), use default fade in
+                                            fadeIn(animationSpec = tween(340))
+                                        }
+                                    }
+
+                                override val popExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition =
+                                    {
+                                        // If returning from a detail page (not a bottom navigation page), scale down and fade out
+                                        if (initialState.destination.route !in bottomBarRoutes) {
+                                            scaleOut(targetScale = 0.9f) + fadeOut()
+                                        } else {
+                                            // Otherwise, use default fade out
+                                            fadeOut(animationSpec = tween(340))
+                                        }
+                                    }
+                            }
+                        )
+                    }
+                }
             }
         }
-    }
 
-    // Initialize Coil
-    val iconSize = resources.getDimensionPixelSize(android.R.dimen.app_icon_size)
-    Coil.setImageLoader(
-        ImageLoader.Builder(this)
-            .components {
-                add(AppIconKeyer())
-                add(AppIconFetcher.Factory(iconSize, false, this@MainActivity))
-            }
-            .build()
-    )
+        // Initialize Coil
+        val iconSize = resources.getDimensionPixelSize(android.R.dimen.app_icon_size)
+        Coil.setImageLoader(
+            ImageLoader.Builder(this)
+                .components {
+                    add(AppIconKeyer())
+                    add(AppIconFetcher.Factory(iconSize, false, this@MainActivity))
+                }
+                .build()
+        )
 
-    isLoading = false
+        isLoading = false
     }
 }
+
+@Composable
+fun MyBottomBar(
+    navController: NavHostController
+) {
+    val currentDestination = navController.currentDestination
+    val currentRoute = currentDestination?.route
+    
+    // 获取所有底部栏目的地
+    val bottomBarDestinations = BottomBarDestination.entries
+    
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        tonalElevation = 8.dp
+    ) {
+        bottomBarDestinations.forEach { destination ->
+            val isSelected = currentRoute == destination.direction.route
+            val isOnBackStack by navController.isRouteOnBackStackAsState(destination.direction)
+            
+            NavigationBarItem(
+                selected = isSelected,
+                onClick = {
+                    if (!isSelected) {
+                        navController.navigate(destination.direction.route) {
+                            // 清除返回栈，避免重复堆叠相同的页面
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(destination.label)
+                    )
+                },
+                label = {
+                    Text(
+                        text = stringResource(destination.label),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
+                alwaysShowLabel = true
+            )
+        }
+    }
+}
+
+// 如果 BottomBarDestination 不在正确的包中，这里是一个备用定义
+// enum class BottomBarDestination(
+//     val direction: DirectionDestinationSpec,
+//     val icon: ImageVector,
+//     val label: Int
+// ) {
+//     Home(
+//         direction = HomeScreenDestination,
+//         icon = Icons.Default.Home,
+//         label = R.string.home
+//     ),
+//     Apps(
+//         direction = AppsScreenDestination,
+//         icon = Icons.Default.Apps,
+//         label = R.string.apps
+//     ),
+//     Patches(
+//         direction = PatchesScreenDestination,
+//         icon = Icons.Default.Build,
+//         label = R.string.patches
+//     ),
+//     Settings(
+//         direction = SettingsScreenDestination,
+//         icon = Icons.Default.Settings,
+//         label = R.string.settings
+//     )
+// }

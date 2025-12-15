@@ -6,7 +6,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -36,14 +35,25 @@ object MusicManager : DefaultLifecycleObserver {
     private val _duration = MutableStateFlow(0)
     val duration: StateFlow<Int> = _duration.asStateFlow()
 
+    // 存储注册的生命周期所有者
+    private var registeredLifecycleOwner: LifecycleOwner? = null
+
     fun init(ctx: Context) {
         context = ctx.applicationContext
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        
-        // Initial setup if enabled and auto-play is on
-        if (MusicConfig.isMusicEnabled && MusicConfig.isAutoPlayEnabled) {
-            prepareAndPlay()
-        }
+        // 这里不需要初始化 ProcessLifecycleOwner，因为现在使用手动注册
+    }
+
+    // 新增：手动注册生命周期的方法
+    fun registerLifecycle(lifecycleOwner: LifecycleOwner) {
+        registeredLifecycleOwner?.lifecycle?.removeObserver(this)
+        lifecycleOwner.lifecycle.addObserver(this)
+        registeredLifecycleOwner = lifecycleOwner
+    }
+
+    // 新增：取消注册生命周期
+    fun unregisterLifecycle() {
+        registeredLifecycleOwner?.lifecycle?.removeObserver(this)
+        registeredLifecycleOwner = null
     }
 
     private fun startProgressUpdater() {
@@ -72,13 +82,7 @@ object MusicManager : DefaultLifecycleObserver {
             mediaPlayer?.apply {
                 setDataSource(context!!, Uri.fromFile(file))
                 setVolume(MusicConfig.volume, MusicConfig.volume)
-                isLooping = MusicConfig.isLoopingEnabled
-                setOnCompletionListener {
-                    if (!isLooping) {
-                        _isPlaying.value = false
-                        _currentPosition.value = 0
-                    }
-                }
+                isLooping = true
                 prepare()
                 _duration.value = duration
                 start()
@@ -156,14 +160,6 @@ object MusicManager : DefaultLifecycleObserver {
             mediaPlayer?.setVolume(volume, volume)
         } catch (e: Exception) {
             Log.e(TAG, "Error setting volume", e)
-        }
-    }
-
-    fun updateLooping(looping: Boolean) {
-        try {
-            mediaPlayer?.isLooping = looping
-        } catch (e: Exception) {
-            Log.e(TAG, "Error setting looping", e)
         }
     }
     

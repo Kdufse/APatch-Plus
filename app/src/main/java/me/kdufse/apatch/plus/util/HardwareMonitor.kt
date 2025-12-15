@@ -1,4 +1,4 @@
-package me.bmax.apatch.util
+package me.kdufse.apatch.plus.util
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers

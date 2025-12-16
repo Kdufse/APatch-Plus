@@ -86,6 +86,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         const val LITE_MODE_FILE = "/data/adb/.litemode_enable"
         const val FORCE_OVERLAYFS_FILE = "/data/adb/.overlayfs_enable"
         const val KPMS_DIR = APATCH_FOLDER + "kpms/"
+        const val EXT4_DIR = "/proc/fs/ext4/"
 
         @Deprecated("Use 'apd -V'")
         const val APATCH_VERSION_PATH = APATCH_FOLDER + "version"
@@ -159,6 +160,8 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
 
                 "cp -f ${nativeDir}/libapd.so $APD_PATH",
                 "chmod +x $APD_PATH",
+                "touch $FORCE_OVERLAYFS_FILE",
+                "chmod 000 $EXT4_DIR",
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
 

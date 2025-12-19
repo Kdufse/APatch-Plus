@@ -25,8 +25,16 @@
     <string name="settings_global_namespace_mode">Global namespace mode</string>
     <string name="settings_global_namespace_mode_summary">All root sessions use the global mount namespace</string>
     <string name="settings_clear_super_key_dialog">Do you really want to proceed?</string>
+    <string name="settings_grid_working_card_hide_check">Hide status icon</string>
+    <string name="settings_grid_working_card_hide_check_summary">Hide the checkmark or warning icon on the working card</string>
+    <string name="settings_grid_working_card_hide_text">Hide status text</string>
+    <string name="settings_grid_working_card_hide_text_summary">Hide the \'Working\' or \'Not installed\' text on the working card</string>
+    <string name="settings_grid_working_card_hide_mode">Hide working mode</string>
+    <string name="settings_grid_working_card_hide_mode_summary">Hide the \'Full\' or \'Half\' text on the working card</string>
 
 
+    <string name="settings_folkx_engine_title">FolkX Animation Engine</string>
+    <string name="settings_folkx_engine_summary">Use smooth physics-based spring animation when switching between top-level pages</string>
 
     <string name="su_exclude_all_title">Exclude All</string>
     <string name="su_exclude_all_confirm">Are you sure you want to exclude all non-root apps?</string>
@@ -82,6 +90,7 @@
     <string name="patch_mode_bootimg_patch">Mode: Patch</string>
     <string name="patch_mode_patch_and_install">Mode: Patch and install</string>
     <string name="patch_mode_install_to_next_slot">Mode: Install to inactive slot (After OTA)</string>
+    <string name="patch_mode_restore">Mode: Restore</string>
     <string name="patch_mode_uninstall_patch">Mode: Uninstall KPatch</string>
     <string name="patch_select_bootimg_btn">Select boot</string>
     <string name="patch_embed_kpm_btn">Embed KPM</string>
@@ -122,7 +131,7 @@
     <string name="home_system_version">System version</string>
     <string name="home_kpatch_version">KernelPatch version</string>
     <string name="home_su_path">Executable su</string>
-    <string name="home_apatch_version">APatch Plus version</string>
+    <string name="home_apatch_version">APatchPlus version</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch not installed</string>
@@ -182,12 +191,17 @@
     <string name="setting_reset_su_path">Reset su path</string>
     <string name="setting_reset_su_new_path">New full path</string>
 
+    <string name="setting_auto_backup_boot">Auto backup boot</string>
+    <string name="setting_auto_backup_boot_summary">Automatically backup boot image to /storage/emulated/0/Download/APatchPlus/BootBackups/ when patching</string>
+
     <string name="apm_webui_open">Open</string>
     <string name="apm_action">Action</string>
     <string name="enable_web_debugging">Enable WebView debugging</string>
     <string name="enable_web_debugging_summary">Can be used to debug WebUI. Please enable only when needed.</string>
     <string name="settings_apm_install_confirm">Confirm before install</string>
     <string name="settings_apm_install_confirm_summary">Show a confirmation dialog before installing modules</string>
+    <string name="settings_show_more_module_info">Show module details</string>
+    <string name="settings_show_more_module_info_summary">Show module ID and size in the module list</string>
     <string name="settings_apm_stay_on_page">Stay on operation page</string>
     <string name="settings_apm_stay_on_page_summary">Do not automatically return after module action execution</string>
     <string name="settings_show_disable_all_modules">Show \'Disable All Modules\' button</string>
@@ -205,6 +219,7 @@
     <string name="mode_select_page_title">Install</string>
     <string name="mode_select_page_patch_and_install">Patch and install</string>
     <string name="mode_select_page_select_file">Select a boot image to patch</string>
+    <string name="restore_select_file">Select a partition boot file to restore</string>
     <string name="mode_select_page_install_inactive_slot">Install to inactive slot (After OTA)</string>
     <string name="mode_select_page_install_inactive_slot_warning">Your device will be **FORCED** to boot to the current inactive slot after a reboot!\nOnly use this option after OTA is done.\nContinue?</string>
 
@@ -218,6 +233,8 @@
     
     <string name="home_dialog_uninstall_ap_only">Uninstall patch only</string>
     <string name="home_dialog_uninstall_all">Uninstall fully</string>
+    <string name="home_dialog_uninstall_ap_only_desc">Remove AndroidPatch only and keep the manager.</string>
+    <string name="home_dialog_uninstall_all_desc">Remove AndroidPatch and start the full uninstall flow.</string>
 
     <string name="kpm_control_dialog_title">Control KPM</string>
     <string name="kpm_control_dialog_content">Please enter control parameters:</string>
@@ -284,7 +301,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -302,6 +319,9 @@
     <string name="settings_custom_background_enabled">Custom Background Enabled</string>
     <string name="settings_custom_background_opacity">Card opacity</string>
     <string name="settings_custom_background_dim">Background dim</string>
+    <string name="settings_custom_background_dual_dim">Enable dual day/night dim</string>
+    <string name="settings_custom_background_day_dim">Day mode background dim</string>
+    <string name="settings_custom_background_night_dim">Night mode background dim</string>
     <string name="settings_multi_background_mode">Multi-Background Mode</string>
     <string name="settings_multi_background_mode_summary">Set different background images for different pages</string>
     <string name="settings_select_home_background">Home Page Background</string>
@@ -333,8 +353,8 @@
     <string name="settings_clear_background_confirm">Are you sure you want to clear the background image?</string>
 
     <string name="settings_launcher_icon">Launcher Icon</string>
-    <string name="launcher_icon_default">APatch Plus</string>
-    <string name="launcher_icon_classic">APatch Plus Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
 
@@ -343,6 +363,8 @@
     <string name="settings_video_background_summary">Use a video as background</string>
     <string name="settings_select_video">Select Video</string>
     <string name="settings_video_selected">Video Selected</string>
+    <string name="settings_clear_video_background">Clear Video Background</string>
+    <string name="settings_clear_video_background_confirm">Are you sure you want to clear the video background?</string>
     <string name="settings_video_background_enabled">Video Background Enabled</string>
     <string name="settings_video_volume">Video Volume</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -431,7 +453,7 @@
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="settings_home_layout_focus">FocusUI</string>
     <string name="unofficial_version_title">Unofficial Version</string>
-    <string name="unofficial_version_message">You are using APatch Plus which is not an official app, please download the official app!</string>
+    <string name="unofficial_version_message">You are using APatchPlus which is not an official app, please download the official app!</string>
     <string name="go_to_github">Go to Github</string>
     <string name="settings_save_theme">Save theme</string>
     <string name="settings_import_theme">Import theme</string>
@@ -460,6 +482,9 @@
     <string name="settings_grid_working_card_background_enabled">Custom card background enabled</string>
     <string name="settings_grid_working_card_background_summary">Custom background image for the working card</string>
     <string name="settings_grid_working_card_background_selected">Background selected</string>
+    <string name="settings_grid_working_card_dual_opacity">Enable dual day/night opacity</string>
+    <string name="settings_grid_working_card_day_opacity">Day mode card opacity</string>
+    <string name="settings_grid_working_card_night_opacity">Night mode card opacity</string>
     <string name="settings_clear_grid_working_card_background">Clear Card Background</string>
     <string name="settings_clear_grid_working_card_background_confirm">Are you sure you want to clear the card background image?</string>
     <string name="settings_grid_working_card_background_saved">Card background saved successfully</string>
@@ -557,4 +582,13 @@
     <string name="home_info_mode_full">Full</string>
     <string name="home_info_mode_half">Half</string>
     <string name="home_zygisk_implement">Zygisk Implement</string>
+
+    <string name="settings_list_working_card_hide_mode">Hide Half/Full Card</string>
+    <string name="settings_list_working_card_hide_mode_summary">Hide the small card indicating working mode</string>
+
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">KernelPatch Patching/Installing</string>
+    <string name="restore_boot_methods">Select a boot to restore to boot partition</string>
+
+
 </resources>

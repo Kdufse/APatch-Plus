@@ -40,6 +40,9 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.StringReader
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private const val TAG = "PatchViewModel"
 
@@ -49,6 +52,7 @@ class PatchesViewModel : ViewModel() {
         PATCH_ONLY(R.string.patch_mode_bootimg_patch),
         PATCH_AND_INSTALL(R.string.patch_mode_patch_and_install),
         INSTALL_TO_NEXT_SLOT(R.string.patch_mode_install_to_next_slot),
+        RESTORE(R.string.patch_mode_restore),
         UNPATCH(R.string.patch_mode_uninstall_patch)
     }
 
@@ -94,7 +98,7 @@ class PatchesViewModel : ViewModel() {
 
         // Extract scripts
         for (script in listOf(
-            "boot_patch.sh", "boot_unpatch.sh", "boot_extract.sh", "util_functions.sh", "kpimg"
+            "boot_patch.sh", "boot_unpatch.sh", "boot_extract.sh", "util_functions.sh", "kpimg", "boot_flash.sh"
         )) {
             val dest = File(patchDir, script)
             apApp.assets.open(script).writeTo(dest)
@@ -252,7 +256,7 @@ class PatchesViewModel : ViewModel() {
             if (mode != PatchMode.UNPATCH) {
                 parseKpimg()
             }
-            if (mode == PatchMode.PATCH_AND_INSTALL || mode == PatchMode.UNPATCH || mode == PatchMode.INSTALL_TO_NEXT_SLOT) {
+            if (mode == PatchMode.PATCH_AND_INSTALL || mode == PatchMode.UNPATCH || mode == PatchMode.INSTALL_TO_NEXT_SLOT || mode == PatchMode.RESTORE) {
                 extractAndParseBootimg(mode)
             }
             running = false
@@ -325,7 +329,7 @@ class PatchesViewModel : ViewModel() {
             val result = shell.newJob().add(
                 "export ASH_STANDALONE=1",
                 "cd $patchDir",
-                "cp /data/adb/aplus/ori.img new-boot.img",
+                "cp /data/adb/ap/ori.img new-boot.img",
                 "./busybox sh ./boot_unpatch.sh $bootDev",
                 "rm -f ${APApplication.APD_PATH}",
                 "rm -rf ${APApplication.APATCH_FOLDER}",
@@ -366,6 +370,55 @@ class PatchesViewModel : ViewModel() {
                 }
             }
             logs.add("****************************")
+
+            // Auto Backup Boot
+            val prefs = APApplication.sharedPreferences
+            if (prefs.getBoolean("auto_backup_boot", true)) {
+                logs.add(" Backing up boot image...")
+                try {
+                    val backupDir = File("/storage/emulated/0/Download/FolkPatch/BootBackups/")
+                    if (!backupDir.exists()) {
+                        backupDir.mkdirs()
+                    }
+                    val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                    val backupFile = File(backupDir, "boot_backup_$timestamp.img")
+                    srcBoot.inputStream().use { input ->
+                        backupFile.outputStream().use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                    logs.add(" Boot image backed up to ${backupFile.absolutePath}")
+                    logs.add("****************************")
+                } catch (e: Exception) {
+                    logs.add(" Backup failed: ${e.message}")
+                    Log.e(TAG, "Backup failed", e)
+                    logs.add("****************************")
+                }
+            }
+
+            if (mode == PatchMode.RESTORE) {
+                logs.add(" Restoring boot image...")
+                val restoreCommand = mutableListOf("./busybox", "sh", "boot_flash.sh", bootDev, srcBoot.path)
+                
+                val result = shell.newJob().add(
+                    "export ASH_STANDALONE=1",
+                    "cd $patchDir",
+                    restoreCommand.joinToString(" "),
+                ).to(logs, logs).exec()
+
+                if (result.isSuccess) {
+                    logs.add(" Restore successful")
+                    needReboot = true
+                    APApplication.markNeedReboot()
+                } else {
+                    logs.add(" Restore failed")
+                    error = result.err.joinToString("\n")
+                }
+                logs.add("****************************")
+                patchdone = true
+                patching = false
+                return@launch
+            }
 
             var patchCommand = mutableListOf("./busybox sh boot_patch.sh \"$0\" \"$@\"")
 

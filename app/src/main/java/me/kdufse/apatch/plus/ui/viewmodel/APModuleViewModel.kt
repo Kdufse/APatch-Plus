@@ -11,12 +11,16 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.kdufse.apatch.plus.apApp
+import me.kdufse.apatch.plus.util.getRootShell
 import me.kdufse.apatch.plus.util.listModules
 import me.kdufse.apatch.plus.util.toggleModule
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.Collator
+import java.text.DecimalFormat
 import java.util.Locale
+import kotlin.math.log10
+import kotlin.math.pow
 
 class APModuleViewModel : ViewModel() {
     companion object {
@@ -172,4 +176,31 @@ class APModuleViewModel : ViewModel() {
 
         return Triple(zipUrl, version, changelog)
     }
+
+    fun getModuleSize(moduleId: String): String {
+        val bytes = runCatching {
+            val command = "/data/adb/ap/bin/busybox du -sb /data/adb/modules/$moduleId"
+            val result = getRootShell().newJob().add(command).to(ArrayList(), null).exec()
+
+            if (result.isSuccess && result.out.isNotEmpty()) {
+                val sizeStr = result.out.firstOrNull()?.split("\t")?.firstOrNull()
+                sizeStr?.toLongOrNull() ?: 0L
+            } else {
+                0L
+            }
+        }.getOrDefault(0L)
+
+        return formatFileSize(bytes)
+    }
+}
+
+private fun formatFileSize(bytes: Long): String {
+    if (bytes <= 0) return "0 KB"
+
+    val units = arrayOf("B", "KB", "MB", "GB", "TB")
+    val digitGroups = (log10(bytes.toDouble()) / log10(1024.0)).toInt().coerceIn(0, units.lastIndex)
+
+    return DecimalFormat("#,##0.#").format(
+        bytes / 1024.0.pow(digitGroups.toDouble())
+    ) + " " + units[digitGroups]
 }

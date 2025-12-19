@@ -86,11 +86,12 @@ fun SettingsCategory(
     icon: ImageVector? = null,
     title: String,
     initialExpanded: Boolean = false,
+    isSearching: Boolean = false,
     content: @Composable () -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(initialExpanded) }
     val rotationState by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
+        targetValue = if (expanded || isSearching) 180f else 0f,
         label = "ArrowRotation"
     )
 
@@ -114,18 +115,20 @@ fun SettingsCategory(
                 }
             } else null,
             trailingContent = {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier.rotate(rotationState)
-                )
+                if (!isSearching) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        modifier = Modifier.rotate(rotationState)
+                    )
+                }
             },
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             modifier = Modifier
-                .clickable { expanded = !expanded }
+                .clickable(enabled = !isSearching) { expanded = !expanded }
         )
         
-        AnimatedVisibility(visible = expanded) {
+        AnimatedVisibility(visible = expanded || isSearching) {
             Column {
                 content()
             }

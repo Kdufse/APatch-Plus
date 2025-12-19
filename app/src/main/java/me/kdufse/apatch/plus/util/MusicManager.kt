@@ -4,9 +4,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner  // 添加这行导入
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,7 +16,7 @@ import kotlinx.coroutines.launch
 import me.kdufse.apatch.plus.ui.theme.MusicConfig
 import java.io.File
 
-object MusicManager : DefaultLifecycleObserver {
+object MusicManager {
     private const val TAG = "MusicManager"
     private var mediaPlayer: MediaPlayer? = null
     private var context: Context? = null
@@ -38,7 +35,6 @@ object MusicManager : DefaultLifecycleObserver {
 
     fun init(ctx: Context) {
         context = ctx.applicationContext
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         
         // Initial setup if enabled and auto-play is on
         if (MusicConfig.isMusicEnabled && MusicConfig.isAutoPlayEnabled) {
@@ -177,9 +173,9 @@ object MusicManager : DefaultLifecycleObserver {
         }
     }
 
-    override fun onStart(owner: LifecycleOwner) {
-        super.onStart(owner)
-        // App comes to foreground
+    // 手动调用的应用生命周期方法
+    fun onAppResume() {
+        // 应用回到前台
         if (MusicConfig.isMusicEnabled && MusicConfig.isAutoPlayEnabled) {
              if (mediaPlayer == null) {
                  prepareAndPlay()
@@ -190,9 +186,8 @@ object MusicManager : DefaultLifecycleObserver {
         }
     }
 
-    override fun onStop(owner: LifecycleOwner) {
-        super.onStop(owner)
-        // App goes to background
+    fun onAppPause() {
+        // 应用进入后台
         pause()
     }
 }

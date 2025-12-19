@@ -130,6 +130,20 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     }
     var dontShowAgain by remember { mutableStateOf(false) }
 
+    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
+    
+    DisposableEffect(Unit) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+            if (key == "show_more_module_info") {
+                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose {
+            prefs.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
     val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
     if (state != APApplication.State.ANDROIDPATCH_INSTALLED && state != APApplication.State.ANDROIDPATCH_NEED_UPDATE) {
         Column(
@@ -274,6 +288,7 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                     navigator,
                     viewModel = viewModel,
                     modules = filteredModuleList,
+                    showMoreModuleInfo = showMoreModuleInfo,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
@@ -375,6 +390,7 @@ private fun ModuleList(
     navigator: DestinationsNavigator,
     viewModel: APModuleViewModel,
     modules: List<APModuleViewModel.ModuleInfo>,
+    showMoreModuleInfo: Boolean,
     modifier: Modifier = Modifier,
     state: LazyListState,
     onInstallModule: (Uri) -> Unit,
@@ -540,6 +556,7 @@ private fun ModuleList(
                             module,
                             isChecked,
                             updatedModule.first,
+                            showMoreModuleInfo = showMoreModuleInfo,
                             onUninstall = {
                                 scope.launch { onModuleUninstall(module) }
                             },
@@ -719,6 +736,7 @@ private fun ModuleItem(
     module: APModuleViewModel.ModuleInfo,
     isChecked: Boolean,
     updateUrl: String,
+    showMoreModuleInfo: Boolean,
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,
@@ -729,6 +747,12 @@ private fun ModuleItem(
     val decoration = if (!module.remove) TextDecoration.None else TextDecoration.LineThrough
     val moduleAuthor = stringResource(id = R.string.apm_author)
     val viewModel = viewModel<APModuleViewModel>()
+
+    val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
+        value = withContext(Dispatchers.IO) {
+            viewModel.getModuleSize(module.id)
+        }
+    }
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
@@ -787,6 +811,46 @@ private fun ModuleItem(
                     textDecoration = decoration,
                     color = MaterialTheme.colorScheme.outline
                 )
+
+                if (showMoreModuleInfo) {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Text(
+                                text = module.id,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Text(
+                                text = sizeStr,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+                }
 
                 HorizontalDivider(
                     thickness = 1.5.dp,

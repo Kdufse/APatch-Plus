@@ -3,12 +3,12 @@ package me.kdufse.apatch.plus.ui.screen
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Apps
-import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.Archive
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Security
 import androidx.compose.material.icons.outlined.Settings
@@ -41,8 +41,8 @@ enum class BottomBarDestination(
     KModule(
         KPModuleScreenDestination,
         R.string.kpm,
-        Icons.Filled.Build,
-        Icons.Outlined.Build,
+        Icons.Filled.Archive,
+        Icons.Outlined.Archive,
         true,
         false
     ),

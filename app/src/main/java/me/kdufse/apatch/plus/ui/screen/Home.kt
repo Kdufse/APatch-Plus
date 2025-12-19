@@ -4,6 +4,7 @@ import android.os.Build
 import android.system.Os
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,8 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.RadioButtonChecked
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import me.kdufse.apatch.plus.ui.theme.MusicConfig
 import me.kdufse.apatch.plus.util.MusicManager
 import androidx.compose.material.icons.filled.Warning
@@ -38,9 +41,11 @@ import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.DeleteForever
 import androidx.compose.material.icons.outlined.InstallMobile
 import androidx.compose.material.icons.outlined.SystemUpdate
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -63,6 +68,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -72,7 +78,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -108,6 +116,23 @@ import me.kdufse.apatch.plus.util.reboot
 import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
 
 private val managerVersion = getManagerVersion()
+
+private enum class ApatchUninstallOption(
+    @StringRes val titleRes: Int,
+    @StringRes val descRes: Int,
+    val icon: ImageVector,
+) {
+    PATCH_ONLY(
+        titleRes = R.string.home_dialog_uninstall_ap_only,
+        descRes = R.string.home_dialog_uninstall_ap_only_desc,
+        icon = Icons.Outlined.Delete
+    ),
+    FULL(
+        titleRes = R.string.home_dialog_uninstall_all,
+        descRes = R.string.home_dialog_uninstall_all_desc,
+        icon = Icons.Outlined.DeleteForever
+    ),
+}
 
 @Destination<RootGraph>(start = true)
 @Composable
@@ -167,55 +192,125 @@ fun HomeScreenV1(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UninstallDialog(showDialog: MutableState<Boolean>, navigator: DestinationsNavigator) {
-    BasicAlertDialog(
-        onDismissRequest = { showDialog.value = false }, properties = DialogProperties(
-            decorFitsSystemWindows = true,
-            usePlatformDefaultWidth = false,
+    if (!showDialog.value) return
+
+    val options = remember { listOf(ApatchUninstallOption.PATCH_ONLY, ApatchUninstallOption.FULL) }
+    var selectedOption by remember { mutableStateOf<ApatchUninstallOption?>(null) }
+
+    MaterialTheme(
+        colorScheme = MaterialTheme.colorScheme.copy(
+            surface = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     ) {
-        Surface(
-            modifier = Modifier
-                .width(320.dp)
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(20.dp),
-            tonalElevation = AlertDialogDefaults.TonalElevation,
-            color = AlertDialogDefaults.containerColor,
-        ) {
-            Column(modifier = Modifier.padding(PaddingValues(all = 24.dp))) {
-                Box(
-                    Modifier
-                        .padding(PaddingValues(bottom = 16.dp))
-                        .align(Alignment.CenterHorizontally)
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.home_dialog_uninstall_title),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.home_dialog_uninstall_title),
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
-                ) {
-                    TextButton(onClick = {
-                        showDialog.value = false
-                        APApplication.uninstallApatch()
-                    }) {
-                        Text(text = stringResource(id = R.string.home_dialog_uninstall_ap_only))
-                    }
+                    options.forEach { option ->
+                        val isSelected = selectedOption == option
+                        val backgroundColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            Color.Transparent
+                        }
+                        val subtitleColor = if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
 
-                    TextButton(onClick = {
-                        showDialog.value = false
-                        APApplication.uninstallApatch()
-                        navigator.navigate(PatchesDestination(PatchesViewModel.PatchMode.UNPATCH))
-                    }) {
-                        Text(text = stringResource(id = R.string.home_dialog_uninstall_all))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(backgroundColor)
+                                .clickable { selectedOption = option }
+                                .padding(vertical = 12.dp, horizontal = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = option.icon,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .padding(end = 16.dp)
+                                    .size(24.dp)
+                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(option.titleRes),
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Text(
+                                    text = stringResource(option.descRes),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = subtitleColor,
+                                )
+                            }
+                            Icon(
+                                imageVector = if (isSelected) {
+                                    Icons.Filled.RadioButtonChecked
+                                } else {
+                                    Icons.Filled.RadioButtonUnchecked
+                                },
+                                contentDescription = null,
+                                tint = if (isSelected) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
-            }
-            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
-            APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
-        }
+
+                val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+                SideEffect {
+                    APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        when (selectedOption) {
+                            ApatchUninstallOption.PATCH_ONLY -> {
+                                showDialog.value = false
+                                APApplication.uninstallApatch()
+                            }
+
+                            ApatchUninstallOption.FULL -> {
+                                showDialog.value = false
+                                APApplication.uninstallApatch()
+                                navigator.navigate(PatchesDestination(PatchesViewModel.PatchMode.UNPATCH))
+                            }
+
+                            null -> Unit
+                        }
+                    },
+                    enabled = selectedOption != null,
+                ) {
+                    Text(text = stringResource(android.R.string.ok))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text(text = stringResource(android.R.string.cancel))
+                }
+            },
+            shape = MaterialTheme.shapes.extraLarge,
+            tonalElevation = 4.dp,
+        )
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -408,7 +503,7 @@ private fun TopBar(
     var showDropdownMoreOptions by remember { mutableStateOf(false) }
     var showDropdownReboot by remember { mutableStateOf(false) }
     val prefs = APApplication.sharedPreferences
-    val currentTitle = prefs.getString("app_title", "apatchplus") ?: "apatchplus"
+    val currentTitle = prefs.getString("app_title", "folkpatch") ?: "folkpatch"
     val titleResId = when (currentTitle) {
         "fpatch" -> R.string.app_title_fpatch
         "apatch_folk" -> R.string.app_title_apatch_folk
@@ -420,7 +515,7 @@ private fun TopBar(
         "superuser" -> R.string.app_title_superuser
         "superpatch" -> R.string.app_title_superpatch
         "magicpatch" -> R.string.app_title_magicpatch
-        else -> R.string.app_title_apatchplus
+        else -> R.string.app_title_folkpatch
     }
 
     TopAppBar(title = {
@@ -650,10 +745,12 @@ private fun KStatusCard(
                                     text = stringResource(R.string.home_working),
                                     style = MaterialTheme.typography.titleMedium
                                 )
-                                Spacer(Modifier.width(8.dp))
-                                StatusBadge(
-                                    text = if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) "Full" else "Half"
-                                )
+                                if (!BackgroundConfig.isListWorkingCardModeHidden) {
+                                    Spacer(Modifier.width(8.dp))
+                                    StatusBadge(
+                                        text = if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) "Full" else "Half"
+                                    )
+                                }
                             }
                         }
 
@@ -686,7 +783,7 @@ private fun KStatusCard(
                     if (kpState != APApplication.State.UNKNOWN_STATE && kpState != APApplication.State.KERNELPATCH_NEED_UPDATE && kpState != APApplication.State.KERNELPATCH_NEED_REBOOT) {
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            text = "${Version.installedKPVString()} (${managerVersion.second}) - " + if (apState != APApplication.State.ANDROIDPATCH_NOT_INSTALLED) "Full" else "KernelPatch",
+                            text = "${Version.installedKPVString()} (${managerVersion.second})" + if (!BackgroundConfig.isListWorkingCardModeHidden) " - " + (if (apState != APApplication.State.ANDROIDPATCH_NOT_INSTALLED) "Full" else "KernelPatch") else "",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }

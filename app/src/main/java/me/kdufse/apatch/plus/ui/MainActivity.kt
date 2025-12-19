@@ -369,7 +369,7 @@ fun UnofficialVersionDialog() {
                 Row(modifier = Modifier.align(Alignment.End)) {
                     TextButton(
                         onClick = {
-                            uriHandler.openUri("https://github.com/matsuzaka-yuki/FolkPatch")
+                            uriHandler.openUri("https://github.com/Kdufse/APatch-Plus")
                         }
                     ) {
                         Text(stringResource(R.string.go_to_github))

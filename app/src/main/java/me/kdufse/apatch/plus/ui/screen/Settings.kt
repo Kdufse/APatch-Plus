@@ -536,7 +536,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val showResetSuPath = kPatchReady && (matchGeneral || shouldShow(resetSuPathTitle))
 
             val appTitleTitle = stringResource(id = R.string.settings_app_title)
-            val currentAppTitleRaw = prefs.getString("app_title", "folkpatch")
+            val currentAppTitleRaw = prefs.getString("app_title", "apatchplus")
             val currentAppTitle = stringResource(appTitleNameToString(currentAppTitleRaw.toString()))
             val showAppTitle = matchGeneral || shouldShow(appTitleTitle, currentAppTitle)
 
@@ -1852,7 +1852,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         SwitchItem(
                             icon = Icons.Filled.Save,
                             title = autoBackupTitle,
-                            summary = autoBackupSummary + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/FolkPatch/ModuleBackups",
+                            summary = autoBackupSummary + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APatchPlus/ModuleBackups",
                             checked = autoBackupModule
                         ) {
                             prefs.edit { putBoolean("auto_backup_module", it) }
@@ -1865,7 +1865,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                             headlineContent = { Text(openBackupDirTitle) },
                             modifier = Modifier.clickable {
-                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "FolkPatch/ModuleBackups")
+                                val backupDir = java.io.File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "APatchPlus/ModuleBackups")
                                 if (!backupDir.exists()) backupDir.mkdirs()
 
                                 try {
@@ -2141,7 +2141,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                     scope.launch {
                         loadingDialog.show()
                         try {
-                            val exportDir = java.io.File("/storage/emulated/0/Download/FolkPatch/Themes/")
+                            val exportDir = java.io.File("/storage/emulated/0/Download/APatchPlus/Themes/")
                              if (!exportDir.exists()) {
                                  exportDir.mkdirs()
                              }
@@ -2487,7 +2487,7 @@ private data class AppTitle(
 
 private fun appTitleList(): List<AppTitle> {
     return listOf(
-        AppTitle("folkpatch", R.string.app_title_folkpatch),
+        AppTitle("apatchplus", R.string.app_title_apatchpplus),
         AppTitle("fpatch", R.string.app_title_fpatch),
         AppTitle("apatch_folk", R.string.app_title_apatch_folk),
         AppTitle("apatchx", R.string.app_title_apatchx),
@@ -2503,7 +2503,7 @@ private fun appTitleList(): List<AppTitle> {
 
 @Composable
 private fun appTitleNameToString(titleName: String): Int {
-    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_folkpatch
+    return appTitleList().find { it.name == titleName }?.nameId ?: R.string.app_title_apatchplus
 }
 
 

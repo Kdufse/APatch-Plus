@@ -111,7 +111,7 @@
     <string name="home_system_version">天道篇次</string>
     <string name="home_kpatch_version">道核符箓篇次</string>
     <string name="home_su_path">登仙令符</string>
-    <string name="home_apatch_version">APatch Plus仙法篇次</string>
+    <string name="home_apatch_version">APatchPlus仙法篇次</string>
 
     <string name="kpm">道核仙符</string>
     <string name="kpm_kp_not_installed">未凝炼道核符箓</string>
@@ -175,6 +175,12 @@
     <string name="setting_reset_su_path">重铸登仙令符之路</string>
     <string name="setting_reset_su_new_path">新登仙令符全径</string>
 
+    <string name="setting_auto_backup_boot">自动备份仙躯</string>
+    <string name="setting_auto_backup_boot_summary">炼符时自动备份仙躯镜像至 /storage/emulated/0/Download/APatchPlus/BootBackups/</string>
+
+    <string name="settings_folkx_engine_title">FolkX仙法动画引擎</string>
+    <string name="settings_folkx_engine_summary">在天阶仙页转换时使用仙域灵动的物理符箓动画</string>
+
     <string name="apm_webui_open">启仙法玄窗</string>
     <string name="apm_action">渡劫措置</string>
     <string name="enable_web_debugging">启WebView勘符之术</string>
@@ -187,6 +193,8 @@
     <string name="settings_show_disable_all_modules_summary">于仙符台，显一键禁诸仙符之仙钮</string>
     <string name="apm_install_confirm_title">凝符入体</string>
     <string name="apm_install_confirm_content">道友确欲凝炼%s仙符入体乎？</string>
+    <string name="settings_show_more_module_info">显仙符详录</string>
+    <string name="settings_show_more_module_info_summary">仙符录中显仙符号与大小</string>
     <string name="apm_disable_all_title">禁诸仙符</string>
     <string name="apm_disable_all_confirm">确欲尽禁诸仙符乎？大抵天道易筋前为之可避天劫。</string>
 
@@ -207,7 +215,9 @@
 
     <string name="home_dialog_uninstall_title">废去仙籍</string>
     <string name="home_dialog_uninstall_ap_only">唯废符箓</string>
+    <string name="home_dialog_uninstall_ap_only_desc">唯废系统符箓，留仙官</string>
     <string name="home_dialog_uninstall_all">尽废仙法</string>
+    <string name="home_dialog_uninstall_all_desc">废去系统符箓，始废仙流程</string>
 
     <string name="kpm_control_dialog_title">驭道核仙符</string>
     <string name="kpm_control_dialog_content">请输驭符之渡劫数参：</string>
@@ -274,7 +284,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_folkpatch">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -308,8 +318,8 @@
     <string name="settings_select_system_module_background">系统模块仙府背景</string>
     <string name="settings_select_settings_background">设置页面仙府背景</string>
     <string name="settings_launcher_icon">引仙台标识</string>
-    <string name="launcher_icon_default">APatch Plus</string>
-    <string name="launcher_icon_classic">APatch Plus Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -327,6 +337,20 @@
     <string name="home_hide_su_path_summary">于仙门事宜仙笺，隐登仙令符之路</string>
     <string name="home_hide_kpatch_version_summary">于仙门事宜仙笺，隐道核符箓篇次之宜</string>
     <string name="home_hide_fingerprint_summary">于仙门事宜仙笺，隐仙门指印之宜</string>
+    <string name="settings_grid_working_card_hide_check">隐仙符标记</string>
+    <string name="settings_grid_working_card_hide_check_summary">隐仙术卡片之符印或警示</string>
+    <string name="settings_grid_working_card_hide_text">隐仙术卡片之文字</string>
+    <string name="settings_grid_working_card_hide_text_summary">隐仙术卡片上"闭关修炼中中"或"未入仙门"文字</string>
+    <string name="settings_grid_working_card_hide_mode">隐仙术卡片之道法</string>
+    <string name="settings_grid_working_card_hide_mode_summary">隐仙术卡片上"Full"或"Half"文字</string>
+    <string name="settings_list_working_card_hide_mode">隐仙术模式小卡片</string>
+    <string name="settings_list_working_card_hide_mode_summary">隐显示仙术工作模式之小卡片</string>
+    <string name="settings_custom_background_dual_dim">启昼夜双修仙法</string>
+    <string name="settings_custom_background_day_dim">白昼仙法暗度</string>
+    <string name="settings_custom_background_night_dim">夜晚仙法暗度</string>
+    <string name="settings_grid_working_card_dual_opacity">启昼夜双透仙法</string>
+    <string name="settings_grid_working_card_day_opacity">白昼卡片透法</string>
+    <string name="settings_grid_working_card_night_opacity">夜晚卡片透法</string>
     <!-- KPM AutoLoad Strings -->
     <string name="kpm_autoload_title">道核仙符自动引符</string>
     <string name="kpm_autoload_enabled">启自动引符</string>
@@ -414,7 +438,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">非官制版</string>
-    <string name="unofficial_version_message">君所用之APatch Plus非官制所出，请下载官制正版应用！</string>
+    <string name="unofficial_version_message">君所用之APatchPlus非官制所出，请下载官制正版应用！</string>
     <string name="go_to_github">往Github处</string>
     <string name="settings_save_theme">藏仙府色章</string>
     <string name="settings_import_theme">引仙府色章</string>
@@ -516,6 +540,8 @@
     <string name="settings_select_video">择影像</string>
     <string name="settings_video_selected">影像已择</string>
     <string name="settings_video_background_enabled">影像仙幕已启</string>
+    <string name="settings_clear_video_background">涤除影像仙幕</string>
+    <string name="settings_clear_video_background_confirm">确要涤除影像仙幕？</string>
     <string name="settings_video_volume">影像音量</string>
     <!-- File Picker -->
     <string name="file_picker_permission_required">需道友赐法</string>
@@ -544,4 +570,9 @@
     <string name="home_info_mode_full">圆满</string>
     <string name="home_info_mode_half">残缺</string>
     <string name="home_zygisk_implement">Zygisk 仙人指路</string>
+    
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">仙道符箓修补/安装</string>
+    <string name="restore_boot_methods">选择一仙法镜像恢复至仙籍分区</string>
+    <string name="restore_select_file">选择一仙籍引导文件以还原</string>
 </resources>

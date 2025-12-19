@@ -30,6 +30,15 @@
     <string name="home_click_to_learn_apatch">了解 APatch 的功能及使用方法</string>
     <string name="settings_hide_apatch_card">隐藏"了解 APatch"卡片</string>
     <string name="settings_hide_apatch_card_summary">隐藏首页的"了解 APatch"卡片</string>
+    <string name="settings_grid_working_card_hide_check">隐藏状态图标</string>
+    <string name="settings_grid_working_card_hide_check_summary">隐藏工作卡片上的对号或警告图标</string>
+    <string name="settings_grid_working_card_hide_text">隐藏状态文字</string>
+    <string name="settings_grid_working_card_hide_text_summary">隐藏工作卡片上的"工作中"或"未安装"文字</string>
+    <string name="settings_grid_working_card_hide_mode">隐藏工作模式</string>
+    <string name="settings_grid_working_card_hide_mode_summary">隐藏工作卡片上的"Full"或"Half"文字</string>
+
+    <string name="settings_folkx_engine_title">FolkX动画引擎</string>
+    <string name="settings_folkx_engine_summary">在顶层页面切换时使用丝滑的物理弹簧动画</string>
 
     <string name="about_source_code"><![CDATA[<p>在 %1$s 查看源代码<p/>加入我们的 %2$s 频道<p/>加入我们的 %3$s 群组]]></string>
     <string name="send_log">发送日志</string>
@@ -73,6 +82,7 @@
     <string name="patch_mode_bootimg_patch">模式：修补</string>
     <string name="patch_mode_patch_and_install">模式：修补并安装</string>
     <string name="patch_mode_install_to_next_slot">模式：安装到未激活槽位 (OTA 后)</string>
+    <string name="patch_mode_restore">模式：恢复</string>
     <string name="patch_mode_uninstall_patch">模式：卸载 KPatch</string>
     <string name="patch_select_bootimg_btn">选择镜像</string>
     <string name="patch_embed_kpm_btn">嵌入 KPM</string>
@@ -113,7 +123,7 @@
     <string name="home_system_version">系统版本</string>
     <string name="home_kpatch_version">内核补丁版本</string>
     <string name="home_su_path">su 可执行文件</string>
-    <string name="home_apatch_version">APatch Plus 版本</string>
+    <string name="home_apatch_version">APatchPlus 版本</string>
 
     <string name="kpm">内核模块</string>
     <string name="kpm_kp_not_installed">未安装内核补丁</string>
@@ -177,12 +187,17 @@
     <string name="setting_reset_su_path">重置 su 路径</string>
     <string name="setting_reset_su_new_path">新完整路径</string>
 
+    <string name="setting_auto_backup_boot">自动备份 Boot</string>
+    <string name="setting_auto_backup_boot_summary">修补时自动备份 Boot 镜像到 /storage/emulated/0/Download/APatchPlus/BootBackups/</string>
+
     <string name="apm_webui_open">打开</string>
     <string name="apm_action">操作</string>
     <string name="enable_web_debugging">启用 WebView 调试</string>
     <string name="enable_web_debugging_summary">可用于调试 WebUI。请仅在需要时启用。</string>
     <string name="settings_apm_install_confirm">安装模块确认</string>
     <string name="settings_apm_install_confirm_summary">安装模块前显示确认对话框</string>
+    <string name="settings_show_more_module_info">显示模块详细信息</string>
+    <string name="settings_show_more_module_info_summary">在模块列表中显示模块 ID 和大小</string>
     <string name="settings_apm_stay_on_page">留在操作页面</string>
     <string name="settings_apm_stay_on_page_summary">系统模块执行完操作后不自动返回</string>
     <string name="settings_show_disable_all_modules">显示"禁用全部模块"按钮</string>
@@ -198,6 +213,7 @@
     <string name="mode_select_page_title">安装</string>
     <string name="mode_select_page_patch_and_install">修补并安装</string>
     <string name="mode_select_page_select_file">选择要修补的镜像</string>
+    <string name="restore_select_file">选择一个要还原的分区引导文件</string>
     <string name="mode_select_page_install_inactive_slot">安装到未激活槽位 (OTA 后)</string>
     <string name="mode_select_page_install_inactive_slot_warning">您的设备将在重启后**强制**启动到当前未激活的槽位！\n仅在 OTA 完成后使用此选项。\n继续吗？</string>
 
@@ -211,6 +227,8 @@
     
     <string name="home_dialog_uninstall_ap_only">仅卸载补丁</string>
     <string name="home_dialog_uninstall_all">完全卸载</string>
+    <string name="home_dialog_uninstall_ap_only_desc">仅移除系统补丁，保留管理器。</string>
+    <string name="home_dialog_uninstall_all_desc">移除系统补丁并进入完整卸载流程。</string>
 
     <string name="kpm_control_dialog_title">控制 KPM</string>
     <string name="kpm_control_dialog_content">请输入控制参数：</string>
@@ -277,7 +295,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -295,6 +313,9 @@
     <string name="settings_custom_background_enabled">已启用自定义背景</string>
     <string name="settings_custom_background_opacity">卡片不透明度</string>
     <string name="settings_custom_background_dim">背景暗度</string>
+    <string name="settings_custom_background_dual_dim">启用双切暗色适配</string>
+    <string name="settings_custom_background_day_dim">白天模式暗度</string>
+    <string name="settings_custom_background_night_dim">夜间模式暗度</string>
     <string name="settings_multi_background_mode">启用多背景模式</string>
     <string name="settings_multi_background_mode_summary">为不同页面设置不同的背景图片</string>
     <string name="settings_select_home_background">首页背景</string>
@@ -320,14 +341,14 @@
     <string name="settings_custom_background_saved">背景保存成功</string>
     <string name="settings_custom_background_error">保存背景失败</string>
     <string name="settings_background_selected">已选择背景</string>
-    <string name="settings_background_image_cleared">背景图片已清除</string>
+    <string name="settings_background_image_cleared">已移除背景</string>
     <string name="settings_clear_background">清除背景</string>
     <string name="settings_clear_background_confirm">确定要清除背景图片吗？</string>
 
 
     <string name="settings_launcher_icon">桌面图标</string>
-    <string name="launcher_icon_default">APatch Plus</string>
-    <string name="launcher_icon_classic">APatch Plus Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
 
@@ -336,6 +357,8 @@
     <string name="settings_video_background_summary">使用视频作为背景</string>
     <string name="settings_select_video">选择视频</string>
     <string name="settings_video_selected">已选择视频</string>
+    <string name="settings_clear_video_background">清除视频壁纸</string>
+    <string name="settings_clear_video_background_confirm">确定要清除视频壁纸吗？</string>
     <string name="settings_video_background_enabled">视频背景已启用</string>
     <string name="settings_video_volume">视频音量</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -423,7 +446,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">非官方版本</string>
-    <string name="unofficial_version_message">您正在使用的 APatch Plus 管理器為第三方版本，可能會造成財產損失，請下載正版APP使用！</string>
+    <string name="unofficial_version_message">您正在使用的 APatchPlus 管理器为第三方版本，可能会造成财产损失，请下载正版APP使用！</string>
     <string name="go_to_github">前往 Github</string>
     <string name="settings_save_theme">保存主题</string>
     <string name="settings_import_theme">导入主题</string>
@@ -452,6 +475,9 @@
     <string name="settings_grid_working_card_background_enabled">自定义卡片背景已启用</string>
     <string name="settings_grid_working_card_background_summary">为工作卡片设置自定义背景图片</string>
     <string name="settings_grid_working_card_background_selected">背景已选择</string>
+    <string name="settings_grid_working_card_dual_opacity">启用双切透明度适配</string>
+    <string name="settings_grid_working_card_day_opacity">白天模式透明度</string>
+    <string name="settings_grid_working_card_night_opacity">夜间模式透明度</string>
     <string name="settings_clear_grid_working_card_background">清除卡片背景</string>
     <string name="settings_clear_grid_working_card_background_confirm">确定要清除卡片背景图片吗？</string>
     <string name="settings_grid_working_card_background_saved">卡片背景保存成功</string>
@@ -550,4 +576,12 @@
     <string name="home_info_mode_full">完整</string>
     <string name="home_info_mode_half">不完全</string>
     <string name="home_zygisk_implement">Zygisk 实现</string>
+
+    <string name="settings_list_working_card_hide_mode">隐藏 Half/Full 小卡片</string>
+    <string name="settings_list_working_card_hide_mode_summary">隐藏显示工作模式的小卡片</string>
+
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">KernelPatch 修补/安装</string>
+    <string name="restore_boot_methods">选择一个启动来恢复到引导分区</string>
+
 </resources>

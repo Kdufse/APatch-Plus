@@ -113,7 +113,7 @@
     <string name="home_system_version">系統版本</string>
     <string name="home_kpatch_version">KernelPatch 版本</string>
     <string name="home_su_path">可執行 SU 路徑</string>
-    <string name="home_apatch_version">APatch Plus 版本</string>
+    <string name="home_apatch_version">APatchPlus 版本</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch 尚未安裝</string>
@@ -177,6 +177,12 @@
     <string name="setting_reset_su_path">重設 SU 路徑</string>
     <string name="setting_reset_su_new_path">新的完整路徑</string>
 
+    <string name="setting_auto_backup_boot">自動備份 Boot</string>
+    <string name="setting_auto_backup_boot_summary">修補時自動備份 Boot 鏡像到 /storage/emulated/0/Download/APatchPlus/BootBackups/</string>
+
+    <string name="settings_folkx_engine_title">FolkX 動畫引擎</string>
+    <string name="settings_folkx_engine_summary">在頂層頁面切換時使用絲滑的物理彈簧動畫</string>
+
     <string name="apm_webui_open">打開網頁介面</string>
     <string name="apm_action">操作</string>
     <string name="enable_web_debugging">啟用 WebView 偵錯</string>
@@ -193,6 +199,8 @@
     <string name="settings_donot_store_superkey">停用本機儲存密鑰</string>
     <string name="settings_donot_store_superkey_summary">每次管理器啟動時驗證超級密鑰</string>
 
+    <string name="settings_show_more_module_info">顯示模組詳細資訊</string>
+    <string name="settings_show_more_module_info_summary">在模組列表中顯示模組 ID 和大小</string>
     <string name="mode_select_page_title">安裝</string>
     <string name="mode_select_page_patch_and_install">直接安裝（通常選擇此項）</string>
     <string name="mode_select_page_select_file">選取要修補的「boot image」</string>
@@ -206,8 +214,15 @@
     <string name="home_more_menu_about">關於</string>
 
     <string name="home_dialog_uninstall_title">解除安裝</string>
-    <string name="home_dialog_uninstall_ap_only">僅刪除 AndroidPatch</string>
+    <string name="home_dialog_uninstall_ap_only">僅刪除系統修補</string>
+    <string name="home_dialog_uninstall_ap_only_desc">僅移除系統修補，保留管理器。</string>
     <string name="home_dialog_uninstall_all">完全卸載</string>
+    <string name="home_dialog_uninstall_all_desc">移除系統修補並進入完整卸載流程。</string>
+    
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">KernelPatch 修補/安裝</string>
+    <string name="restore_boot_methods">選擇一個啟動映像檔來復原到引導分割區</string>
+    <string name="restore_select_file">選擇一個要還原的磁區引導檔案</string>
 
     <string name="kpm_control_dialog_title">控制 KP模組</string>
     <string name="kpm_control_dialog_content">輸入控制參數：</string>
@@ -274,7 +289,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -307,8 +322,8 @@
     <string name="settings_select_system_module_background">系統模組背景</string>
     <string name="settings_select_settings_background">設置頁面背景</string>
     <string name="settings_launcher_icon">桌面圖示</string>
-    <string name="launcher_icon_default">APatch Plus Anime</string>
-    <string name="launcher_icon_classic">APatch Plus</string>
+    <string name="launcher_icon_default">APatchPlus Anime</string>
+    <string name="launcher_icon_classic">APatchPlus</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -327,6 +342,20 @@
     <string name="kpm_autoload_json_error">無效的JSON格式</string>
     <string name="kpm_autoload_json_helper">輸入有效的JSON，包含KPM檔案路徑陣列</string>
     <string name="kpm_autoload_save">保存配置</string>
+    <string name="settings_grid_working_card_hide_check">隱藏狀態圖示</string>
+    <string name="settings_grid_working_card_hide_check_summary">隱藏工作卡片上的勾選或警告圖示</string>
+    <string name="settings_grid_working_card_hide_text">隱藏狀態文字</string>
+    <string name="settings_grid_working_card_hide_text_summary">隱藏工作卡片上的"工作中"或"未安裝"文字</string>
+    <string name="settings_grid_working_card_hide_mode">隱藏工作模式</string>
+    <string name="settings_grid_working_card_hide_mode_summary">隱藏工作卡片上的"Full"或"Half"文字</string>
+    <string name="settings_list_working_card_hide_mode">隱藏 Half/Full 小卡片</string>
+    <string name="settings_list_working_card_hide_mode_summary">隱藏顯示工作模式的小卡片</string>
+    <string name="settings_custom_background_dual_dim">啟用日夜雙切模式</string>
+    <string name="settings_custom_background_day_dim">白天模式暗度</string>
+    <string name="settings_custom_background_night_dim">夜晚模式暗度</string>
+    <string name="settings_grid_working_card_dual_opacity">啟用日夜雙切透明度</string>
+    <string name="settings_grid_working_card_day_opacity">白天模式卡片透明度</string>
+    <string name="settings_grid_working_card_night_opacity">夜晚模式卡片透明度</string>
     <string name="kpm_autoload_save_confirm">保存自動載入配置？</string>
     <string name="kpm_autoload_save_success">配置保存成功</string>
     <string name="kpm_autoload_save_failed">配置保存失敗</string>
@@ -409,7 +438,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">非官方版本</string>
-    <string name="unofficial_version_message">你使用的APatch Plus並不是官方渠道下載的正版APP,請下載正版APP使用!</string>
+    <string name="unofficial_version_message">你使用的APatchPlus並不是官方渠道下載的正版APP,請下載正版APP使用!</string>
     <string name="go_to_github">前往 Github</string>
     <string name="settings_save_theme">儲存主題</string>
     <string name="settings_import_theme">匯入主題</string>
@@ -513,6 +542,8 @@
     <string name="settings_select_video">選擇影片</string>
     <string name="settings_video_selected">已選擇影片</string>
     <string name="settings_video_background_enabled">影片背景已啟用</string>
+    <string name="settings_clear_video_background">清除影片壁紙</string>
+    <string name="settings_clear_video_background_confirm">確定要清除影片壁紙嗎？</string>
     <string name="settings_video_volume">影片音量</string>
     <!-- File Picker -->
     <string name="file_picker_permission_required">需要權限</string>

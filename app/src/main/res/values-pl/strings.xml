@@ -117,7 +117,7 @@
     <string name="home_system_version">Wersja systemu</string>
     <string name="home_kpatch_version">Wersja KernelPatch</string>
     <string name="home_su_path">Plik wykonywalny su</string>
-    <string name="home_apatch_version">Wersja APatch Plus</string>
+    <string name="home_apatch_version">Wersja APatchPlus</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch nie jest zainstalowany</string>
@@ -181,6 +181,12 @@
     <string name="setting_reset_su_path">Resetuj ścieżkę su</string>
     <string name="setting_reset_su_new_path">Nowa pełna ścieżka</string>
 
+    <string name="setting_auto_backup_boot">Automatyczna kopia zapasowa Boot</string>
+    <string name="setting_auto_backup_boot_summary">Automatycznie twórz kopię zapasową obrazu Boot do /storage/emulated/0/Download/APatchPlus/BootBackups/ podczas łatania</string>
+
+    <string name="settings_folkx_engine_title">Silnik animacji FolkX</string>
+    <string name="settings_folkx_engine_summary">Używaj płynnych fizycznych animacji sprężynowych przy przełączaniu stron najwyższego poziomu</string>
+
     <string name="apm_webui_open">Otwórz</string>
     <string name="apm_action">Akcja</string>
     <string name="enable_web_debugging">Włącz debugowanie WebView</string>
@@ -189,6 +195,8 @@
     <string name="settings_apm_install_confirm_summary">Pokaż okno dialogowe potwierdzenia przed instalacją modułów</string>
     <string name="settings_show_disable_all_modules">Pokaż przycisk \'Wyłącz wszystkie moduły\'</string>
     <string name="settings_show_disable_all_modules_summary">Wyświetl przycisk na stronie modułów, aby wyłączyć wszystkie moduły naraz</string>
+    <string name="settings_show_more_module_info">Pokaż szczegóły modułu</string>
+    <string name="settings_show_more_module_info_summary">Pokaż ID i rozmiar modułu na liście modułów</string>
     <string name="apm_install_confirm_title">Instalacja modułu</string>
     <string name="apm_install_confirm_content">Czy na pewno chcesz zainstalować %s?</string>
 
@@ -213,7 +221,14 @@
     <string name="home_dialog_uninstall_title">Odinstaluj</string>
     
     <string name="home_dialog_uninstall_ap_only">Odinstaluj tylko poprawkę</string>
+    <string name="home_dialog_uninstall_ap_only_desc">Usuń tylko AndroidPatch, zachowując menedżer.</string>
     <string name="home_dialog_uninstall_all">Odinstaluj całkowicie</string>
+    <string name="home_dialog_uninstall_all_desc">Usuń AndroidPatch i rozpocznij pełny proces odinstalowywania.</string>
+    
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">KernelPatch Łatanie/Instalowanie</string>
+    <string name="restore_boot_methods">Wybierz rozruch do przywrócenia do partycji rozruchowej</string>
+    <string name="restore_select_file">Wybierz plik rozruchowy partycji do przywrócenia</string>
 
     <string name="kpm_control_dialog_title">Sterowanie KPM</string>
     <string name="kpm_control_dialog_content">Proszę wprowadzić parametry sterowania:</string>
@@ -280,7 +295,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -314,8 +329,8 @@
     <string name="settings_select_system_module_background">Tło modułu systemowego</string>
     <string name="settings_select_settings_background">Tło strony ustawień</string>
     <string name="settings_launcher_icon">Ikona launchera</string>
-    <string name="launcher_icon_default">APatch Plus</string>
-    <string name="launcher_icon_classic">APatch Plus Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -327,6 +342,20 @@
     <string name="kpm_autoload_title">Automatyczne ładowanie KPM</string>
     <string name="kpm_autoload_enabled">Włącz automatyczne ładowanie</string>
     <string name="kpm_autoload_enabled_summary">Automatycznie ładuj moduły KPM przy starcie aplikacji</string>
+    <string name="settings_grid_working_card_hide_check">Ukryj ikonę statusu</string>
+    <string name="settings_grid_working_card_hide_check_summary">Ukryj znacznik wyboru lub ikonę ostrzeżenia na karcie roboczej</string>
+    <string name="settings_grid_working_card_hide_text">Ukryj tekst statusu</string>
+    <string name="settings_grid_working_card_hide_text_summary">Ukryj tekst "Działa" lub "Nie zainstalowano" na karcie roboczej</string>
+    <string name="settings_grid_working_card_hide_mode">Ukryj tryb pracy</string>
+    <string name="settings_grid_working_card_hide_mode_summary">Ukryj tekst "Full" lub "Half" na karcie roboczej</string>
+    <string name="settings_list_working_card_hide_mode">Ukryj kartę Half/Full</string>
+    <string name="settings_list_working_card_hide_mode_summary">Ukryj małą kartę wskazującą tryb pracy</string>
+    <string name="settings_custom_background_dual_dim">Włącz podwójne przyciemnienie dzienne/nocne</string>
+    <string name="settings_custom_background_day_dim">Przyciemnienie tła w trybie dziennym</string>
+    <string name="settings_custom_background_night_dim">Przyciemnienie tła w trybie nocnym</string>
+    <string name="settings_grid_working_card_dual_opacity">Włącz podwójną przezroczystość dzienną/nocną</string>
+    <string name="settings_grid_working_card_day_opacity">Przezroczystość karty w trybie dziennym</string>
+    <string name="settings_grid_working_card_night_opacity">Przezroczystość karty w trybie nocnym</string>
     <string name="kpm_autoload_json_config">Konfiguracja JSON</string>
     <string name="kpm_autoload_json_label">Konfiguracja JSON</string>
     <string name="kpm_autoload_json_placeholder">{\n  "enabled": true,\n  "kpmPaths": [\n    "/sciezka/do/modulu1.kpm",\n    "/sciezka/do/modulu2.kpm"\n  ]\n}</string>
@@ -418,7 +447,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">Wersja nieoficjalna</string>
-    <string name="unofficial_version_message">Używasz APatch Plus, który nie jest oficjalną aplikacją, pobierz oficjalną aplikację!</string>
+    <string name="unofficial_version_message">Używasz APatchPlus, który nie jest oficjalną aplikacją, pobierz oficjalną aplikację!</string>
     <string name="go_to_github">Przejdź na Github</string>
     <string name="settings_save_theme">Zapisz motyw</string>
     <string name="settings_import_theme">Importuj motyw</string>
@@ -521,6 +550,8 @@
     <string name="settings_select_video">Wybierz Wideo</string>
     <string name="settings_video_selected">Wideo Wybrane</string>
     <string name="settings_video_background_enabled">Tło Wideo Włączone</string>
+    <string name="settings_clear_video_background">Wyczyść tapetę wideo</string>
+    <string name="settings_clear_video_background_confirm">Czy na pewno chcesz wyczyścić tapetę wideo?</string>
     <string name="settings_video_volume">Głośność Wideo</string>
     <!-- File Picker -->
     <string name="file_picker_permission_required">Wymagane uprawnienia</string>

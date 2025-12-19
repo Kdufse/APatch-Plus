@@ -113,7 +113,7 @@
     <string name="home_system_version">Phiên bản hệ thống</string>
     <string name="home_kpatch_version">Phiên bản bản vá nhân</string>
     <string name="home_su_path">Tệp thực thi su</string>
-    <string name="home_apatch_version">Phiên bản APatch Plus</string>
+    <string name="home_apatch_version">Phiên bản APatchPlus</string>
 
     <string name="kpm">Module nhân</string>
     <string name="kpm_kp_not_installed">Chưa cài đặt bản vá nhân</string>
@@ -177,6 +177,12 @@
     <string name="setting_reset_su_path">Đặt lại đường dẫn su</string>
     <string name="setting_reset_su_new_path">Đường dẫn đầy đủ mới</string>
 
+    <string name="setting_auto_backup_boot">Tự động sao lưu Boot</string>
+    <string name="setting_auto_backup_boot_summary">Tự động sao lưu ảnh Boot vào /storage/emulated/0/Download/APatchPlus/BootBackups/ khi vá</string>
+
+    <string name="settings_folkx_engine_title">Động cơ hoạt hình FolkX</string>
+    <string name="settings_folkx_engine_summary">Sử dụng hoạt hình lò xo vật lý mượt mà khi chuyển đổi các trang cấp cao nhất</string>
+
     <string name="apm_webui_open">Mở</string>
     <string name="apm_action">Hành động</string>
     <string name="enable_web_debugging">Bật gỡ lỗi WebView</string>
@@ -189,6 +195,8 @@
     <string name="settings_show_disable_all_modules_summary">Hiển thị nút vô hiệu hóa tất cả module một cách nhanh chóng trên trang module</string>
     <string name="apm_install_confirm_title">Cài đặt module</string>
     <string name="apm_install_confirm_content">Bạn có chắc chắn muốn cài đặt %s không?</string>
+    <string name="settings_show_more_module_info">Hiển thị chi tiết module</string>
+    <string name="settings_show_more_module_info_summary">Hiển thị ID và kích thước module trong danh sách module</string>
     <string name="apm_disable_all_title">Vô hiệu hóa tất cả module</string>
     <string name="apm_disable_all_confirm">Bạn có chắc chắn muốn vô hiệu hóa tất cả module không? Thông thường chỉ làm điều này trước khi cập nhật OTA.</string>
 
@@ -210,7 +218,14 @@
     <string name="home_dialog_uninstall_title">Gỡ cài đặt</string>
     
     <string name="home_dialog_uninstall_ap_only">Chỉ gỡ bản vá</string>
+    <string name="home_dialog_uninstall_ap_only_desc">Chỉ gỡ AndroidPatch và giữ lại trình quản lý.</string>
     <string name="home_dialog_uninstall_all">Gỡ hoàn toàn</string>
+    <string name="home_dialog_uninstall_all_desc">Gỡ AndroidPatch và bắt đầu quy trình gỡ cài đặt hoàn toàn.</string>
+    
+    <!-- Install Mode Select -->
+    <string name="kp_install_methods">KernelPatch Vá/安装</string>
+    <string name="restore_boot_methods">Chọn một boot để khôi phục vào phân vùng boot</string>
+    <string name="restore_select_file">Chọn tệp boot phân vùng để khôi phục</string>
 
     <string name="kpm_control_dialog_title">Kiểm soát KPM</string>
     <string name="kpm_control_dialog_content">Vui lòng nhập tham số kiểm soát:</string>
@@ -277,7 +292,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_apatchplus">APatchPlus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -324,13 +339,27 @@
     <string name="settings_select_system_module_background">Nền mô-đun hệ thống</string>
     <string name="settings_select_settings_background">Nền trang cài đặt</string>
     <string name="settings_launcher_icon">Biểu tượng màn hình chính</string>
-    <string name="launcher_icon_default">APatch Plus</string>
-    <string name="launcher_icon_classic">APatch Plus Anime</string>
+    <string name="launcher_icon_default">APatchPlus</string>
+    <string name="launcher_icon_classic">APatchPlus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
     <string name="launcher_icon_kitsune">Mặt nạ Kitsune</string>
     <string name="launcher_icon_magisk">Magisk</string>
+    <string name="settings_grid_working_card_hide_check">Ẩn biểu tượng trạng thái</string>
+    <string name="settings_grid_working_card_hide_check_summary">Ẩn dấu kiểm hoặc biểu tượng cảnh báo trên thẻ đang hoạt động</string>
+    <string name="settings_grid_working_card_hide_text">Ẩn văn bản trạng thái</string>
+    <string name="settings_grid_working_card_hide_text_summary">Ẩn văn bản "Đang hoạt động" hoặc "Chưa cài đặt" trên thẻ làm việc</string>
+    <string name="settings_grid_working_card_hide_mode">Ẩn chế độ làm việc</string>
+    <string name="settings_grid_working_card_hide_mode_summary">Ẩn văn bản "Full" hoặc "Half" trên thẻ làm việc</string>
+    <string name="settings_list_working_card_hide_mode">Ẩn thẻ Half/Full</string>
+    <string name="settings_list_working_card_hide_mode_summary">Ẩn thẻ nhỏ chỉ định chế độ làm việc</string>
+    <string name="settings_custom_background_dual_dim">Bật chế độ độ tối ngày/đêm kép</string>
+    <string name="settings_custom_background_day_dim">Độ tối nền ban ngày</string>
+    <string name="settings_custom_background_night_dim">Độ tối nền ban đêm</string>
+    <string name="settings_grid_working_card_dual_opacity">Bật chế độ độ trong suốt ngày/đêm kép</string>
+    <string name="settings_grid_working_card_day_opacity">Độ trong suốt thẻ ban ngày</string>
+    <string name="settings_grid_working_card_night_opacity">Độ trong suốt thẻ ban đêm</string>
     <string name="launcher_icon_superroot">SuperRoot</string>
     
     <string name="su_exclude_all_title">Loại trừ hàng loạt</string>
@@ -413,7 +442,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Phiên bản không chính thức</string>
-    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý APatch Plus phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
+    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý APatchPlus phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
     <string name="go_to_github">Đi đến Github</string>
     <string name="settings_save_theme">Lưu chủ đề</string>
     <string name="settings_import_theme">Nhập chủ đề</string>
@@ -520,6 +549,8 @@
     <string name="settings_select_video">Chọn Video</string>
     <string name="settings_video_selected">Đã Chọn Video</string>
     <string name="settings_video_background_enabled">Nền Video Đã Bật</string>
+    <string name="settings_clear_video_background">Xóa hình nền video</string>
+    <string name="settings_clear_video_background_confirm">Bạn có chắc chắn muốn xóa hình nền video không?</string>
     <string name="settings_video_volume">Âm Lượng Video</string>
     <!-- File Picker -->
     <string name="file_picker_permission_required">Cần quyền truy cập</string>

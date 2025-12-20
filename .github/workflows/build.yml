@@ -76,6 +76,17 @@ jobs:
           sed -i 's/org.gradle.configuration-cache=true//g' gradle.properties
           ./gradlew clean assembleRelease
           echo "BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)" >> $GITHUB_ENV
+      
+      - name: Decode Keystore
+        run: echo "${{ secrets.KeyStore }}" | base64 --decode > app/keystore.jks
+
+      - name: Build & Sign APK
+        run: |
+          ./gradlew assembleRelease \
+          -PkeystorePath=app/keystore.jks \
+          -PkeystorePassword=${{ secrets.KeyStorePassword }} \
+          -PkeyAlias=${{ secrets.KeyStoreAlias }} \
+          -PkeyPassword=${{ secrets.KeyPassword }}
 
       - name: Sign Release
         env:

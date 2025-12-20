@@ -40,25 +40,13 @@ android {
     namespace = "me.kdufse.apatch.plus"
 
     signingConfigs {
-    getByName("debug") { /* д╛хо debug */ }
-
-    create("release") {
-        val keystorePath: String? by project
-        val keystorePassword: String? by project
-        val keyAlias: String? by project
-        val keyPassword: String? by project
-
-        if (keystorePath != null && keystorePassword != null && keyAlias != null && keyPassword != null) {
-            storeFile = file(keystorePath)
-            storePassword = keystorePassword
-            keyAlias = keyAlias
-            keyPassword = keyPassword
-            println("? Release signing configured dynamically for CI")
-        } else {
-            println("?? Release signing not configured (CI vars missing)")
+        create("release") {
+            storeFile = file(keystoreProperties["KEYSTORE_FILE"] as String)
+            storePassword = keystoreProperties["KEYSTORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["KEY_ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
         }
     }
-}
 
     buildTypes {
         debug {
@@ -71,7 +59,6 @@ android {
             )
         }
         release {
-            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             isDebuggable = false

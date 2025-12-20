@@ -17,8 +17,8 @@ object UpdateChecker {
     private const val TAG = "UpdateChecker"
     // Placeholder URL for version file.
     // It is expected to return a plain text integer version code.
-    private const val UPDATE_API_URL = "https://folk.mysqil.com/api/version.php"
-    private const val UPDATE_URL = "https://github.com/matsuzaka-yuki/FolkPatch/releases"
+    private const val UPDATE_API_URL = "https://hk.gh-proxy.org/https://raw.githubusercontent.com/Kdufse/APatch-Plus/refs/heads/main/version"
+    private const val UPDATE_URL = "https://github.com/Kdufse/APatch-Plis/releases"
 
     /**
      * Checks for updates.

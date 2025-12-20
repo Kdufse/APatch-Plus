@@ -29,6 +29,13 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
+// Load local properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+
 apksign {
     storeFileProperty = "KEYSTORE_FILE"
     storePasswordProperty = "KEYSTORE_PASSWORD"
@@ -37,14 +44,14 @@ apksign {
 }
 
 android {
-    namespace = "me.kdufse.apatch.plus"
+    namespace = "me.bmax.apatch"
 
     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProperties["KEYSTORE_FILE"] as String)
-            storePassword = keystoreProperties["KEYSTORE_PASSWORD"] as String
-            keyAlias = keystoreProperties["KEY_ALIAS"] as String
-            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
+            storeFile = file(keystoreProperties.getProperty("KEYSTORE_FILE") ?: "debug.keystore")
+            storePassword = keystoreProperties.getProperty("KEYSTORE_PASSWORD") ?: "android"
+            keyAlias = keystoreProperties.getProperty("KEY_ALIAS") ?: "androiddebugkey"
+            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD") ?: "android"
         }
     }
 
@@ -90,8 +97,9 @@ android {
 
     defaultConfig {
         buildConfigField("String", "buildKPV", "\"$kernelPatchVersion\"")
+        buildConfigField("boolean", "DEBUG_FAKE_ROOT", localProperties.getProperty("debug.fake_root", "false"))
 
-        base.archivesName = "APatchPlus_${managerVersionCode}_${managerVersionName}_on_${branchname}"
+        base.archivesName = "FolkPatch_${managerVersionCode}_${managerVersionName}_on_${branchname}"
     }
 
     compileOptions {
@@ -186,7 +194,7 @@ fun downloadFile(url: String, destFile: File) {
         }
     }
 }
-
+// HongKong CDN Accelerate
 registerDownloadTask(
     taskName = "downloadKpimg",
     // srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kpimg-android",
@@ -294,6 +302,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
 
     implementation(libs.compose.destinations.core)
     ksp(libs.compose.destinations.ksp)
@@ -332,4 +341,3 @@ cmaker {
         cFlags += "-std=c2x"
     }
 }
-

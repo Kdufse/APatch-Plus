@@ -746,7 +746,7 @@ private fun KStatusCard(
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 if (!BackgroundConfig.isListWorkingCardModeHidden) {
-                                    Spacer(Modifier.width(50.dp))
+                                    Spacer(Modifier.width(8.dp))
                                     StatusBadge(
                                         text = if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) "Full" else "Half"
                                     )

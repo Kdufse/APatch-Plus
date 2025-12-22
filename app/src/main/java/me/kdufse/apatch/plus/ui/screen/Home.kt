@@ -327,7 +327,7 @@ fun AuthFailedTipDialog(showDialog: MutableState<Boolean>) {
             modifier = Modifier
                 .width(320.dp)
                 .wrapContentHeight(),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(99.dp),
             tonalElevation = AlertDialogDefaults.TonalElevation,
             color = AlertDialogDefaults.containerColor,
         ) {

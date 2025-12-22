@@ -327,7 +327,7 @@ fun AuthFailedTipDialog(showDialog: MutableState<Boolean>) {
             modifier = Modifier
                 .width(320.dp)
                 .wrapContentHeight(),
-            shape = RoundedCornerShape(99.dp),
+            shape = RoundedCornerShape(20.dp),
             tonalElevation = AlertDialogDefaults.TonalElevation,
             color = AlertDialogDefaults.containerColor,
         ) {
@@ -746,7 +746,7 @@ private fun KStatusCard(
                                     style = MaterialTheme.typography.titleMedium
                                 )
                                 if (!BackgroundConfig.isListWorkingCardModeHidden) {
-                                    Spacer(Modifier.width(8.dp))
+                                    Spacer(Modifier.width(50.dp))
                                     StatusBadge(
                                         text = if (apState == APApplication.State.ANDROIDPATCH_INSTALLED) "Full" else "Half"
                                     )

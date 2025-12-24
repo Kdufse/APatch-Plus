@@ -79,7 +79,7 @@ jobs:
 
       - name: Sign Release
         env:
-          SIGNING_KEY: ${{ secrets.KEYSTORE }}
+          SIGNING_KEY: ${{ secrets.KEYSTORE_BASE64 }}
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
         if: ${{ env.SIGNING_KEY != '' }}
         continue-on-error: true
@@ -99,7 +99,7 @@ jobs:
         with:
           name: APatchPlus-Signed-APK
           path: app/build/outputs/apk/release/*.apk
-        # 上传所有未签名的 APK 文件
+        # 上传签名的 APK 文件
 
       - name: Post to channel
         if: ${{github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.ref_type != 'tag'}}

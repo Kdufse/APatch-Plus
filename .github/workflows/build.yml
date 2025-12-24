@@ -79,7 +79,7 @@ jobs:
 
       - name: Sign Release
         env:
-          SIGNING_KEY: ${{ secrets.KEYSTORE }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
         if: ${{ env.SIGNING_KEY != '' }}
         continue-on-error: true
@@ -87,19 +87,20 @@ jobs:
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
           zipAlign: true
 
-      - name: Upload Signed APK Artifact
-        if: always()
+      - name: Upload build artifact
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        if: ${{ env.SIGNING_KEY != '' }}
         uses: actions/upload-artifact@v5
         with:
-          name: APatchPlus-Signed-APK
-          path: app/build/outputs/apk/release/*.apk
-        # 上传所有未签名的 APK 文件
+          name: APatch
+          path: ${{steps.sign_app.outputs.signedReleaseFile}}
 
       - name: Post to channel
         if: ${{github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && github.ref_type != 'tag'}}

@@ -78,7 +78,7 @@ jobs:
           echo "BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)" >> $GITHUB_ENV
 
       - name: Sign Release
-        if: ${{ secrets.KEYSTORE_BASE64 != '' && secrets.ALIAS != '' && secrets.KEYSTORE_PASSWORD != '' && secrets.KEY_PASSWORD != '' }}
+        if: ${{ secrets.KEYSTORE_BASE64 != '' && secrets.KEY_ALIAS != '' && secrets.KEYSTORE_PASSWORD != '' && secrets.KEY_PASSWORD != '' }}
         uses: kevin-david/zipalign-sign-android-release@v2
         id: sign_app
         with:

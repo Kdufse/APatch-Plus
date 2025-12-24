@@ -3,6 +3,7 @@ package me.kdufse.apatch.plus.util
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import me.kdufse.apatch.plus.APApplication
 
 enum class LauncherIconVariant(val aliasName: String) {
     DEFAULT(".ui.MainActivityAliasDefault"),
@@ -29,10 +30,15 @@ object LauncherIconUtils {
 
     fun applyVariant(context: Context, variant: LauncherIconVariant) {
         val pm = context.packageManager
+        val basePackage = APApplication::class.java.`package`?.name ?: "me.kdufse.apatch.plus"
         aliases.forEach { v ->
-            val cn = ComponentName(context.packageName, context.packageName + v.aliasName)
+            val cn = ComponentName(context.packageName, basePackage + v.aliasName)
             val state = if (v == variant) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-            pm.setComponentEnabledSetting(cn, state, PackageManager.DONT_KILL_APP)
+            try {
+                pm.setComponentEnabledSetting(cn, state, PackageManager.DONT_KILL_APP)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -51,4 +57,3 @@ object LauncherIconUtils {
         applyVariant(context, variant)
     }
 }
-

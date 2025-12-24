@@ -509,7 +509,7 @@ private fun TopBar(
     var showDropdownMoreOptions by remember { mutableStateOf(false) }
     var showDropdownReboot by remember { mutableStateOf(false) }
     val prefs = APApplication.sharedPreferences
-    val currentTitle = prefs.getString("app_title", "folkpatch") ?: "folkpatch"
+    val currentTitle = prefs.getString("app_title", "apatchplus") ?: "apatchplus"
     val titleResId = when (currentTitle) {
         "fpatch" -> R.string.app_title_fpatch
         "apatch_folk" -> R.string.app_title_apatch_folk
@@ -521,7 +521,7 @@ private fun TopBar(
         "superuser" -> R.string.app_title_superuser
         "superpatch" -> R.string.app_title_superpatch
         "magicpatch" -> R.string.app_title_magicpatch
-        else -> R.string.app_title_folkpatch
+        else -> R.string.app_title_apatchplus
     }
 
     TopAppBar(title = {
@@ -597,7 +597,7 @@ private fun TopBar(
                         text = { Text(stringResource(R.string.home_more_menu_feedback_or_suggestion)) },
                         onClick = {
                             showDropdownMoreOptions = false
-                            uriHandler.openUri("https://github.com/matsuzaka-yuki/FolkPatch/issues/new/choose")
+                            uriHandler.openUri("https://github.com/matsuzaka-yuki/apatchplus/issues/new/choose")
                         }
                     )
                     WallpaperAwareDropdownMenuItem(

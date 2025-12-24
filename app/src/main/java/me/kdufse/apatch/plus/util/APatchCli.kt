@@ -42,6 +42,15 @@ class RootShellInitializer : Shell.Initializer() {
 fun createRootShell(globalMnt: Boolean = false): Shell {
     Shell.enableVerboseLogging = BuildConfig.DEBUG
     val builder = Shell.Builder.create().setInitializers(RootShellInitializer::class.java)
+
+    if (android.os.Process.myUid() == 0 && !globalMnt) {
+        try {
+            return builder.build("sh")
+        } catch (e: Throwable) {
+            Log.e(TAG, "sh failed for root process", e)
+        }
+    }
+
     return try {
         builder.build(
             SUPERCMD, APApplication.superKey, "-Z", APApplication.MAGISK_SCONTEXT

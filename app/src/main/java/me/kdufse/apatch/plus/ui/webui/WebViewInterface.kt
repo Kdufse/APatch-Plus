@@ -1,4 +1,4 @@
-package me.bmax.apatch.ui.webui
+package me.kdufse.apatch.plus.ui.webui
 
 import android.app.Activity
 import android.content.Context
@@ -16,8 +16,8 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.internal.UiThreadHandler
-import me.bmax.apatch.ui.viewmodel.SuperUserViewModel
-import me.bmax.apatch.util.createRootShell
+import me.kdufse.apatch.plus.ui.viewmodel.SuperUserViewModel
+import me.kdufse.apatch.plus.util.createRootShell
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.CompletableFuture

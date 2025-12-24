@@ -1,7 +1,9 @@
 package me.kdufse.apatch.plus.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,9 +16,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -41,6 +46,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
 import coil.Coil
 import coil.ImageLoader
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -51,7 +57,9 @@ import com.ramcosta.composedestinations.utils.isRouteOnBackStackAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
+import me.kdufse.apatch.plus.ui.screen.MODULE_TYPE
 import me.kdufse.apatch.plus.ui.theme.APatchTheme
+import me.kdufse.apatch.plus.ui.viewmodel.SuperUserViewModel
 import me.kdufse.apatch.plus.ui.theme.APatchThemeWithBackground
 import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import androidx.compose.material3.NavigationBarDefaults
@@ -91,6 +99,7 @@ import androidx.compose.ui.platform.LocalContext
 class MainActivity : AppCompatActivity() {
 
     private var isLoading = true
+    private var installUri: Uri? = null
     private lateinit var permissionHandler: PermissionRequestHandler
 
     override fun attachBaseContext(newBase: android.content.Context) {
@@ -108,6 +117,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         super.onCreate(savedInstanceState)
+        
+        installUri = if (intent.action == Intent.ACTION_SEND) {
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra<Uri>(Intent.EXTRA_STREAM)
+            }
+        } else {
+            intent.data ?: run {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableArrayListExtra("uris", Uri::class.java)?.firstOrNull()
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableArrayListExtra<Uri>("uris")?.firstOrNull()
+                }
+            }
+        }
 
         // 初始化权限处理器
         permissionHandler = PermissionRequestHandler(this)
@@ -171,11 +198,23 @@ class MainActivity : AppCompatActivity() {
             var folkXEngineEnabled by remember {
                 mutableStateOf(prefs.getBoolean("folkx_engine_enabled", true))
             }
+            var folkXAnimationType by remember {
+                mutableStateOf(prefs.getString("folkx_animation_type", "linear"))
+            }
+            var folkXAnimationSpeed by remember {
+                mutableStateOf(prefs.getFloat("folkx_animation_speed", 1.0f))
+            }
 
             DisposableEffect(Unit) {
                 val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
                     if (key == "folkx_engine_enabled") {
                         folkXEngineEnabled = sharedPreferences.getBoolean("folkx_engine_enabled", true)
+                    }
+                    if (key == "folkx_animation_type") {
+                        folkXAnimationType = sharedPreferences.getString("folkx_animation_type", "linear")
+                    }
+                    if (key == "folkx_animation_speed") {
+                        folkXAnimationSpeed = sharedPreferences.getFloat("folkx_animation_speed", 1.0f)
                     }
                 }
                 prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -185,9 +224,23 @@ class MainActivity : AppCompatActivity() {
             }
 
             val navController = rememberNavController()
+            val navigator = navController.rememberDestinationsNavigator()
             val snackBarHostState = remember { SnackbarHostState() }
             val bottomBarRoutes = remember {
                 BottomBarDestination.entries.map { it.direction.route }.toSet()
+            }
+
+            LaunchedEffect(Unit) {
+                if (SuperUserViewModel.apps.isEmpty()) {
+                    SuperUserViewModel().fetchAppList()
+                }
+            }
+            
+            val uri = installUri
+            LaunchedEffect(Unit) {
+                if (uri != null) {
+                    navigator.navigate(InstallScreenDestination(uri, MODULE_TYPE.APM))
+                }
             }
 
             APatchThemeWithBackground(navController = navController) {
@@ -243,11 +296,45 @@ class MainActivity : AppCompatActivity() {
                                                 val initialIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == initialRoute }
                                                 val targetIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == targetRoute }
 
+                                                val stiffness = 300f * folkXAnimationSpeed * folkXAnimationSpeed
+                                                val duration300 = (300 / folkXAnimationSpeed).toInt()
+                                                val duration600 = (600 / folkXAnimationSpeed).toInt()
+
                                                 if (initialIndex != -1 && targetIndex != -1) {
-                                                    if (targetIndex > initialIndex) {
-                                                        slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), initialOffsetX = { it })
-                                                    } else {
-                                                        slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), initialOffsetX = { -it })
+                                                    when (folkXAnimationType) {
+                                                        "spatial" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                scaleIn(initialScale = 0.9f, animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness)) + fadeIn(animationSpec = tween(duration300))
+                                                            } else {
+                                                                scaleIn(initialScale = 1.1f, animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness)) + fadeIn(animationSpec = tween(duration300))
+                                                            }
+                                                        }
+                                                        "fade" -> {
+                                                            fadeIn(animationSpec = tween(duration300))
+                                                        }
+                                                        "vertical" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideInVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetY = { height: Int -> height }) + fadeIn()
+                                                            } else {
+                                                                slideInVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetY = { height: Int -> -height }) + fadeIn()
+                                                            }
+                                                        }
+                                                        "diagonal" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetX = { width: Int -> width }) +
+                                                                slideInVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetY = { height: Int -> height }) + fadeIn()
+                                                            } else {
+                                                                slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetX = { width: Int -> -width }) +
+                                                                slideInVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetY = { height: Int -> -height }) + fadeIn()
+                                                            }
+                                                        }
+                                                        else -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetX = { width: Int -> width })
+                                                            } else {
+                                                                slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), initialOffsetX = { width: Int -> -width })
+                                                            }
+                                                        }
                                                     }
                                                 } else {
                                                     fadeIn(animationSpec = tween(340))
@@ -271,11 +358,45 @@ class MainActivity : AppCompatActivity() {
                                                 val initialIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == initialRoute }
                                                 val targetIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == targetRoute }
 
+                                                val stiffness = 300f * folkXAnimationSpeed * folkXAnimationSpeed
+                                                val duration300 = (300 / folkXAnimationSpeed).toInt()
+                                                val duration600 = (600 / folkXAnimationSpeed).toInt()
+
                                                 if (initialIndex != -1 && targetIndex != -1) {
-                                                    if (targetIndex > initialIndex) {
-                                                        slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), targetOffsetX = { -it })
-                                                    } else {
-                                                        slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), targetOffsetX = { it })
+                                                    when (folkXAnimationType) {
+                                                        "spatial" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                scaleOut(targetScale = 1.1f, animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness)) + fadeOut(animationSpec = tween(duration300))
+                                                            } else {
+                                                                scaleOut(targetScale = 0.9f, animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness)) + fadeOut(animationSpec = tween(duration300))
+                                                            }
+                                                        }
+                                                        "fade" -> {
+                                                            fadeOut(animationSpec = tween(duration600))
+                                                        }
+                                                        "vertical" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideOutVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), targetOffsetY = { height -> -height }) + fadeOut()
+                                                            } else {
+                                                                slideOutVertically(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), targetOffsetY = { height -> height }) + fadeOut()
+                                                            }
+                                                        }
+                                                        "diagonal" -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideOutHorizontally(animationSpec = tween(duration600), targetOffsetX = { width -> -width }) +
+                                                                slideOutVertically(animationSpec = tween(duration600), targetOffsetY = { height -> -height }) + fadeOut(animationSpec = tween(duration600))
+                                                            } else {
+                                                                slideOutHorizontally(animationSpec = tween(duration600), targetOffsetX = { width -> width }) +
+                                                                slideOutVertically(animationSpec = tween(duration600), targetOffsetY = { height -> height }) + fadeOut(animationSpec = tween(duration600))
+                                                            }
+                                                        }
+                                                        else -> {
+                                                            if (targetIndex > initialIndex) {
+                                                                slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), targetOffsetX = { width -> -width })
+                                                            } else {
+                                                                slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = stiffness), targetOffsetX = { width -> width })
+                                                            }
+                                                        }
                                                     }
                                                 } else {
                                                     fadeOut(animationSpec = tween(340))
@@ -382,9 +503,6 @@ fun UnofficialVersionDialog() {
 
 @Composable
 private fun BottomBar(navController: NavHostController) {
-    // if (!APApplication.isSignatureValid) {
-    //     UnofficialVersionDialog()
-    // }
     val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
     val navigator = navController.rememberDestinationsNavigator()
 

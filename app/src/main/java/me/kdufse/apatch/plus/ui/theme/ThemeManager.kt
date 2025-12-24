@@ -43,6 +43,7 @@ object ThemeManager {
     data class ThemeConfig(
         val isBackgroundEnabled: Boolean,
         val backgroundOpacity: Float,
+        val backgroundBlur: Float = 0f,
         val backgroundDim: Float,
         val isDualBackgroundDimEnabled: Boolean = false,
         val backgroundDayDim: Float = 0.0f,
@@ -98,6 +99,7 @@ object ThemeManager {
                 val config = ThemeConfig(
                     isBackgroundEnabled = BackgroundConfig.isCustomBackgroundEnabled,
                     backgroundOpacity = BackgroundConfig.customBackgroundOpacity,
+                    backgroundBlur = BackgroundConfig.customBackgroundBlur,
                     backgroundDim = BackgroundConfig.customBackgroundDim,
                     isDualBackgroundDimEnabled = BackgroundConfig.isDualBackgroundDimEnabled,
                     backgroundDayDim = BackgroundConfig.customBackgroundDayDim,
@@ -133,6 +135,7 @@ object ThemeManager {
                 val json = JSONObject().apply {
                     put("isBackgroundEnabled", config.isBackgroundEnabled)
                     put("backgroundOpacity", config.backgroundOpacity.toDouble())
+                    put("backgroundBlur", config.backgroundBlur.toDouble())
                     put("backgroundDim", config.backgroundDim.toDouble())
                     put("isDualBackgroundDimEnabled", config.isDualBackgroundDimEnabled)
                     put("backgroundDayDim", config.backgroundDayDim.toDouble())
@@ -372,6 +375,7 @@ object ThemeManager {
                 val json = JSONObject(configFile.readText())
                 val isBackgroundEnabled = json.optBoolean("isBackgroundEnabled", false)
                 val backgroundOpacity = json.optDouble("backgroundOpacity", 0.5).toFloat()
+                val backgroundBlur = json.optDouble("backgroundBlur", 0.0).toFloat()
                 val backgroundDim = json.optDouble("backgroundDim", 0.2).toFloat()
                 val isDualBackgroundDimEnabled = json.optBoolean("isDualBackgroundDimEnabled", false)
                 val backgroundDayDim = json.optDouble("backgroundDayDim", backgroundDim.toDouble()).toFloat()
@@ -412,6 +416,7 @@ object ThemeManager {
 
                 // 3. Apply Background
                 BackgroundConfig.setCustomBackgroundOpacityValue(backgroundOpacity)
+                BackgroundConfig.setCustomBackgroundBlurValue(backgroundBlur)
                 BackgroundConfig.setCustomBackgroundDimValue(backgroundDim)
                 BackgroundConfig.setDualBackgroundDimEnabledState(isDualBackgroundDimEnabled)
                 BackgroundConfig.setCustomBackgroundDayDimValue(backgroundDayDim)

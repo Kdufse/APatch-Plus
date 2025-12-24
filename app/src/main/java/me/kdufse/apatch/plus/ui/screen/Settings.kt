@@ -1,5 +1,9 @@
 package me.kdufse.apatch.plus.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Spacer
 import me.kdufse.apatch.plus.ui.component.FilePickerDialog
 import android.app.Activity
 import android.content.ActivityNotFoundException
@@ -59,7 +63,10 @@ import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Animation
+import androidx.compose.material.icons.filled.FilterList
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.generated.destinations.ThemeStoreScreenDestination
 
@@ -260,6 +267,21 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             AppTitleChooseDialog(showAppTitleDialog)
         }
 
+        val showFolkXAnimationTypeDialog = remember { mutableStateOf(false) }
+        if (showFolkXAnimationTypeDialog.value) {
+            FolkXAnimationTypeDialog(showFolkXAnimationTypeDialog)
+        }
+
+        val showFolkXAnimationSpeedDialog = remember { mutableStateOf(false) }
+        if (showFolkXAnimationSpeedDialog.value) {
+            FolkXAnimationSpeedDialog(showFolkXAnimationSpeedDialog)
+        }
+
+        val showAppListLoadingSchemeDialog = remember { mutableStateOf(false) }
+        if (showAppListLoadingSchemeDialog.value) {
+            AppListLoadingSchemeDialog(showAppListLoadingSchemeDialog)
+        }
+
         var showLogBottomSheet by remember { mutableStateOf(false) }
 
         val scope = rememberCoroutineScope()
@@ -276,6 +298,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             it.copyTo(output)
                         }
                     }
+
                     loadingDialog.hide()
                     snackBarHost.showSnackbar(message = logSavedMessage)
                 }
@@ -478,7 +501,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         
         var biometricLogin by rememberSaveable { mutableStateOf(prefs.getBoolean("biometric_login", false)) }
         var enableWebDebugging by rememberSaveable { mutableStateOf(prefs.getBoolean("enable_web_debugging", false)) }
-        var showMoreModuleInfo by rememberSaveable { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
+        var showMoreModuleInfo by rememberSaveable { mutableStateOf(prefs.getBoolean("show_more_module_info", true)) }
         var installConfirm by rememberSaveable { mutableStateOf(prefs.getBoolean("apm_install_confirm_enabled", true)) }
         var showDisableAllModules by rememberSaveable { mutableStateOf(prefs.getBoolean("show_disable_all_modules", false)) }
         var stayOnPage by rememberSaveable { mutableStateOf(prefs.getBoolean("apm_action_stay_on_page", true)) }
@@ -557,7 +580,12 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val folkXEngineSummary = stringResource(id = R.string.settings_folkx_engine_summary)
             val showFolkXEngine = matchGeneral || shouldShow(folkXEngineTitle, folkXEngineSummary)
 
-            val showGeneralCategory = showLanguage || showUpdate || showAutoUpdate || showGlobalNamespace || showLiteMode || showOverlayFS || showAutoBackupBoot || showResetSuPath || showAppTitle || showLauncherIcon || showDpi || showLog || showFolkXEngine
+            val appListLoadingSchemeTitle = stringResource(id = R.string.settings_app_list_loading_scheme)
+            val currentScheme = prefs.getString("app_list_loading_scheme", "root_service")
+            val currentSchemeLabel = if (currentScheme == "root_service") stringResource(R.string.app_list_loading_scheme_root_service) else stringResource(R.string.app_list_loading_scheme_package_manager)
+            val showAppListLoadingScheme = matchGeneral || shouldShow(appListLoadingSchemeTitle, currentSchemeLabel)
+
+            val showGeneralCategory = showLanguage || showUpdate || showAutoUpdate || showGlobalNamespace || showLiteMode || showOverlayFS || showAutoBackupBoot || showResetSuPath || showAppTitle || showLauncherIcon || showDpi || showLog || showFolkXEngine || showAppListLoadingScheme
 
             if (showGeneralCategory) {
                 SettingsCategory(icon = Icons.Filled.Tune, title = generalTitle, isSearching = searchText.isNotEmpty()) {
@@ -621,6 +649,69 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                             prefs.edit { putBoolean("folkx_engine_enabled", it) }
                             folkXEngineEnabled = it
                         }
+                    }
+
+                    AnimatedVisibility(
+                        visible = folkXEngineEnabled,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        Column {
+                            ListItem(
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                headlineContent = { Text(stringResource(R.string.settings_folkx_animation_type)) },
+                                supportingContent = {
+                                    val currentType = prefs.getString("folkx_animation_type", "linear")
+                                    Text(
+                                        text = when (currentType) {
+                                            "spatial" -> stringResource(R.string.settings_folkx_animation_spatial)
+                                            "fade" -> stringResource(R.string.settings_folkx_animation_fade)
+                                            "vertical" -> stringResource(R.string.settings_folkx_animation_vertical)
+                                            "diagonal" -> stringResource(R.string.settings_folkx_animation_diagonal)
+                                            else -> stringResource(R.string.settings_folkx_animation_linear)
+                                        },
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                },
+                                leadingContent = { Icon(Icons.Filled.Animation, null) },
+                                modifier = Modifier.clickable { showFolkXAnimationTypeDialog.value = true }
+                            )
+
+                            ListItem(
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                headlineContent = { Text(stringResource(R.string.settings_folkx_animation_speed)) },
+                                supportingContent = {
+                                    val currentSpeed = prefs.getFloat("folkx_animation_speed", 1.0f)
+                                    Text(
+                                        text = "${currentSpeed}x",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.outline
+                                    )
+                                },
+                                leadingContent = { Icon(Icons.Filled.Speed, null) },
+                                modifier = Modifier.clickable { showFolkXAnimationSpeedDialog.value = true }
+                            )
+                        }
+                    }
+
+                    // App List Loading Scheme
+                    if (showAppListLoadingScheme) {
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                            headlineContent = { Text(appListLoadingSchemeTitle) },
+                            modifier = Modifier.clickable {
+                                showAppListLoadingSchemeDialog.value = true
+                            },
+                            supportingContent = {
+                                Text(
+                                    text = currentSchemeLabel,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            },
+                            leadingContent = { Icon(Icons.Filled.FilterList, null) }
+                        )
                     }
 
                     // Global Namespace
@@ -829,6 +920,11 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val customOpacityTitle = stringResource(id = R.string.settings_custom_background_opacity)
             val showCustomOpacity = BackgroundConfig.isCustomBackgroundEnabled && (matchAppearance || shouldShow(customOpacityTitle))
             
+            val customBlurTitle = stringResource(id = R.string.settings_custom_background_blur)
+            // Blur is only supported on Android 12+ (API 31+)
+            val isBlurSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            val showCustomBlur = BackgroundConfig.isCustomBackgroundEnabled && isBlurSupported && (matchAppearance || shouldShow(customBlurTitle))
+
             val customDimTitle = stringResource(id = R.string.settings_custom_background_dim)
             val showCustomDim = BackgroundConfig.isCustomBackgroundEnabled && !BackgroundConfig.isDualBackgroundDimEnabled && (matchAppearance || shouldShow(customDimTitle))
 
@@ -1241,6 +1337,26 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                 }
                             )
                         }
+                        
+                        if (showCustomBlur) {
+                            ListItem(
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                                headlineContent = { Text(customBlurTitle) },
+                                supportingContent = {
+                                    androidx.compose.material3.Slider(
+                                        value = BackgroundConfig.customBackgroundBlur,
+                                        onValueChange = { BackgroundConfig.setCustomBackgroundBlurValue(it) },
+                                        onValueChangeFinished = { BackgroundConfig.save(context) },
+                                        valueRange = 0f..50f,
+                                        colors = androidx.compose.material3.SliderDefaults.colors(
+                                            thumbColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                                            activeTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f)
+                                        )
+                                    )
+                                }
+                            )
+                        }
+
                         if (!BackgroundConfig.isDualBackgroundDimEnabled && showCustomDim) {
                             ListItem(
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent),
@@ -1621,10 +1737,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val installConfirmSummary = stringResource(id = R.string.settings_apm_install_confirm_summary)
             val showInstallConfirm = aPatchReady && (matchBehavior || shouldShow(installConfirmTitle, installConfirmSummary))
 
-            val showMoreInfoTitle = stringResource(id = R.string.settings_show_more_module_info)
-            val showMoreInfoSummary = stringResource(id = R.string.settings_show_more_module_info_summary)
-            val showMoreInfo = aPatchReady && (matchBehavior || shouldShow(showMoreInfoTitle, showMoreInfoSummary))
-
             val disableModulesTitle = stringResource(id = R.string.settings_show_disable_all_modules)
             val disableModulesSummary = stringResource(id = R.string.settings_show_disable_all_modules_summary)
             val showDisableModules = aPatchReady && (matchBehavior || shouldShow(disableModulesTitle, disableModulesSummary))
@@ -1666,18 +1778,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                         }
                     }
 
-                    if (showMoreInfo) {
-                        SwitchItem(
-                            icon = Icons.Filled.Info,
-                            title = showMoreInfoTitle,
-                            summary = showMoreInfoSummary,
-                            checked = showMoreModuleInfo
-                        ) {
-                            prefs.edit { putBoolean("show_more_module_info", it) }
-                            showMoreModuleInfo = it
-                        }
-                    }
-                    
                     // Install Confirm
                     if (showInstallConfirm) {
                         SwitchItem(
@@ -1837,6 +1937,10 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val moduleTitle = stringResource(R.string.settings_category_module)
             val matchModule = shouldShow(moduleTitle)
 
+            val showMoreInfoTitle = stringResource(id = R.string.settings_show_more_module_info)
+            val showMoreInfoSummary = stringResource(id = R.string.settings_show_more_module_info_summary)
+            val showMoreInfo = aPatchReady && (matchModule || shouldShow(showMoreInfoTitle, showMoreInfoSummary))
+
             val autoBackupTitle = stringResource(id = R.string.settings_auto_backup_module)
             val autoBackupSummary = stringResource(id = R.string.settings_auto_backup_module_summary)
             val showAutoBackup = aPatchReady && (matchModule || shouldShow(autoBackupTitle, autoBackupSummary))
@@ -1844,15 +1948,44 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val openBackupDirTitle = stringResource(id = R.string.settings_open_backup_dir)
             val showOpenBackupDir = aPatchReady && autoBackupModule && (matchModule || shouldShow(openBackupDirTitle))
 
-            val showModuleCategory = showAutoBackup || showOpenBackupDir
+            val moduleSortOptimizationTitle = stringResource(id = R.string.settings_module_sort_optimization)
+            val moduleSortOptimizationSummary = stringResource(id = R.string.settings_module_sort_optimization_summary)
+            var moduleSortOptimization by rememberSaveable { mutableStateOf(prefs.getBoolean("module_sort_optimization", true)) }
+            val showModuleSortOptimization = aPatchReady && (matchModule || shouldShow(moduleSortOptimizationTitle, moduleSortOptimizationSummary))
+
+            val showModuleCategory = showAutoBackup || showOpenBackupDir || showMoreInfo || showModuleSortOptimization
 
             if (showModuleCategory) {
                 SettingsCategory(icon = Icons.Filled.Extension, title = moduleTitle, isSearching = searchText.isNotEmpty()) {
+                    if (showModuleSortOptimization) {
+                        SwitchItem(
+                            icon = Icons.Filled.FilterList,
+                            title = moduleSortOptimizationTitle,
+                            summary = moduleSortOptimizationSummary,
+                            checked = moduleSortOptimization
+                        ) {
+                            prefs.edit { putBoolean("module_sort_optimization", it) }
+                            moduleSortOptimization = it
+                        }
+                    }
+
+                    if (showMoreInfo) {
+                        SwitchItem(
+                            icon = Icons.Filled.Info,
+                            title = showMoreInfoTitle,
+                            summary = showMoreInfoSummary,
+                            checked = showMoreModuleInfo
+                        ) {
+                            prefs.edit { putBoolean("show_more_module_info", it) }
+                            showMoreModuleInfo = it
+                        }
+                    }
+
                     if (showAutoBackup) {
                         SwitchItem(
                             icon = Icons.Filled.Save,
                             title = autoBackupTitle,
-                            summary = autoBackupSummary + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APatchPlus/ModuleBackups",
+                            summary = autoBackupSummary + "\n" + android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath + "/APtchPlus/ModuleBackups",
                             checked = autoBackupModule
                         ) {
                             prefs.edit { putBoolean("auto_backup_module", it) }
@@ -2297,6 +2430,281 @@ fun SettingScreen(navigator: DestinationsNavigator) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun AppListLoadingSchemeDialog(showDialog: MutableState<Boolean>) {
+    val prefs = APApplication.sharedPreferences
+
+    BasicAlertDialog(
+        onDismissRequest = { showDialog.value = false }, properties = DialogProperties(
+            decorFitsSystemWindows = true,
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(310.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(30.dp),
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+            color = AlertDialogDefaults.containerColor,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_app_list_loading_scheme),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                val currentScheme = prefs.getString("app_list_loading_scheme", "root_service")
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AlertDialogDefaults.containerColor,
+                    tonalElevation = 2.dp
+                ) {
+                    Column {
+                        val schemes = listOf(
+                            "root_service" to R.string.app_list_loading_scheme_root_service,
+                            "package_manager" to R.string.app_list_loading_scheme_package_manager
+                        )
+
+                        schemes.forEach { (scheme, labelId) ->
+                            ListItem(
+                                headlineContent = { Text(stringResource(labelId)) },
+                                leadingContent = {
+                                    RadioButton(
+                                        selected = currentScheme == scheme,
+                                        onClick = null
+                                    )
+                                },
+                                modifier = Modifier.clickable {
+                                    prefs.edit { putString("app_list_loading_scheme", scheme) }
+                                    showDialog.value = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { showDialog.value = false }) {
+                        Text(stringResource(id = android.R.string.cancel))
+                    }
+                }
+            }
+            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+            APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FolkXAnimationTypeDialog(showDialog: MutableState<Boolean>) {
+    val prefs = APApplication.sharedPreferences
+
+    BasicAlertDialog(
+        onDismissRequest = { showDialog.value = false }, properties = DialogProperties(
+            decorFitsSystemWindows = true,
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(310.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(30.dp),
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+            color = AlertDialogDefaults.containerColor,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_folkx_animation_type),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                
+                val currentType = prefs.getString("folkx_animation_type", "linear")
+                
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AlertDialogDefaults.containerColor,
+                    tonalElevation = 2.dp
+                ) {
+                    Column {
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_folkx_animation_linear)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentType == "linear",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("folkx_animation_type", "linear").apply()
+                                showDialog.value = false
+                            }
+                        )
+                        
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_folkx_animation_spatial)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentType == "spatial",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("folkx_animation_type", "spatial").apply()
+                                showDialog.value = false
+                            }
+                        )
+
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_folkx_animation_fade)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentType == "fade",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("folkx_animation_type", "fade").apply()
+                                showDialog.value = false
+                            }
+                        )
+
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_folkx_animation_vertical)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentType == "vertical",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("folkx_animation_type", "vertical").apply()
+                                showDialog.value = false
+                            }
+                        )
+
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.settings_folkx_animation_diagonal)) },
+                            leadingContent = {
+                                RadioButton(
+                                    selected = currentType == "diagonal",
+                                    onClick = null
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                prefs.edit().putString("folkx_animation_type", "diagonal").apply()
+                                showDialog.value = false
+                            }
+                        )
+                    }
+                }
+                
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { showDialog.value = false }) {
+                        Text(stringResource(id = android.R.string.cancel))
+                    }
+                }
+            }
+            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+            APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FolkXAnimationSpeedDialog(showDialog: MutableState<Boolean>) {
+    val prefs = APApplication.sharedPreferences
+
+    BasicAlertDialog(
+        onDismissRequest = { showDialog.value = false }, properties = DialogProperties(
+            decorFitsSystemWindows = true,
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(310.dp)
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(30.dp),
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+            color = AlertDialogDefaults.containerColor,
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = stringResource(R.string.settings_folkx_animation_speed),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                val currentSpeed = prefs.getFloat("folkx_animation_speed", 1.0f)
+
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = AlertDialogDefaults.containerColor,
+                    tonalElevation = 2.dp
+                ) {
+                    Column {
+                        val speeds = listOf(
+                            0.5f to "0.5x",
+                            0.75f to "0.75x",
+                            1.0f to "1.0x",
+                            1.25f to "1.25x",
+                            1.5f to "1.5x",
+                            2.0f to "2.0x"
+                        )
+
+                        speeds.forEach { (speed, label) ->
+                            ListItem(
+                                headlineContent = { Text(label) },
+                                leadingContent = {
+                                    RadioButton(
+                                        selected = currentSpeed == speed,
+                                        onClick = null
+                                    )
+                                },
+                                modifier = Modifier.clickable {
+                                    prefs.edit().putFloat("folkx_animation_speed", speed).apply()
+                                    showDialog.value = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { showDialog.value = false }) {
+                        Text(stringResource(id = android.R.string.cancel))
+                    }
+                }
+            }
+            val dialogWindowProvider = LocalView.current.parent as DialogWindowProvider
+            APDialogBlurBehindUtils.setupWindowBlurListener(dialogWindowProvider.window)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun ThemeChooseDialog(showDialog: MutableState<Boolean>) {
     val prefs = APApplication.sharedPreferences
 
@@ -2487,7 +2895,7 @@ private data class AppTitle(
 
 private fun appTitleList(): List<AppTitle> {
     return listOf(
-        AppTitle("apatchplus", R.string.app_title_apatchplus),
+        AppTitle("apatchplus", R.string.app_title_APatch Plus),
         AppTitle("fpatch", R.string.app_title_fpatch),
         AppTitle("apatch_folk", R.string.app_title_apatch_folk),
         AppTitle("apatchx", R.string.app_title_apatchx),

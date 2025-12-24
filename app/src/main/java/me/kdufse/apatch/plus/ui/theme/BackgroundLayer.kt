@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.draw.blur
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -40,8 +41,12 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import me.kdufse.apatch.plus.ui.screen.BottomBarDestination
 
@@ -56,6 +61,8 @@ fun BackgroundLayer(currentRoute: String? = null) {
     val darkThemeFollowSys = prefs.getBoolean("night_mode_follow_sys", true)
     val nightModeEnabled = prefs.getBoolean("night_mode_enabled", false)
     val folkXEngineEnabled = prefs.getBoolean("folkx_engine_enabled", true)
+    val folkXAnimationType = prefs.getString("folkx_animation_type", "linear")
+    val folkXAnimationSpeed = prefs.getFloat("folkx_animation_speed", 1.0f)
     val isDarkTheme = if (darkThemeFollowSys) {
         isSystemInDarkTheme()
     } else {
@@ -136,16 +143,27 @@ fun BackgroundLayer(currentRoute: String? = null) {
     }
 
     // Default background (fallback)
+    // Fix: When custom background is enabled, MaterialTheme.colorScheme.background is Transparent.
+    // We need a solid color here to prevent the window background (often white) from flashing during animations.
+    val fallbackColor = if (BackgroundConfig.isCustomBackgroundEnabled) {
+        if (isDarkTheme) Color.Black else Color.White
+    } else {
+        MaterialTheme.colorScheme.background
+    }
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
             .zIndex(-2f)
-            .background(MaterialTheme.colorScheme.background)
+            .background(fallbackColor)
     )
 
     // Image Background Logic
     if (BackgroundConfig.isCustomBackgroundEnabled) {
-        if (BackgroundConfig.isMultiBackgroundEnabled && folkXEngineEnabled) {
+        // 在单壁纸模式下，所有动画类型都不需要重生成壁纸，保持固定位置
+        val shouldAnimate = folkXEngineEnabled && BackgroundConfig.isMultiBackgroundEnabled
+
+        if (shouldAnimate) {
             AnimatedContent(
                 targetState = currentRoute,
                 modifier = Modifier.fillMaxSize(),
@@ -156,14 +174,12 @@ fun BackgroundLayer(currentRoute: String? = null) {
                     val initialIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == initialRoute }
                     val targetIndex = BottomBarDestination.entries.indexOfFirst { it.direction.route == targetRoute }
 
+                    val stiffness = 300f * folkXAnimationSpeed * folkXAnimationSpeed
+                    val duration300 = (300 / folkXAnimationSpeed).toInt()
+                    val duration600 = (600 / folkXAnimationSpeed).toInt()
+
                     if (initialIndex != -1 && targetIndex != -1) {
-                        if (targetIndex > initialIndex) {
-                            (slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), initialOffsetX = { it }) + fadeIn()) togetherWith
-                                    (slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), targetOffsetX = { -it }) + fadeOut())
-                        } else {
-                            (slideInHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), initialOffsetX = { -it }) + fadeIn()) togetherWith
-                                    (slideOutHorizontally(animationSpec = spring(dampingRatio = 0.8f, stiffness = 300f), targetOffsetX = { it }) + fadeOut())
-                        }
+                        fadeIn(animationSpec = tween(duration600)) togetherWith fadeOut(animationSpec = tween(duration600))
                     } else {
                         // Default fade for other transitions (e.g. to details)
                         fadeIn(animationSpec = tween(340)) togetherWith fadeOut(animationSpec = tween(340))
@@ -171,13 +187,17 @@ fun BackgroundLayer(currentRoute: String? = null) {
                 },
                 label = "BackgroundAnimation"
             ) { route ->
-                val rawTargetUri = when (route) {
-                    HomeScreenDestination.route -> BackgroundConfig.homeBackgroundUri
-                    KPModuleScreenDestination.route -> BackgroundConfig.kernelBackgroundUri
-                    SuperUserScreenDestination.route -> BackgroundConfig.superuserBackgroundUri
-                    APModuleScreenDestination.route -> BackgroundConfig.systemModuleBackgroundUri
-                    SettingScreenDestination.route -> BackgroundConfig.settingsBackgroundUri
-                    else -> BackgroundConfig.homeBackgroundUri
+                val rawTargetUri = if (BackgroundConfig.isMultiBackgroundEnabled) {
+                    when (route) {
+                        HomeScreenDestination.route -> BackgroundConfig.homeBackgroundUri
+                        KPModuleScreenDestination.route -> BackgroundConfig.kernelBackgroundUri
+                        SuperUserScreenDestination.route -> BackgroundConfig.superuserBackgroundUri
+                        APModuleScreenDestination.route -> BackgroundConfig.systemModuleBackgroundUri
+                        SettingScreenDestination.route -> BackgroundConfig.settingsBackgroundUri
+                        else -> BackgroundConfig.homeBackgroundUri
+                    }
+                } else {
+                    BackgroundConfig.customBackgroundUri
                 }
                 
                 RenderBackgroundImage(rawTargetUri, isDarkTheme)
@@ -219,11 +239,21 @@ private fun RenderBackgroundImage(rawTargetUri: String?, isDarkTheme: Boolean) {
             }
         )
 
-        Box(
+        // Use Image composable instead of Box + paint for better compatibility with Modifier.blur
+        Image(
+            painter = painter,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
                 .zIndex(-2f)
-                .paint(painter = painter, contentScale = ContentScale.Crop)
+                .let {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && BackgroundConfig.customBackgroundBlur > 0f) {
+                        it.blur(radius = BackgroundConfig.customBackgroundBlur.dp)
+                    } else {
+                        it
+                    }
+                }
         )
 
         // Dim overlay for image

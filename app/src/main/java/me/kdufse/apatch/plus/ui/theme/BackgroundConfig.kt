@@ -20,6 +20,8 @@ object BackgroundConfig {// State
         private set
     var customBackgroundOpacity: Float by mutableStateOf(0.7f)
         private set
+    var customBackgroundBlur: Float by mutableStateOf(0f)
+        private set
     var customBackgroundDim: Float by mutableStateOf(0.0f)
         private set
     var isDualBackgroundDimEnabled: Boolean by mutableStateOf(false)
@@ -81,6 +83,7 @@ object BackgroundConfig {// State
     private const val KEY_CUSTOM_BACKGROUND_URI = "custom_background_uri"
     private const val KEY_CUSTOM_BACKGROUND_ENABLED = "custom_background_enabled"
     private const val KEY_CUSTOM_BACKGROUND_OPACITY = "custom_background_opacity"
+    private const val KEY_CUSTOM_BACKGROUND_BLUR = "custom_background_blur"
     private const val KEY_CUSTOM_BACKGROUND_DIM = "custom_background_dim"
     private const val KEY_CUSTOM_BACKGROUND_DUAL_DIM_ENABLED = "custom_background_dual_dim_enabled"
     private const val KEY_CUSTOM_BACKGROUND_DAY_DIM = "custom_background_day_dim"
@@ -234,6 +237,13 @@ object BackgroundConfig {// State
     }
 
     /**
+     * 设置自定义背景模糊度
+     */
+    fun setCustomBackgroundBlurValue(blur: Float) {
+        customBackgroundBlur = blur
+    }
+
+    /**
      * 设置自定义背景暗度
      */
     fun setCustomBackgroundDimValue(dim: Float) {
@@ -294,6 +304,7 @@ object BackgroundConfig {// State
             putString(KEY_CUSTOM_BACKGROUND_URI, customBackgroundUri)
             putBoolean(KEY_CUSTOM_BACKGROUND_ENABLED, isCustomBackgroundEnabled)
             putFloat(KEY_CUSTOM_BACKGROUND_OPACITY, customBackgroundOpacity)
+            putFloat(KEY_CUSTOM_BACKGROUND_BLUR, customBackgroundBlur)
             putFloat(KEY_CUSTOM_BACKGROUND_DIM, customBackgroundDim)
             putBoolean(KEY_CUSTOM_BACKGROUND_DUAL_DIM_ENABLED, isDualBackgroundDimEnabled)
             putFloat(KEY_CUSTOM_BACKGROUND_DAY_DIM, customBackgroundDayDim)
@@ -333,11 +344,12 @@ object BackgroundConfig {// State
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val uri = prefs.getString(KEY_CUSTOM_BACKGROUND_URI, "background.png")
         val enabled = prefs.getBoolean(KEY_CUSTOM_BACKGROUND_ENABLED, true)
-        val opacity = prefs.getFloat(KEY_CUSTOM_BACKGROUND_OPACITY, 0.7f)
+        val opacity = prefs.getFloat(KEY_CUSTOM_BACKGROUND_OPACITY, 0.23f)
+        val blur = prefs.getFloat(KEY_CUSTOM_BACKGROUND_BLUR, 0f)
         val dim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_DIM, 0.0f)
-        val dualDimEnabled = prefs.getBoolean(KEY_CUSTOM_BACKGROUND_DUAL_DIM_ENABLED, false)
-        val dayDim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_DAY_DIM, dim)
-        val nightDim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_NIGHT_DIM, dim)
+        val dualDimEnabled = prefs.getBoolean(KEY_CUSTOM_BACKGROUND_DUAL_DIM_ENABLED, true)
+        val dayDim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_DAY_DIM, 0.0f)
+        val nightDim = prefs.getFloat(KEY_CUSTOM_BACKGROUND_NIGHT_DIM, 0.75f)
         
         val videoUri = prefs.getString(KEY_VIDEO_BACKGROUND_URI, null)
         val videoEnabled = prefs.getBoolean(KEY_VIDEO_BACKGROUND_ENABLED, false)
@@ -368,6 +380,7 @@ object BackgroundConfig {// State
         customBackgroundUri = uri
         isCustomBackgroundEnabled = enabled
         customBackgroundOpacity = opacity
+        customBackgroundBlur = blur
         customBackgroundDim = dim
         isDualBackgroundDimEnabled = dualDimEnabled
         customBackgroundDayDim = dayDim
@@ -405,11 +418,12 @@ object BackgroundConfig {// State
         // Default to custom background enabled with "background.png"
         customBackgroundUri = "background.png"
         isCustomBackgroundEnabled = true
-        customBackgroundOpacity = 0.7f
+        customBackgroundOpacity = 0.23f
+        customBackgroundBlur = 0f
         customBackgroundDim = 0.0f
-        isDualBackgroundDimEnabled = false
+        isDualBackgroundDimEnabled = true
         customBackgroundDayDim = 0.0f
-        customBackgroundNightDim = 0.0f
+        customBackgroundNightDim = 0.75f
         
         videoBackgroundUri = null
         isVideoBackgroundEnabled = false

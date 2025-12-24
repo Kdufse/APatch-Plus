@@ -24,10 +24,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.AutoFixHigh
 import androidx.compose.material.icons.filled.InstallMobile
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SwapVerticalCircle
+import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Button
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
@@ -503,7 +509,7 @@ private fun TopBar(
     var showDropdownMoreOptions by remember { mutableStateOf(false) }
     var showDropdownReboot by remember { mutableStateOf(false) }
     val prefs = APApplication.sharedPreferences
-    val currentTitle = prefs.getString("app_title", "apatchplus") ?: "apatchplus"
+    val currentTitle = prefs.getString("app_title", "folkpatch") ?: "folkpatch"
     val titleResId = when (currentTitle) {
         "fpatch" -> R.string.app_title_fpatch
         "apatch_folk" -> R.string.app_title_apatch_folk
@@ -515,7 +521,7 @@ private fun TopBar(
         "superuser" -> R.string.app_title_superuser
         "superpatch" -> R.string.app_title_superpatch
         "magicpatch" -> R.string.app_title_magicpatch
-        else -> R.string.app_title_apatchplus
+        else -> R.string.app_title_folkpatch
     }
 
     TopAppBar(title = {
@@ -533,7 +539,7 @@ private fun TopBar(
 
         IconButton(onClick = onInstallClick) {
             Icon(
-                imageVector = Icons.Filled.InstallMobile,
+                imageVector = Icons.Filled.AutoFixHigh,
                 contentDescription = stringResource(id = R.string.mode_select_page_title)
             )
         }

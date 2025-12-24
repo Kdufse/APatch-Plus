@@ -86,7 +86,6 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         const val LITE_MODE_FILE = "/data/adb/.litemode_enable"
         const val FORCE_OVERLAYFS_FILE = "/data/adb/.overlayfs_enable"
         const val KPMS_DIR = APATCH_FOLDER + "kpms/"
-        const val EXT4_DIR = "/proc/fs/ext4/"
 
         @Deprecated("Use 'apd -V'")
         const val APATCH_VERSION_PATH = APATCH_FOLDER + "version"
@@ -160,8 +159,6 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
 
                 "cp -f ${nativeDir}/libapd.so $APD_PATH",
                 "chmod +x $APD_PATH",
-                "touch $FORCE_OVERLAYFS_FILE",
-                "chmod 000 $EXT4_DIR",
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
 
@@ -204,7 +201,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         var superKey: String = ""
             set(value) {
                 field = value
-                val ready = Natives.nativeReady(value)
+                val ready = BuildConfig.DEBUG_FAKE_ROOT || Natives.nativeReady(value)
                 _kpStateLiveData.value =
                     if (ready) State.KERNELPATCH_INSTALLED else State.UNKNOWN_STATE
                 _apStateLiveData.value =
@@ -215,11 +212,14 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                 APatchKeyHelper.writeSPSuperKey(value)
 
                 thread {
-                    val rc = Natives.su(0, null)
+                    val rc = BuildConfig.DEBUG_FAKE_ROOT || Natives.su(0, null)
                     if (!rc) {
                         Log.e(TAG, "Native.su failed")
                         return@thread
                     }
+
+                    // Refresh shell after becoming root
+                    APatchCli.refresh()
 
                     // KernelPatch version
                     //val buildV = Version.buildKPVUInt()
@@ -247,7 +247,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                     val installedApdVInt = Version.installedApdVUInt()
                     Log.d(TAG, "manager version: $mgv, installed apd version: $installedApdVInt")
 
-                    if (Version.installedApdVInt > 0) {
+                    if (BuildConfig.DEBUG_FAKE_ROOT || Version.installedApdVInt > 0) {
                         _apStateLiveData.postValue(State.ANDROIDPATCH_INSTALLED)
                     }
                     Log.d(TAG, "ap state: " + _apStateLiveData.value)
@@ -291,12 +291,9 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         }
 
         Log.d(TAG, "Checking app signature...")
-        // a9eba5b702eb55fb5f4b1a672a7133a16a7bcaea949cde43c812ef26c77de812
-        if (!BuildConfig.DEBUG && !verifyAppSignature("9ddcd2fad60a29a28c3b4fe27d2d7048ee778bc5f94ca4a6fccf93864f46c023")) {
-        Log.e(TAG, "App signature verification failed!")
-        isSignatureValid = false   // 验证失败时设为false
-        } else {
-        isSignatureValid = true   // 验证通过时设为true
+        if (!BuildConfig.DEBUG && !verifyAppSignature("a9eba5b702eb55fb5f4b1a672a7133a16a7bcaea949cde43c812ef26c77de812")) {
+            Log.e(TAG, "App signature verification failed!")
+            isSignatureValid = false
         }
         Log.d(TAG, "App signature verification passed")
 
@@ -330,6 +327,27 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         // Initialize Music
         MusicConfig.load(this)
         MusicManager.init(this)
+        
+        // Ensure background.png exists
+        try {
+            val bgFile = File(filesDir, "background.png")
+            val bgPrefs = getSharedPreferences("background_settings", Context.MODE_PRIVATE)
+            val customUri = bgPrefs.getString("custom_background_uri", "background.png")
+            // If using default configuration, or file missing/empty, copy from assets
+            val shouldCopy = customUri == "background.png" || !bgFile.exists() || bgFile.length() == 0L
+            
+            if (shouldCopy) {
+                Log.d(TAG, "Copying default background.png (shouldCopy=$shouldCopy)...")
+                assets.open("background.png").use { input ->
+                    bgFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                Log.d(TAG, "Default background.png copied.")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to copy default background: ${e.message}")
+        }
         
         Log.d(TAG, "APApplication onCreate completed")
     }

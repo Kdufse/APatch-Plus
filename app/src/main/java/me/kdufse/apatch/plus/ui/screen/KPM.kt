@@ -107,6 +107,18 @@ import me.kdufse.apatch.plus.util.ui.APDialogBlurBehindUtils
 import me.kdufse.apatch.plus.util.writeTo
 import java.io.IOException
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.Color
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
+import androidx.compose.material3.ButtonDefaults
+
+import android.content.SharedPreferences
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+
 private const val TAG = "KernelPatchModule"
 private lateinit var targetKPMToControl: KPModel.KPMInfo
 
@@ -138,6 +150,21 @@ fun KPModuleScreen(navigator: DestinationsNavigator) {
     val context = LocalContext.current
     var showFirstTimeDialog by remember { mutableStateOf(KpmAutoLoadManager.isFirstTimeKpmPage(context)) }
     var dontShowAgain by remember { mutableStateOf(false) }
+
+    val prefs = remember { APApplication.sharedPreferences }
+    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", true)) }
+
+    DisposableEffect(Unit) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+            if (key == "show_more_module_info") {
+                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", true)
+            }
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose {
+            prefs.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (viewModel.moduleList.isEmpty() || viewModel.isNeedRefresh) {
@@ -257,7 +284,8 @@ fun KPModuleScreen(navigator: DestinationsNavigator) {
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize(),
-            state = kpModuleListState
+            state = kpModuleListState,
+            showMoreModuleInfo = showMoreModuleInfo
         )
     }
 
@@ -475,7 +503,7 @@ fun KPMControlDialog(showDialog: MutableState<Boolean>) {
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun KPModuleList(
-    viewModel: KPModuleViewModel, modifier: Modifier = Modifier, state: LazyListState
+    viewModel: KPModuleViewModel, modifier: Modifier = Modifier, state: LazyListState, showMoreModuleInfo: Boolean
 ) {
     val moduleStr = stringResource(id = R.string.kpm)
     val moduleUninstallConfirm = stringResource(id = R.string.kpm_unload_confirm)
@@ -556,6 +584,7 @@ private fun KPModuleList(
                                 targetKPMToControl = module
                                 showKPMControlDialog.value = true
                             },
+                            showMoreModuleInfo = showMoreModuleInfo
                         )
 
                         // fix last item shadow incomplete in LazyColumn
@@ -594,115 +623,177 @@ private fun TopBar(navigator: DestinationsNavigator) {
 }
 
 @Composable
+private fun KPModuleLabel(
+    text: String,
+    containerColor: Color,
+    contentColor: Color
+) {
+    Surface(
+        color = containerColor,
+        contentColor = contentColor,
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
 private fun KPModuleItem(
     module: KPModel.KPMInfo,
     onUninstall: (KPModel.KPMInfo) -> Unit,
     onControl: (KPModel.KPMInfo) -> Unit,
     modifier: Modifier = Modifier,
     alpha: Float = 1f,
+    showMoreModuleInfo: Boolean
 ) {
     val moduleAuthor = stringResource(id = R.string.kpm_author)
     val moduleArgs = stringResource(id = R.string.kpm_args)
     val decoration = TextDecoration.None
 
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp,
-        shape = RoundedCornerShape(20.dp)
-    ) {
+    val isWallpaperMode = BackgroundConfig.isCustomBackgroundEnabled
+    val opacity = if (isWallpaperMode) {
+        BackgroundConfig.customBackgroundOpacity.coerceAtLeast(0.2f)
+    } else {
+        1f
+    }
+    
+    val isDark = isSystemInDarkTheme()
+    val cardColor = if (isWallpaperMode) {
+        MaterialTheme.colorScheme.surface.copy(alpha = opacity)
+    } else {
+        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f)
+    }
 
-        Box(
-            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
-        ) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = cardColor,
+        tonalElevation = 0.dp
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(all = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .alpha(alpha = alpha)
-                            .weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        val hasAnyLabel = showMoreModuleInfo
+                        if (hasAnyLabel) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            ) {
+                                 val labelOpacity = (opacity + 0.1f).coerceAtMost(1f)
+                                 
+                                 KPModuleLabel(
+                                    text = "KPM",
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                 )
+                                 
+                                 if (module.args.isNotEmpty()) {
+                                     KPModuleLabel(
+                                        text = "Args",
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                     )
+                                 }
+                            }
+                        }
+                    
                         Text(
                             text = module.name,
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 2,
-                            textDecoration = decoration,
-                            overflow = TextOverflow.Ellipsis
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            textDecoration = decoration
                         )
 
                         Text(
-                            text = "${module.version}, $moduleAuthor ${module.author}",
+                            text = "${module.version} ? $moduleAuthor ${module.author}",
                             style = MaterialTheme.typography.bodySmall,
-                            textDecoration = decoration,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textDecoration = decoration
                         )
-
-                        Text(
-                            text = "$moduleArgs: ${module.args}",
-                            style = MaterialTheme.typography.bodySmall,
-                            textDecoration = decoration,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        
+                        if (showMoreModuleInfo && module.args.isNotEmpty()) {
+                             Text(
+                                text = "$moduleArgs: ${module.args}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textDecoration = decoration,
+                                modifier = Modifier.padding(top = 2.dp)
+                            )
+                        }
                     }
-
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(
-                    modifier = Modifier
-                        .alpha(alpha = alpha)
-                        .padding(horizontal = 16.dp),
                     text = module.description,
                     style = MaterialTheme.typography.bodySmall,
-                    textDecoration = decoration,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                HorizontalDivider(
-                    thickness = 1.5.dp,
-                    color = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    FilledTonalButton(
+                     FilledTonalButton(
                         onClick = { onControl(module) },
                         enabled = true,
-                        contentPadding = PaddingValues(horizontal = 12.dp)
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        modifier = Modifier.height(36.dp),
+                         colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
+                        )
                     ) {
                         Icon(
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(18.dp),
                             painter = painterResource(id = R.drawable.settings),
                             contentDescription = null
                         )
 
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(id = R.string.kpm_control),
-                            maxLines = 1,
-                            overflow = TextOverflow.Visible,
-                            softWrap = false
-                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(id = R.string.kpm_control))
                     }
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.weight(1f))
+                    
+                    FilledTonalButton(
+                        onClick = { onUninstall(module) },
+                        enabled = true,
+                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        modifier = Modifier.height(36.dp),
+                         colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f)),
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                         Icon(
+                            modifier = Modifier.size(18.dp),
+                            painter = painterResource(id = R.drawable.trash),
+                            contentDescription = null
+                        )
 
-                    KPModuleRemoveButton(enabled = true, onClick = { onUninstall(module) })
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(stringResource(id = R.string.kpm_unload))
+                    }
                 }
             }
-
         }
     }
 }

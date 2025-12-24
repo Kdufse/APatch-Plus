@@ -68,6 +68,7 @@ import kotlinx.coroutines.launch
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.Natives
 import me.kdufse.apatch.plus.R
+import me.kdufse.apatch.plus.apApp
 import me.kdufse.apatch.plus.ui.component.ProvideMenuShape
 import me.kdufse.apatch.plus.ui.component.SearchAppBar
 import me.kdufse.apatch.plus.ui.component.SwitchItem
@@ -175,7 +176,7 @@ fun SuperUserScreen() {
             isRefreshing = viewModel.isRefreshing
         ) {
             LazyColumn(Modifier.fillMaxSize()) {
-                items(viewModel.appList, key = { it.packageName + it.uid }) { app ->
+                items(viewModel.appList.filter { it.packageName != apApp.packageName }, key = { it.packageName + it.uid }) { app ->
                     AppItem(app)
                 }
             }

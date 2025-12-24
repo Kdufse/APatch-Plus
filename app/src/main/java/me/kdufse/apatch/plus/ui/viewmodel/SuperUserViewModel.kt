@@ -1,10 +1,13 @@
 package me.kdufse.apatch.plus.ui.viewmodel
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.os.IBinder
 import android.os.Parcelable
 import android.util.Log
@@ -16,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.parcelize.Parcelize
 import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.IAPRootService
@@ -29,13 +33,21 @@ import java.text.Collator
 import java.util.Locale
 import kotlin.concurrent.thread
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
 class SuperUserViewModel : ViewModel() {
     companion object {
         private const val TAG = "SuperUserViewModel"
-        private var apps by mutableStateOf<List<AppInfo>>(emptyList())
+        private val appsLock = Any()
+        var apps by mutableStateOf<List<AppInfo>>(emptyList())
+
+        fun getAppIconDrawable(context: Context, packageName: String): Drawable? {
+            val appList = synchronized(appsLock) { apps }
+            val appDetail = appList.find { it.packageName == packageName }
+            return appDetail?.packageInfo?.applicationInfo?.loadIcon(context.packageManager)
+        }
     }
 
     @Parcelize
@@ -79,24 +91,50 @@ class SuperUserViewModel : ViewModel() {
 
     private suspend inline fun connectRootService(
         crossinline onDisconnect: () -> Unit = {}
-    ): Pair<IBinder, ServiceConnection> = suspendCoroutine {
+    ): Pair<IBinder, ServiceConnection> = suspendCoroutine { continuation ->
         val connection = object : ServiceConnection {
             override fun onServiceDisconnected(name: ComponentName?) {
+                Log.w(TAG, "onServiceDisconnected: $name")
                 onDisconnect()
             }
 
             override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
-                it.resume(binder as IBinder to this)
+                Log.i(TAG, "onServiceConnected: $name")
+                if (binder != null) {
+                    try {
+                        continuation.resume(binder to this)
+                    } catch (e: IllegalStateException) {
+                        Log.w(TAG, "Service connected but continuation already resumed", e)
+                    }
+                } else {
+                    Log.e(TAG, "Service connected but binder is null")
+                    // If binder is null, we can't really resume successfully, but we should unblock.
+                    // However, normally binder is not null.
+                }
             }
         }
         val intent = Intent(apApp, RootServices::class.java)
+        
+        Log.d(TAG, "Attempting to bind RootService. Shell isRoot: ${APatchCli.SHELL.isRoot}")
+        Log.d(TAG, "Shell info: ${APatchCli.SHELL}")
+        
+        // Ensure binding happens on the main thread as required by Android's bindService
         val task = RootServices.bindOrTask(
             intent,
             Shell.EXECUTOR,
             connection,
         )
-        val shell = APatchCli.SHELL
-        task?.let { it1 -> shell.execTask(it1) }
+        
+        if (task == null) {
+            Log.e(TAG, "RootServices.bindOrTask returned null")
+            continuation.resumeWithException(IllegalStateException("bindOrTask returned null"))
+        } else {
+            val shell = APatchCli.SHELL
+            Log.d(TAG, "Executing bind task...")
+            
+            // Execute the binding task
+            shell.execTask(task)
+        }
     }
 
     fun excludeAll() {
@@ -105,6 +143,7 @@ class SuperUserViewModel : ViewModel() {
 
         currentApps.forEach { app ->
             if ((app.packageInfo.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM) != 0) return@forEach
+            if (app.packageName == apApp.packageName) return@forEach
             if (app.config.allow == 0 && app.config.exclude == 0) {
                 app.config.exclude = 1
                 app.config.profile.scontext = APApplication.DEFAULT_SCONTEXT
@@ -126,6 +165,7 @@ class SuperUserViewModel : ViewModel() {
 
         currentApps.forEach { app ->
             if ((app.packageInfo.applicationInfo!!.flags and ApplicationInfo.FLAG_SYSTEM) != 0) return@forEach
+            if (app.packageName == apApp.packageName) return@forEach
             if (app.config.allow == 0) {
                 val newExclude = if (app.config.exclude == 1) 0 else 1
                 app.config.exclude = newExclude
@@ -149,20 +189,72 @@ class SuperUserViewModel : ViewModel() {
         RootServices.stop(intent)
     }
 
+    /**
+     * Fallback method to get packages using PackageManager when RootService fails.
+     * This is needed for devices where LibSU's RootServerMain can't initialize
+     * (e.g., ONYX e-readers with modified frameworks).
+     *
+     * Note: This only gets packages for the current user, not all users.
+     */
+    private fun getPackagesViaPackageManager(): List<PackageInfo> {
+        return try {
+            val pm = apApp.packageManager
+            pm.getInstalledPackages(PackageManager.GET_META_DATA)
+        } catch (e: Exception) {
+            Log.e(TAG, "getPackagesViaPackageManager failed", e)
+            emptyList()
+        }
+    }
+
     suspend fun fetchAppList() {
         isRefreshing = true
 
-        val result = connectRootService {
-            Log.w(TAG, "RootService disconnected")
+        val prefs = APApplication.sharedPreferences
+        val loadingScheme = prefs.getString("app_list_loading_scheme", "root_service")
+
+        // Try RootService with timeout, fallback to PackageManager if it fails
+        val allPackages: List<PackageInfo> = withContext(Dispatchers.IO) {
+            if (loadingScheme == "package_manager") {
+                Log.i(TAG, "Using PackageManager to load app list (user preference)")
+                getPackagesViaPackageManager()
+            } else {
+                Log.i(TAG, "Using RootService to load app list (user preference)")
+                try {
+                    // Use withTimeoutOrNull to avoid hanging forever if RootService fails to connect
+                    val result = withTimeoutOrNull(10000L) {
+                        withContext(Dispatchers.Main) {
+                            connectRootService {
+                                Log.w(TAG, "RootService disconnected")
+                            }
+                        }
+                    }
+
+                    if (result != null) {
+                        val binder = result.first
+                        val packages = IAPRootService.Stub.asInterface(binder).getPackages(0)
+                        Log.i(TAG, "RootService connected and retrieved ${packages.list.size} packages")
+                        withContext(Dispatchers.Main) {
+                            stopRootService()
+                        }
+                        packages.list
+                    } else {
+                        Log.w(TAG, "RootService connection timed out, using PackageManager fallback")
+                        getPackagesViaPackageManager()
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "RootService failed: ${e.message}", e)
+                    getPackagesViaPackageManager()
+                }
+            }
+        }
+
+        if (allPackages.isEmpty()) {
+            Log.e(TAG, "Failed to get package list")
+            isRefreshing = false
+            return
         }
 
         withContext(Dispatchers.IO) {
-            val binder = result.first
-            val allPackages = IAPRootService.Stub.asInterface(binder).getPackages(0)
-
-            withContext(Dispatchers.Main) {
-                stopRootService()
-            }
             val uids = Natives.suUids().toList()
             Log.d(TAG, "all allows: $uids")
 
@@ -174,7 +266,7 @@ class SuperUserViewModel : ViewModel() {
 
             Log.d(TAG, "all configs: $configs")
 
-            apps = allPackages.list.map {
+            val newApps = allPackages.map {
                 val appInfo = it.applicationInfo
                 val uid = appInfo!!.uid
                 val actProfile = if (uids.contains(uid)) Natives.suProfile(uid) else null
@@ -193,7 +285,11 @@ class SuperUserViewModel : ViewModel() {
                     packageInfo = it,
                     config = config
                 )
-            }.filter { it.packageName != apApp.packageName }
+            }
+
+            synchronized(appsLock) {
+                apps = newApps
+            }
         }
     }
 }

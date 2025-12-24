@@ -113,7 +113,7 @@
     <string name="home_system_version">Phiên bản hệ thống</string>
     <string name="home_kpatch_version">Phiên bản bản vá nhân</string>
     <string name="home_su_path">Tệp thực thi su</string>
-    <string name="home_apatch_version">Phiên bản APatchPlus</string>
+    <string name="home_apatch_version">Phiên bản APatch Plus</string>
 
     <string name="kpm">Module nhân</string>
     <string name="kpm_kp_not_installed">Chưa cài đặt bản vá nhân</string>
@@ -182,6 +182,13 @@
 
     <string name="settings_folkx_engine_title">Động cơ hoạt hình FolkX</string>
     <string name="settings_folkx_engine_summary">Sử dụng hoạt hình lò xo vật lý mượt mà khi chuyển đổi các trang cấp cao nhất</string>
+    <string name="settings_folkx_animation_type">Loại hoạt hình</string>
+    <string name="settings_folkx_animation_speed">Tốc độ hoạt hình</string>
+    <string name="settings_folkx_animation_linear">Chuyển động tuyến tính</string>
+    <string name="settings_folkx_animation_spatial">Chuyển động không gian</string>
+    <string name="settings_folkx_animation_fade">Mờ dần/Hien dần</string>
+    <string name="settings_folkx_animation_vertical">Trượt theo chiều dọc</string>
+    <string name="settings_folkx_animation_diagonal">Trượt theo đường chéo</string>
 
     <string name="apm_webui_open">Mở</string>
     <string name="apm_action">Hành động</string>
@@ -193,6 +200,8 @@
     <string name="settings_apm_stay_on_page_summary">Module hệ thống không tự trả về sau khi thực hiện hành động</string>
     <string name="settings_show_disable_all_modules">Hiển thị nút "Vô hiệu hóa tất cả module"</string>
     <string name="settings_show_disable_all_modules_summary">Hiển thị nút vô hiệu hóa tất cả module một cách nhanh chóng trên trang module</string>
+    <string name="settings_module_sort_optimization">Tối ưu hóa sắp xếp module</string>
+    <string name="settings_module_sort_optimization_summary">Đưa các module hệ thống có WebUI và Action lên đầu danh sách</string>
     <string name="apm_install_confirm_title">Cài đặt module</string>
     <string name="apm_install_confirm_content">Bạn có chắc chắn muốn cài đặt %s không?</string>
     <string name="settings_show_more_module_info">Hiển thị chi tiết module</string>
@@ -309,6 +318,7 @@
     <string name="settings_custom_background">Hình nền tùy chỉnh</string>
     <string name="settings_custom_background_enabled">Đã bật hình nền tùy chỉnh</string>
     <string name="settings_custom_background_opacity">Độ mờ của thẻ</string>
+    <string name="settings_custom_background_blur">Làm mờ nền</string>
     <string name="settings_custom_background_dim">Mức tối của nền</string>
     
     <!-- Font Settings -->
@@ -339,8 +349,8 @@
     <string name="settings_select_system_module_background">Nền mô-đun hệ thống</string>
     <string name="settings_select_settings_background">Nền trang cài đặt</string>
     <string name="settings_launcher_icon">Biểu tượng màn hình chính</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -442,7 +452,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Phiên bản không chính thức</string>
-    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý APatchPlus phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
+    <string name="unofficial_version_message">Bạn đang sử dụng trình quản lý APatch Plus phiên bản thứ ba, có thể gây thiệt hại tài sản, vui lòng tải APP bản quyền sử dụng!</string>
     <string name="go_to_github">Đi đến Github</string>
     <string name="settings_save_theme">Lưu chủ đề</string>
     <string name="settings_import_theme">Nhập chủ đề</string>
@@ -579,4 +589,10 @@
     <string name="home_info_mode_full">Đầy đủ</string>
     <string name="home_info_mode_half">Một phần</string>
     <string name="home_zygisk_implement">Triển khai Zygisk</string>
+
+    <string name="settings_app_list_loading_scheme">Sơ đồ tải danh sách ứng dụng</string>
+    <string name="settings_app_list_loading_scheme_summary">Chọn cách tải danh sách ứng dụng</string>
+    <string name="app_list_loading_scheme_root_service">RootService (Mặc định)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (API hệ thống)</string>
+    <string name="app_list_loading_scheme_dialog_title">Sơ đồ tải</string>
 </resources>

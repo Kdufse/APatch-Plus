@@ -111,7 +111,7 @@
     <string name="home_system_version">天道篇次</string>
     <string name="home_kpatch_version">道核符箓篇次</string>
     <string name="home_su_path">登仙令符</string>
-    <string name="home_apatch_version">APatchPlus仙法篇次</string>
+    <string name="home_apatch_version">APatch Plus仙法篇次</string>
 
     <string name="kpm">道核仙符</string>
     <string name="kpm_kp_not_installed">未凝炼道核符箓</string>
@@ -180,6 +180,13 @@
 
     <string name="settings_folkx_engine_title">FolkX仙法动画引擎</string>
     <string name="settings_folkx_engine_summary">在天阶仙页转换时使用仙域灵动的物理符箓动画</string>
+    <string name="settings_folkx_animation_type">仙法动画类型</string>
+    <string name="settings_folkx_animation_speed">仙法动画速度</string>
+    <string name="settings_folkx_animation_linear">仙域线性运动</string>
+    <string name="settings_folkx_animation_spatial">仙域空间运动</string>
+    <string name="settings_folkx_animation_fade">仙光渐隐渐显</string>
+    <string name="settings_folkx_animation_vertical">仙光垂直滑动</string>
+    <string name="settings_folkx_animation_diagonal">仙光对角滑动</string>
 
     <string name="apm_webui_open">启仙法玄窗</string>
     <string name="apm_action">渡劫措置</string>
@@ -195,6 +202,8 @@
     <string name="apm_install_confirm_content">道友确欲凝炼%s仙符入体乎？</string>
     <string name="settings_show_more_module_info">显仙符详录</string>
     <string name="settings_show_more_module_info_summary">仙符录中显仙符号与大小</string>
+    <string name="settings_module_sort_optimization">仙符排序优化</string>
+    <string name="settings_module_sort_optimization_summary">使天界仙符中具WebUI与符法者排于前列</string>
     <string name="apm_disable_all_title">禁诸仙符</string>
     <string name="apm_disable_all_confirm">确欲尽禁诸仙符乎？大抵天道易筋前为之可避天劫。</string>
 
@@ -301,6 +310,7 @@
     <string name="settings_custom_background">自定仙府背景</string>
     <string name="settings_custom_background_enabled">已启自定仙府背景</string>
     <string name="settings_custom_background_opacity">仙笺透度</string>
+    <string name="settings_custom_background_blur">仙府背景模糊</string>
     <string name="settings_custom_background_dim">仙府暗度</string>
     <string name="settings_select_background_image">择仙府背景图</string>
     <string name="settings_custom_background_summary">设自定仙府背景图</string>
@@ -318,8 +328,8 @@
     <string name="settings_select_system_module_background">系统模块仙府背景</string>
     <string name="settings_select_settings_background">设置页面仙府背景</string>
     <string name="settings_launcher_icon">引仙台标识</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -438,7 +448,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">非官制版</string>
-    <string name="unofficial_version_message">君所用之APatchPlus非官制所出，请下载官制正版应用！</string>
+    <string name="unofficial_version_message">君所用之APatch Plus非官制所出，请下载官制正版应用！</string>
     <string name="go_to_github">往Github处</string>
     <string name="settings_save_theme">藏仙府色章</string>
     <string name="settings_import_theme">引仙府色章</string>
@@ -575,4 +585,10 @@
     <string name="kp_install_methods">仙道符箓修补/安装</string>
     <string name="restore_boot_methods">选择一仙法镜像恢复至仙籍分区</string>
     <string name="restore_select_file">选择一仙籍引导文件以还原</string>
+    
+    <string name="settings_app_list_loading_scheme">仙器召唤方案</string>
+    <string name="settings_app_list_loading_scheme_summary">选择如何召唤仙器列表</string>
+    <string name="app_list_loading_scheme_root_service">仙阵召唤 (默认)</string>
+    <string name="app_list_loading_scheme_package_manager">天道召唤 (天道 API)</string>
+    <string name="app_list_loading_scheme_dialog_title">召唤方案</string>
 </resources>

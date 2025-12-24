@@ -113,7 +113,7 @@
     <string name="home_system_version">系統版本</string>
     <string name="home_kpatch_version">KernelPatch 版本</string>
     <string name="home_su_path">可執行 SU 路徑</string>
-    <string name="home_apatch_version">APatchPlus 版本</string>
+    <string name="home_apatch_version">APatch Plus 版本</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch 尚未安裝</string>
@@ -182,6 +182,13 @@
 
     <string name="settings_folkx_engine_title">FolkX 動畫引擎</string>
     <string name="settings_folkx_engine_summary">在頂層頁面切換時使用絲滑的物理彈簧動畫</string>
+    <string name="settings_folkx_animation_type">動畫類型</string>
+    <string name="settings_folkx_animation_linear">線性運動</string>
+    <string name="settings_folkx_animation_speed">動畫速度</string>
+    <string name="settings_folkx_animation_spatial">空間運動</string>
+    <string name="settings_folkx_animation_fade">漸隱漸顯</string>
+    <string name="settings_folkx_animation_vertical">垂直滑動</string>
+    <string name="settings_folkx_animation_diagonal">對角滑動</string>
 
     <string name="apm_webui_open">打開網頁介面</string>
     <string name="apm_action">操作</string>
@@ -191,6 +198,8 @@
     <string name="settings_apm_install_confirm_summary">安裝模組前顯示確認對話框</string>
     <string name="settings_show_disable_all_modules">顯示「停用所有模組」按鈕</string>
     <string name="settings_show_disable_all_modules_summary">在模組頁面顯示一鍵停用所有模組的按鈕</string>
+    <string name="settings_module_sort_optimization">模組排序優化</string>
+    <string name="settings_module_sort_optimization_summary">讓系統模組帶有WebUI和Action的模組排在前面</string>
     <string name="apm_install_confirm_title">安裝模組</string>
     <string name="apm_install_confirm_content">確定要安裝 %s 嗎？</string>
     <string name="apm_disable_all_title">停用所有模組</string>
@@ -305,6 +314,7 @@
     <string name="settings_custom_background">自訂背景</string>
     <string name="settings_custom_background_enabled">已啟用自訂背景</string>
     <string name="settings_custom_background_opacity">卡片不透明度</string>
+    <string name="settings_custom_background_blur">背景模糊</string>
     <string name="settings_custom_background_dim">背景暗度</string>
     <string name="settings_select_background_image">選擇背景圖片</string>
     <string name="settings_custom_background_summary">設定自訂背景圖片</string>
@@ -322,8 +332,8 @@
     <string name="settings_select_system_module_background">系統模組背景</string>
     <string name="settings_select_settings_background">設置頁面背景</string>
     <string name="settings_launcher_icon">桌面圖示</string>
-    <string name="launcher_icon_default">APatchPlus Anime</string>
-    <string name="launcher_icon_classic">APatchPlus</string>
+    <string name="launcher_icon_default">APatch Plus Anime</string>
+    <string name="launcher_icon_classic">APatch Plus</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -438,7 +448,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">非官方版本</string>
-    <string name="unofficial_version_message">你使用的APatchPlus並不是官方渠道下載的正版APP,請下載正版APP使用!</string>
+    <string name="unofficial_version_message">你使用的APatch Plus並不是官方渠道下載的正版APP,請下載正版APP使用!</string>
     <string name="go_to_github">前往 Github</string>
     <string name="settings_save_theme">儲存主題</string>
     <string name="settings_import_theme">匯入主題</string>
@@ -573,4 +583,10 @@
     <string name="home_info_mode_full">完整</string>
     <string name="home_info_mode_half">不完全</string>
     <string name="home_zygisk_implement">Zygisk 實現</string>
+
+    <string name="settings_app_list_loading_scheme">應用程式列表載入方案</string>
+    <string name="settings_app_list_loading_scheme_summary">選擇如何載入應用程式列表</string>
+    <string name="app_list_loading_scheme_root_service">RootService (預設)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (系統 API)</string>
+    <string name="app_list_loading_scheme_dialog_title">載入方案</string>
 </resources>

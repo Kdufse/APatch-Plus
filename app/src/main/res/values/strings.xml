@@ -35,6 +35,13 @@
 
     <string name="settings_folkx_engine_title">FolkX Animation Engine</string>
     <string name="settings_folkx_engine_summary">Use smooth physics-based spring animation when switching between top-level pages</string>
+    <string name="settings_folkx_animation_type">Animation Type</string>
+    <string name="settings_folkx_animation_speed">Animation Speed</string>
+    <string name="settings_folkx_animation_linear">Linear Motion</string>
+    <string name="settings_folkx_animation_spatial">Spatial Motion</string>
+    <string name="settings_folkx_animation_fade">Fade In/Out</string>
+    <string name="settings_folkx_animation_vertical">Vertical Slide</string>
+    <string name="settings_folkx_animation_diagonal">Diagonal Slide</string>
 
     <string name="su_exclude_all_title">Exclude All</string>
     <string name="su_exclude_all_confirm">Are you sure you want to exclude all non-root apps?</string>
@@ -131,7 +138,7 @@
     <string name="home_system_version">System version</string>
     <string name="home_kpatch_version">KernelPatch version</string>
     <string name="home_su_path">Executable su</string>
-    <string name="home_apatch_version">APatchPlus version</string>
+    <string name="home_apatch_version">APatch Plus version</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch not installed</string>
@@ -206,6 +213,8 @@
     <string name="settings_apm_stay_on_page_summary">Do not automatically return after module action execution</string>
     <string name="settings_show_disable_all_modules">Show \'Disable All Modules\' button</string>
     <string name="settings_show_disable_all_modules_summary">Display a button in the modules page to disable all modules at once</string>
+    <string name="settings_module_sort_optimization">Module Sorting Optimization</string>
+    <string name="settings_module_sort_optimization_summary">Make system modules with WebUI and Action appear at the top</string>
     <string name="apm_install_confirm_title">Install Module</string>
     <string name="apm_install_confirm_content">Are you sure you want to install %s?</string>
     <string name="apm_disable_all_title">Disable All Modules</string>
@@ -318,6 +327,7 @@
     <string name="settings_custom_background">Custom Background</string>
     <string name="settings_custom_background_enabled">Custom Background Enabled</string>
     <string name="settings_custom_background_opacity">Card opacity</string>
+    <string name="settings_custom_background_blur">Background blur</string>
     <string name="settings_custom_background_dim">Background dim</string>
     <string name="settings_custom_background_dual_dim">Enable dual day/night dim</string>
     <string name="settings_custom_background_day_dim">Day mode background dim</string>
@@ -353,8 +363,8 @@
     <string name="settings_clear_background_confirm">Are you sure you want to clear the background image?</string>
 
     <string name="settings_launcher_icon">Launcher Icon</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
 
@@ -453,7 +463,7 @@
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="settings_home_layout_focus">FocusUI</string>
     <string name="unofficial_version_title">Unofficial Version</string>
-    <string name="unofficial_version_message">You are using APatchPlus which is not an official app, please download the official app!</string>
+    <string name="unofficial_version_message">You are using APatch Plus which is not an official app, please download the official app!</string>
     <string name="go_to_github">Go to Github</string>
     <string name="settings_save_theme">Save theme</string>
     <string name="settings_import_theme">Import theme</string>
@@ -519,6 +529,11 @@
     <string name="update_latest">You are on the latest version</string>
     <string name="update_error">Error checking for updates</string>
     <string name="settings_category_general">General</string>
+    <string name="settings_app_list_loading_scheme">App List Loading Scheme</string>
+    <string name="settings_app_list_loading_scheme_summary">Choose how to load the application list</string>
+    <string name="app_list_loading_scheme_root_service">RootService (Default)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (System API)</string>
+    <string name="app_list_loading_scheme_dialog_title">Loading Scheme</string>
     <string name="settings_category_appearance">Appearance</string>
     <string name="settings_category_behavior">Behavior</string>
     <string name="settings_category_module">Modules</string>

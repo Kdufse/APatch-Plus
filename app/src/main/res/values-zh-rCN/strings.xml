@@ -39,6 +39,13 @@
 
     <string name="settings_folkx_engine_title">FolkX动画引擎</string>
     <string name="settings_folkx_engine_summary">在顶层页面切换时使用丝滑的物理弹簧动画</string>
+    <string name="settings_folkx_animation_type">动画类型</string>
+    <string name="settings_folkx_animation_speed">动画速度</string>
+    <string name="settings_folkx_animation_linear">线性运动</string>
+    <string name="settings_folkx_animation_spatial">空间运动</string>
+    <string name="settings_folkx_animation_fade">渐隐渐显</string>
+    <string name="settings_folkx_animation_vertical">垂直滑动</string>
+    <string name="settings_folkx_animation_diagonal">对角滑动</string>
 
     <string name="about_source_code"><![CDATA[<p>在 %1$s 查看源代码<p/>加入我们的 %2$s 频道<p/>加入我们的 %3$s 群组]]></string>
     <string name="send_log">发送日志</string>
@@ -123,7 +130,7 @@
     <string name="home_system_version">系统版本</string>
     <string name="home_kpatch_version">内核补丁版本</string>
     <string name="home_su_path">su 可执行文件</string>
-    <string name="home_apatch_version">APatchPlus 版本</string>
+    <string name="home_apatch_version">APatch Plus 版本</string>
 
     <string name="kpm">内核模块</string>
     <string name="kpm_kp_not_installed">未安装内核补丁</string>
@@ -202,6 +209,8 @@
     <string name="settings_apm_stay_on_page_summary">系统模块执行完操作后不自动返回</string>
     <string name="settings_show_disable_all_modules">显示"禁用全部模块"按钮</string>
     <string name="settings_show_disable_all_modules_summary">在模块页面显示一键禁用所有模块的按钮</string>
+    <string name="settings_module_sort_optimization">模块排序优化</string>
+    <string name="settings_module_sort_optimization_summary">让系统模块带有WebUI和Action的模块排在前面</string>
     <string name="apm_install_confirm_title">安装模块</string>
     <string name="apm_install_confirm_content">确定要安装 %s 吗？</string>
     <string name="apm_disable_all_title">禁用所有模块</string>
@@ -312,6 +321,7 @@
     <string name="settings_custom_background">自定义背景</string>
     <string name="settings_custom_background_enabled">已启用自定义背景</string>
     <string name="settings_custom_background_opacity">卡片不透明度</string>
+    <string name="settings_custom_background_blur">背景模糊</string>
     <string name="settings_custom_background_dim">背景暗度</string>
     <string name="settings_custom_background_dual_dim">启用双切暗色适配</string>
     <string name="settings_custom_background_day_dim">白天模式暗度</string>
@@ -347,8 +357,8 @@
 
 
     <string name="settings_launcher_icon">桌面图标</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
 
@@ -446,7 +456,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">非官方版本</string>
-    <string name="unofficial_version_message">您正在使用的 APatchPlus 管理器为第三方版本，可能会造成财产损失，请下载正版APP使用！</string>
+    <string name="unofficial_version_message">您正在使用的 APatch Plus 管理器为第三方版本，可能会造成财产损失，请下载正版APP使用！</string>
     <string name="go_to_github">前往 Github</string>
     <string name="settings_save_theme">保存主题</string>
     <string name="settings_import_theme">导入主题</string>
@@ -513,6 +523,11 @@
     <string name="update_error">检查更新时出错</string>
     <!--折叠选项-->
     <string name="settings_category_general">常规</string>
+    <string name="settings_app_list_loading_scheme">应用列表加载方案</string>
+    <string name="settings_app_list_loading_scheme_summary">选择如何加载应用列表</string>
+    <string name="app_list_loading_scheme_root_service">RootService (默认)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (系统 API)</string>
+    <string name="app_list_loading_scheme_dialog_title">加载方案</string>
     <string name="settings_category_appearance">外观</string>
     <string name="settings_category_behavior">行为</string>
     <string name="settings_category_module">模块</string>

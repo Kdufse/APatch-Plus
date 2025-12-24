@@ -17,7 +17,7 @@
     <string name="reboot_bootloader">ブートローダーへ再起動</string>
     <string name="reboot_download">ダウンロードモードへ再起動</string>
     <string name="reboot_edl">EDL モードへ再起動</string>
-    <string name="about">APatchPlus について</string>
+    <string name="about">APatch Plus について</string>
     <string name="settings_app_language">言語</string>
     <string name="system_default">システムのデフォルト</string>
     <string name="settings_global_namespace_mode">グローバル名前空間モード</string>
@@ -97,7 +97,7 @@
     <string name="home_system_version">システムのバージョン</string>
     <string name="home_kpatch_version">KernelPatch バージョン</string>
     <string name="home_su_path">su</string>
-    <string name="home_apatch_version">APatchPlus のバージョン</string>s
+    <string name="home_apatch_version">APatch Plus のバージョン</string>s
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch はインストールされていません</string>
     <string name="kpm_add_kpm">KPM を追加</string>
@@ -161,6 +161,13 @@
 
     <string name="settings_folkx_engine_title">FolkX アニメーションエンジン</string>
     <string name="settings_folkx_engine_summary">トップレベルページの切り替え時に滑らかな物理スプリングアニメーションを使用</string>
+    <string name="settings_folkx_animation_type">アニメーションタイプ</string>
+    <string name="settings_folkx_animation_speed">アニメーション速度</string>
+    <string name="settings_folkx_animation_linear">リニアモーション</string>
+    <string name="settings_folkx_animation_spatial">空間モーション</string>
+    <string name="settings_folkx_animation_fade">フェードイン/アウト</string>
+    <string name="settings_folkx_animation_vertical">垂直スライド</string>
+    <string name="settings_folkx_animation_diagonal">対角スライド</string>
     <string name="apm_webui_open">開く</string>
     <string name="apm_action">アクション</string>
     <string name="enable_web_debugging">WebView デバッグを有効</string>
@@ -185,7 +192,7 @@
     <string name="home_dialog_auth_fail_title">認証失敗</string>
     <string name="home_dialog_auth_fail_content">SuperKey の認証に失敗したため、APatchは正しく動作しません。 \n以下の理由が考えられます: \n1. KernelPatch で\\"boot.img\\"をパッチしていない。 \n2. パッチを適用した\\"boot.img\\"をフラッシュしていない。 \n3. SuperKey が間違っている。 \n4. デバイスが APatch と KernelPatch に対応していない。 \n \n再度確認して、もう一度お試しください。問題が解決しない場合は、公式リポジトリの Issue ページで質問をして下さい。</string>
     <string name="home_more_menu_feedback_or_suggestion">フィードバック / 提案</string>
-    <string name="home_more_menu_about">APatchPlus について</string>
+    <string name="home_more_menu_about">APatch Plus について</string>
     <string name="home_dialog_uninstall_title">アンインストール</string>
     <string name="home_dialog_uninstall_ap_only">パッチをアンインストール</string>
     <string name="home_dialog_uninstall_ap_only_desc">AndroidPatchのみを削除し、マネージャーを保持します。</string>
@@ -202,6 +209,8 @@
     <string name="settings_night_theme_enabled">ダークテーマを有効化</string>
     <string name="settings_show_more_module_info">モジュールの詳細情報を表示</string>
     <string name="settings_show_more_module_info_summary">モジュールリストにモジュール ID とサイズを表示</string>
+    <string name="settings_module_sort_optimization">モジュールソート最適化</string>
+    <string name="settings_module_sort_optimization_summary">WebUIとActionを持つシステムモジュールを先頭に表示する</string>
     <string name="settings_use_system_color_theme">ダイナミックテーマ</string>
     <string name="settings_use_system_color_theme_summary">システムが壁紙から生成したカラーテーマを使用します</string>
     <string name="settings_custom_color_theme">カラーテーマ</string>
@@ -270,6 +279,7 @@
     <string name="settings_custom_background">カスタム背景</string>
     <string name="settings_custom_background_enabled">カスタム背景が有効です</string>
     <string name="settings_custom_background_opacity">カードの不透明度</string>
+    <string name="settings_custom_background_blur">背景のぼかし</string>
     <string name="settings_custom_background_dim">背景の暗さ</string>
     <string name="settings_select_background_image">背景画像を選択</string>
     <string name="settings_custom_background_summary">カスタム背景画像を設定する</string>
@@ -286,8 +296,8 @@
     <string name="settings_select_superuser_background">スーパーユーザー背景</string>
     <string name="settings_select_system_module_background">システムモジュール背景</string>
     <string name="settings_select_settings_background">設定ページ背景</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -401,7 +411,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">非公式バージョン</string>
-    <string name="unofficial_version_message">使用している APatchPlus は公式アプリではありません。公式アプリをダウンロードしてください！</string>
+    <string name="unofficial_version_message">使用している APatch Plus は公式アプリではありません。公式アプリをダウンロードしてください！</string>
     <string name="go_to_github">Github へ移動</string>
     <string name="settings_save_theme">テーマを保存</string>
     <string name="settings_import_theme">テーマをインポート</string>
@@ -539,5 +549,11 @@
     <string name="kp_install_methods">KernelPatch パッチング/インストール</string>
     <string name="restore_boot_methods">ブートパーティションに復元するブートを選択</string>
     <string name="restore_select_file">復元するパーティションブートファイルを選択</string>
+    
+    <string name="settings_app_list_loading_scheme">アプリ一覧読み込みスキーム</string>
+    <string name="settings_app_list_loading_scheme_summary">アプリ一覧の読み込み方法を選択</string>
+    <string name="app_list_loading_scheme_root_service">RootService (デフォルト)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (システム API)</string>
+    <string name="app_list_loading_scheme_dialog_title">読み込みスキーム</string>
 
 </resources>

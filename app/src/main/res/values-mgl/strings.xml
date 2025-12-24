@@ -182,6 +182,13 @@
 
     <string name="settings_folkx_engine_title">FolkX魔法动画引擎</string>
     <string name="settings_folkx_engine_summary">在顶层魔法页面切换时使用流畅的物理弹簧动画</string>
+    <string name="settings_folkx_animation_type">魔法动画类型</string>
+    <string name="settings_folkx_animation_speed">异次元速度</string>
+    <string name="settings_folkx_animation_linear">魔法线性运动</string>
+    <string name="settings_folkx_animation_spatial">魔法空间运动</string>
+    <string name="settings_folkx_animation_fade">魔法渐隐渐显</string>
+    <string name="settings_folkx_animation_vertical">魔法垂直滑动</string>
+    <string name="settings_folkx_animation_diagonal">魔法对角滑动</string>
 
     <string name="apm_webui_open">开启</string>
     <string name="apm_action">魔法操作</string>
@@ -193,6 +200,8 @@
     <string name="settings_apm_stay_on_page_summary">星之魔法阵执行完魔法后不自动返回</string>
     <string name="settings_show_disable_all_modules">显示"禁用全部魔法阵"按钮</string>
     <string name="settings_show_disable_all_modules_summary">在魔法阵页面显示一键禁用所有魔法阵的按钮</string>
+    <string name="settings_module_sort_optimization">魔法阵排序优化</string>
+    <string name="settings_module_sort_optimization_summary">让系统魔法阵带有WebUI和Action的魔法阵排在前面</string>
     <string name="settings_show_more_module_info">显示魔法阵详细信息</string>
     <string name="settings_show_more_module_info_summary">在魔法阵列表中显示魔法阵 ID 和大小</string>
     <string name="apm_install_confirm_title">安装魔法阵</string>
@@ -309,6 +318,7 @@
     <string name="settings_custom_background">自定义魔法背景</string>
     <string name="settings_custom_background_enabled">已启用自定义魔法背景</string>
     <string name="settings_custom_background_opacity">魔法阵透明度</string>
+    <string name="settings_custom_background_blur">魔法背景模糊</string>
     <string name="settings_custom_background_dim">背景暗度</string>
     <string name="settings_select_background_image">选择魔法背景图片</string>
     <string name="settings_custom_background_summary">设置自定义魔法背景图片</string>
@@ -326,8 +336,8 @@
     <string name="settings_select_system_module_background">系统模块魔法背景</string>
     <string name="settings_select_settings_background">设置页面魔法背景</string>
     <string name="settings_launcher_icon">魔法使徽章</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -444,7 +454,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">非正统魔法工坊✨</string>
-    <string name="unofficial_version_message">你所使用的APatchPlus并非星界认证的正统魔法工坊~ 请前往官方魔法屋获取正版工坊，以避免魔法反噬或契约失效！</string>
+    <string name="unofficial_version_message">你所使用的APatch Plus并非星界认证的正统魔法工坊~ 请前往官方魔法屋获取正版工坊，以避免魔法反噬或契约失效！</string>
     <string name="go_to_github">前往Github星界魔法屋~☆</string>
     <string name="settings_save_theme">封印魔法主题</string>
     <string name="settings_import_theme">唤醒魔法主题</string>
@@ -578,4 +588,10 @@
     <string name="home_info_mode_full">完整</string>
     <string name="home_info_mode_half">不完整</string>
     <string name="home_zygisk_implement">Zygisk 魔法实现</string>
+
+    <string name="settings_app_list_loading_scheme">魔法使召唤方案</string>
+    <string name="settings_app_list_loading_scheme_summary">选择如何召唤魔法使列表</string>
+    <string name="app_list_loading_scheme_root_service">魔法阵召唤 (默认)</string>
+    <string name="app_list_loading_scheme_package_manager">星界召唤 (星界 API)</string>
+    <string name="app_list_loading_scheme_dialog_title">召唤方案</string>
 </resources>

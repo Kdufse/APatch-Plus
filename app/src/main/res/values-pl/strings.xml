@@ -117,7 +117,7 @@
     <string name="home_system_version">Wersja systemu</string>
     <string name="home_kpatch_version">Wersja KernelPatch</string>
     <string name="home_su_path">Plik wykonywalny su</string>
-    <string name="home_apatch_version">Wersja APatchPlus</string>
+    <string name="home_apatch_version">Wersja APatch Plus</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch nie jest zainstalowany</string>
@@ -186,6 +186,13 @@
 
     <string name="settings_folkx_engine_title">Silnik animacji FolkX</string>
     <string name="settings_folkx_engine_summary">Używaj płynnych fizycznych animacji sprężynowych przy przełączaniu stron najwyższego poziomu</string>
+    <string name="settings_folkx_animation_type">Typ animacji</string>
+    <string name="settings_folkx_animation_speed">Prędkość animacji</string>
+    <string name="settings_folkx_animation_linear">Ruch liniowy</string>
+    <string name="settings_folkx_animation_spatial">Ruch przestrzenny</string>
+    <string name="settings_folkx_animation_fade">Przejście (Fade in/out)</string>
+    <string name="settings_folkx_animation_vertical">Przesuwanie pionowe</string>
+    <string name="settings_folkx_animation_diagonal">Przesuwanie ukośne</string>
 
     <string name="apm_webui_open">Otwórz</string>
     <string name="apm_action">Akcja</string>
@@ -195,6 +202,8 @@
     <string name="settings_apm_install_confirm_summary">Pokaż okno dialogowe potwierdzenia przed instalacją modułów</string>
     <string name="settings_show_disable_all_modules">Pokaż przycisk \'Wyłącz wszystkie moduły\'</string>
     <string name="settings_show_disable_all_modules_summary">Wyświetl przycisk na stronie modułów, aby wyłączyć wszystkie moduły naraz</string>
+    <string name="settings_module_sort_optimization">Optymalizacja sortowania modułów</string>
+    <string name="settings_module_sort_optimization_summary">Umieść moduły systemowe z WebUI i Action na początku listy</string>
     <string name="settings_show_more_module_info">Pokaż szczegóły modułu</string>
     <string name="settings_show_more_module_info_summary">Pokaż ID i rozmiar modułu na liście modułów</string>
     <string name="apm_install_confirm_title">Instalacja modułu</string>
@@ -312,6 +321,7 @@
     <string name="settings_custom_background">Niestandardowe tło</string>
     <string name="settings_custom_background_enabled">Włączono niestandardowe tło</string>
     <string name="settings_custom_background_opacity">Przezroczystość karty</string>
+    <string name="settings_custom_background_blur">Rozmycie tła</string>
     <string name="settings_custom_background_dim">Przyciemnienie tła</string>
     <string name="settings_select_background_image">Wybierz obraz tła</string>
     <string name="settings_custom_background_summary">Ustaw niestandardowy obraz tła</string>
@@ -329,8 +339,8 @@
     <string name="settings_select_system_module_background">Tło modułu systemowego</string>
     <string name="settings_select_settings_background">Tło strony ustawień</string>
     <string name="settings_launcher_icon">Ikona launchera</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -447,7 +457,7 @@
     
     <!-- Unofficial Version Strings -->
     <string name="unofficial_version_title">Wersja nieoficjalna</string>
-    <string name="unofficial_version_message">Używasz APatchPlus, który nie jest oficjalną aplikacją, pobierz oficjalną aplikację!</string>
+    <string name="unofficial_version_message">Używasz APatch Plus, który nie jest oficjalną aplikacją, pobierz oficjalną aplikację!</string>
     <string name="go_to_github">Przejdź na Github</string>
     <string name="settings_save_theme">Zapisz motyw</string>
     <string name="settings_import_theme">Importuj motyw</string>
@@ -580,4 +590,10 @@
     <string name="home_info_mode_full">Pełny</string>
     <string name="home_info_mode_half">Częściowy</string>
     <string name="home_zygisk_implement">Implementacja Zygisk</string>
+
+    <string name="settings_app_list_loading_scheme">Schemat wczytywania listy aplikacji</string>
+    <string name="settings_app_list_loading_scheme_summary">Wybierz sposób wczytywania listy aplikacji</string>
+    <string name="app_list_loading_scheme_root_service">RootService (Domyślnie)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (API systemowe)</string>
+    <string name="app_list_loading_scheme_dialog_title">Schemat wczytywania</string>
 </resources>

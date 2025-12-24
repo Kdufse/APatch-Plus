@@ -121,7 +121,7 @@
     <string name="home_system_version">Версия системы</string>
     <string name="home_kpatch_version">Версия KernelPatch</string>
     <string name="home_su_path">Исполняемый файл su</string>
-    <string name="home_apatch_version">Версия APatchPlus</string>
+    <string name="home_apatch_version">Версия APatch Plus</string>
 
     <string name="kpm">KPModule</string>
     <string name="kpm_kp_not_installed">KernelPatch не установлен</string>
@@ -186,10 +186,17 @@
     <string name="setting_reset_su_new_path">Новый полный путь</string>
 
     <string name="setting_auto_backup_boot">Автоматическое резервное копирование Boot</string>
-    <string name="setting_auto_backup_boot_summary">Автоматически создавать резервную копию образа Boot в /storage/emulated/0/Download/APatchPlus/BootBackups/ при патчинге</string>
+    <string name="setting_auto_backup_boot_summary">Автоматически создавать резервную копию образа Boot в /storage/emulated/0/Download/APatch Plus/BootBackups/ при патчинге</string>
 
     <string name="settings_folkx_engine_title">Движок анимации FolkX</string>
     <string name="settings_folkx_engine_summary">Использовать плавные физические пружинные анимации при переключении страниц верхнего уровня</string>
+    <string name="settings_folkx_animation_type">Тип анимации</string>
+    <string name="settings_folkx_animation_speed">Скорость анимации</string>
+    <string name="settings_folkx_animation_linear">Линейное движение</string>
+    <string name="settings_folkx_animation_spatial">Пространственное движение</string>
+    <string name="settings_folkx_animation_fade">Появление/Исчезновение</string>
+    <string name="settings_folkx_animation_vertical">Вертикальное скольжение</string>
+    <string name="settings_folkx_animation_diagonal">Диагональное скольжение</string>
 
     <string name="apm_webui_open">Открыть</string>
     <string name="apm_action">Действие</string>
@@ -199,6 +206,8 @@
     <string name="settings_apm_install_confirm_summary">Показывать диалог подтверждения перед установкой модулей</string>
     <string name="settings_show_disable_all_modules">Показать кнопку "Отключить все модули"</string>
     <string name="settings_show_disable_all_modules_summary">Отображать кнопку на странице модулей для отключения всех модулей одновременно</string>
+    <string name="settings_module_sort_optimization">Оптимизация сортировки модулей</string>
+    <string name="settings_module_sort_optimization_summary">Разместить системные модули с WebUI и Action в начале списка</string>
     <string name="settings_show_more_module_info">Показать подробности о модуле</string>
     <string name="settings_show_more_module_info_summary">Показать ID и размер модуля в списке модулей</string>
     <string name="apm_install_confirm_title">Установить модуль</string>
@@ -300,7 +309,7 @@
     <string name="app_title_apatch_folk">APatch Folk</string>
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
-    <string name="app_title_apatchplus">APatch Plus</string>
+    <string name="app_title_folkpatch">APatch Plus</string>
     <string name="app_title_kernelpatch">KernelPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
@@ -317,6 +326,7 @@
     <string name="settings_custom_background">Пользовательский фон</string>
     <string name="settings_custom_background_enabled">Пользовательский фон включен</string>
     <string name="settings_custom_background_opacity">Прозрачность карточки</string>
+    <string name="settings_custom_background_blur">Размытие фона</string>
     <string name="settings_custom_background_dim">Затемнение фона</string>
     <string name="settings_select_background_image">Выбрать фоновое изображение</string>
     <string name="settings_custom_background_summary">Установить пользовательское фоновое изображение</string>
@@ -334,8 +344,8 @@
     <string name="settings_select_system_module_background">Фон системного модуля</string>
     <string name="settings_select_settings_background">Фон страницы настроек</string>
     <string name="settings_launcher_icon">Иконка лаунчера</string>
-    <string name="launcher_icon_default">APatchPlus</string>
-    <string name="launcher_icon_classic">APatchPlus Anime</string>
+    <string name="launcher_icon_default">APatch Plus</string>
+    <string name="launcher_icon_classic">APatch Plus Anime</string>
     <string name="launcher_icon_apatch">APatch</string>
     <string name="launcher_icon_kernelsu">KernelSU</string>
     <string name="launcher_icon_kernelsu_next">KernelSU Next</string>
@@ -449,7 +459,7 @@
     <string name="settings_home_layout_default">ListUI</string>
     <string name="settings_home_layout_grid">GridUI</string>
     <string name="unofficial_version_title">Неофициальная версия</string>
-    <string name="unofficial_version_message">Вы используете APatchPlus, который не является официальным приложением, пожалуйста, скачайте официальное приложение!</string>
+    <string name="unofficial_version_message">Вы используете APatch Plus, который не является официальным приложением, пожалуйста, скачайте официальное приложение!</string>
     <string name="go_to_github">Перейти на Github</string>
     <string name="settings_save_theme">Сохранить тему</string>
     <string name="settings_import_theme">Импортировать тему</string>
@@ -582,4 +592,10 @@
     <string name="home_info_mode_full">Полный</string>
     <string name="home_info_mode_half">Частичный</string>
     <string name="home_zygisk_implement">Реализация Zygisk</string>
+
+    <string name="settings_app_list_loading_scheme">Схема загрузки списка приложений</string>
+    <string name="settings_app_list_loading_scheme_summary">Выберите способ загрузки списка приложений</string>
+    <string name="app_list_loading_scheme_root_service">RootService (По умолчанию)</string>
+    <string name="app_list_loading_scheme_package_manager">PackageManager (Системное API)</string>
+    <string name="app_list_loading_scheme_dialog_title">Схема загрузки</string>
 </resources>

@@ -2895,7 +2895,7 @@ private data class AppTitle(
 
 private fun appTitleList(): List<AppTitle> {
     return listOf(
-        AppTitle("apatchplus", R.string.app_title_APatch Plus),
+        AppTitle("apatchplus", R.string.app_title_apatchplus),
         AppTitle("fpatch", R.string.app_title_fpatch),
         AppTitle("apatch_folk", R.string.app_title_apatch_folk),
         AppTitle("apatchx", R.string.app_title_apatchx),

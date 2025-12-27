@@ -52,6 +52,12 @@ class APModuleViewModel : ViewModel() {
         val hasActionScript: Boolean,
         val isZygisk: Boolean,
         val isLSPosed: Boolean,
+        // KernelSU banner added for APatchPlus
+        val banner: String = "",
+        val size: Long = 0L,
+        val isMetaModule: Boolean = false,
+        val updateJson: String = "",
+        val versionCode: Int = 0
     )
 
     data class ModuleUpdateInfo(

@@ -50,6 +50,10 @@ tasks.register("printVersion") {
     }
 }
 
+dependencies {
+    implementation("io.coil-kt:coil-compose:2.5.0")
+}
+
 subprojects {
     plugins.withType(AndroidBasePlugin::class.java) {
         extensions.configure(CommonExtension::class.java) {

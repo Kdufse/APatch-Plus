@@ -137,6 +137,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+// ?? MODULE_TYPE ?????????
+enum class MODULE_TYPE {
+    APM, KPM
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
@@ -237,12 +242,12 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     } else {
         {
             val selectZipLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForActivityResult()
-            ) {
-                if (it.resultCode != RESULT_OK) {
+                contract = ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+                if (result.resultCode != RESULT_OK) {
                     return@rememberLauncherForActivityResult
                 }
-                val data = it.data ?: return@rememberLauncherForActivityResult
+                val data = result.data ?: return@rememberLauncherForActivityResult
                 val uri = data.data ?: return@rememberLauncherForActivityResult
 
                 Log.i("ModuleScreen", "select zip result: $uri")

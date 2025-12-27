@@ -815,11 +815,9 @@ private fun ModuleItem(
                             alpha = 0.18f
                         )
                     } else {
-                        // ???????????
                         val bannerData = remember(module.banner) {
                             try {
-                                // APatch?????????????????
-                                val file = SuFile("/data/adb/ap/modules/${module.id}/${module.banner}")
+                                val file = SuFile("/data/adb/modules/${module.id}/${module.banner}")
                                 file.newInputStream().use { it.readBytes() }
                             } catch (_: Exception) {
                                 null

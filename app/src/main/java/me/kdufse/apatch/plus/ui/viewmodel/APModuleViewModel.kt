@@ -1,6 +1,5 @@
 package me.kdufse.apatch.plus.ui.viewmodel
 
-import android.content.SharedPreferences
 import android.os.SystemClock
 import android.util.Log
 import androidx.compose.runtime.derivedStateOf
@@ -11,12 +10,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.apApp
 import me.kdufse.apatch.plus.util.getRootShell
 import me.kdufse.apatch.plus.util.listModules
 import me.kdufse.apatch.plus.util.toggleModule
-import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.Collator
@@ -29,13 +26,6 @@ class APModuleViewModel : ViewModel() {
     companion object {
         private const val TAG = "ModuleViewModel"
         private var modules by mutableStateOf<List<ModuleInfo>>(emptyList())
-        private val zygiskModuleIds = listOf(
-            "zygisksu",
-            "zygisknext",
-            "rezygisk",
-            "neozygisk",
-            "shirokozygisk"
-        )
     }
 
     class ModuleInfo(
@@ -51,12 +41,6 @@ class APModuleViewModel : ViewModel() {
         val updateJson: String,
         val hasWebUi: Boolean,
         val hasActionScript: Boolean,
-        val isZygisk: Boolean,
-        val isLSPosed: Boolean,
-        // KernelSU banner added for APatchPlus
-        val banner: String = "",
-        val size: Long = 0L,
-        val isMetaModule: Boolean = false
     )
 
     data class ModuleUpdateInfo(
@@ -66,56 +50,12 @@ class APModuleViewModel : ViewModel() {
         val changelog: String,
     )
 
-    data class ModuleInfo(
-        val id: String,
-        val name: String,
-        val version: String,
-        val author: String,
-        val description: String,
-        val enabled: Boolean,
-        val remove: Boolean,
-        val update: Boolean,
-        val hasWebUi: Boolean,
-        val hasActionScript: Boolean,
-        val banner: String = ""
-    )
-
     var isRefreshing by mutableStateOf(false)
         private set
 
-    private val prefs = APApplication.sharedPreferences
-    var sortOptimizationEnabled by mutableStateOf(prefs.getBoolean("module_sort_optimization", true))
-
-    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == "module_sort_optimization") {
-            sortOptimizationEnabled = prefs.getBoolean("module_sort_optimization", true)
-        }
-    }
-
-    init {
-        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        prefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
-    }
-
     val moduleList by derivedStateOf {
-        val collator = Collator.getInstance(Locale.getDefault())
-        val sortedList = if (sortOptimizationEnabled) {
-            modules.sortedWith(
-                compareByDescending<ModuleInfo> { it.isZygisk }
-                    .thenByDescending { it.isLSPosed }
-                    .thenByDescending { it.hasWebUi }
-                    .thenByDescending { it.hasActionScript }
-                    .thenBy(collator) { it.id }
-            )
-        } else {
-            val comparator = compareBy(collator, ModuleInfo::id)
-            modules.sortedWith(comparator)
-        }
-        sortedList.also {
+        val comparator = compareBy(Collator.getInstance(Locale.getDefault()), ModuleInfo::id)
+        modules.sortedWith(comparator).also {
             isRefreshing = false
         }
     }
@@ -160,6 +100,7 @@ class APModuleViewModel : ViewModel() {
                     .map { obj ->
                         ModuleInfo(
                             obj.getString("id"),
+
                             obj.optString("name"),
                             obj.optString("author", "Unknown"),
                             obj.optString("version", "Unknown"),
@@ -170,9 +111,7 @@ class APModuleViewModel : ViewModel() {
                             obj.getBoolean("remove"),
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
-                            obj.optBoolean("action"),
-                            zygiskModuleIds.contains(obj.getString("id")),
-                            obj.optString("name").contains("LSPosed", ignoreCase = true)
+                            obj.optBoolean("action")
                         )
                     }.toList()
                 isNeedRefresh = false
@@ -204,12 +143,12 @@ class APModuleViewModel : ViewModel() {
         val result = kotlin.runCatching {
             val url = m.updateJson
             Log.i(TAG, "checkUpdate url: $url")
-            val request = Request.Builder()
-                .url(url)
-                .build()
             val response = apApp.okhttpClient
-                .newCall(request)
-                .execute()
+                .newCall(
+                    okhttp3.Request.Builder()
+                        .url(url)
+                        .build()
+                ).execute()
             Log.d(TAG, "checkUpdate code: ${response.code}")
             if (response.isSuccessful) {
                 response.body?.string() ?: ""

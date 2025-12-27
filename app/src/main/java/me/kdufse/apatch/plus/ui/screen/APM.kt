@@ -779,6 +779,7 @@ private fun ModuleItem(
     module: APModuleViewModel.ModuleInfo,
     isChecked: Boolean,
     updateUrl: String,
+    showMoreModuleInfo: Boolean,
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,

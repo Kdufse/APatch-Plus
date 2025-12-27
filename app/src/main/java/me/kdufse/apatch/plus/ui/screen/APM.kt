@@ -787,91 +787,82 @@ private fun ModuleItem(
     modifier: Modifier = Modifier,
     alpha: Float = 1f,
 ) {
-    val decoration = if (!module.remove) TextDecoration.None else TextDecoration.LineThrough
-    val moduleAuthor = stringResource(id = R.string.apm_author)
-    val viewModel = viewModel<APModuleViewModel>()
     val context = LocalContext.current
-    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
-    val useBanner = remember { mutableStateOf(prefs.getBoolean("use_banner", true)) }
+    val viewModel = viewModel<APModuleViewModel>()
     
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp,
-        shape = RoundedCornerShape(20.dp)
-    ) {
+    val isWallpaperMode = BackgroundConfig.isCustomBackgroundEnabled
+    val opacity = if (isWallpaperMode) {
+        BackgroundConfig.customBackgroundOpacity.coerceAtLeast(0.2f)
+    } else {
+        1f
+    }
+    
+    val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
+        value = withContext(Dispatchers.IO) {
+            viewModel.getModuleSize(module.id)
+        }
+    }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick(module) },
-            contentAlignment = Alignment.Center
-        ) {
-            // Ìí¼Ó Banner ±³¾°
-            if (useBanner.value && module.banner.isNotEmpty()) {
-                val isDark = isSystemInDarkTheme()
-                val colorScheme = MaterialTheme.colorScheme
-                val amoledMode = prefs.getBoolean("amoled_mode", false)
-                val isDynamic = colorScheme.primary != colorScheme.secondary
-
-                val fadeColor = when {
-                    amoledMode && isDark -> Color.Black
-                    isDynamic -> colorScheme.surface
-                    isDark -> Color(0xFF222222)
-                    else -> Color.White
+    // Banner Logic
+    val bannerData = remember(module.id) {
+        try {
+            val dir = "/data/adb/modules/${module.id}"
+            val candidates = listOf("banner", "banner.png", "banner.jpg", "banner.jpeg")
+            var bytes: ByteArray? = null
+            for (name in candidates) {
+                val file = SuFile("$dir/$name")
+                if (file.exists()) {
+                    bytes = file.newInputStream().use { it.readBytes() }
+                    break
                 }
+            }
+            bytes
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    val isDark = isSystemInDarkTheme()
+    val cardColor = if (isWallpaperMode) {
+        MaterialTheme.colorScheme.surface.copy(alpha = opacity)
+    } else {
+        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f)
+    }
+
+    Surface(
+        onClick = { onClick(module) },
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = cardColor,
+        tonalElevation = 0.dp
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            if (bannerData != null) {
+                val isDark = isSystemInDarkTheme()
+                val fadeColor = if (isDark) Color(0xFF222222) else Color.White
 
                 Box(
                     modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
-                        // ÍøÂçÍ¼Æ¬
-                        AsyncImage(
-                            model = module.banner,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            contentScale = ContentScale.Crop,
-                            alpha = 0.18f
-                        )
-                    } else {
-                        // ±¾µØÍ¼Æ¬
-                        val bannerData = remember(module.banner) {
-                            try {
-                                val file = SuFile("/data/adb/modules/${module.id}/${module.banner}")
-                                file.newInputStream().use { it.readBytes() }
-                            } catch (_: Exception) {
-                                null
-                            }
-                        }
-                        if (bannerData != null) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(bannerData)
-                                    .build(),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(),
-                                contentScale = ContentScale.Crop,
-                                alpha = 0.18f
-                            )
-                        }
-                    }
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(bannerData)
+                            .build(),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        alpha = 0.2f
+                    )
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
+                            .fillMaxSize()
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        fadeColor.copy(alpha = 0.0f),
-                                        fadeColor.copy(alpha = 0.8f)
-                                    ),
-                                    startY = 0f,
-                                    endY = Float.POSITIVE_INFINITY
+                                        fadeColor.copy(alpha = 0.1f),
+                                        fadeColor.copy(alpha = 0.9f)
+                                    )
                                 )
                             )
                     )
@@ -879,31 +870,82 @@ private fun ModuleItem(
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(all = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .alpha(alpha = alpha)
-                            .weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = module.name,
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 2,
-                            textDecoration = decoration,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    Column(modifier = Modifier.weight(1f)) {
+                        val hasAnyLabel = showMoreModuleInfo || module.remove || (updateUrl.isNotEmpty() && !module.update) || module.update
+                        if (hasAnyLabel) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            ) {
+                                val labelOpacity = (opacity + 0.1f).coerceAtMost(1f)
+                                if (showMoreModuleInfo) {
+                                    ModuleLabel(
+                                        text = sizeStr,
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                    ModuleLabel(
+                                        text = module.id,
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                                if (module.remove) {
+                                    ModuleLabel(
+                                        text = stringResource(R.string.apm_remove),
+                                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                    )
+                                } else if (updateUrl.isNotEmpty() && !module.update) {
+                                    ModuleLabel(
+                                        text = stringResource(R.string.apm_update),
+                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                } else if (module.update) {
+                                    ModuleLabel(
+                                        text = "Updated",
+                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                }
+                                
+                                if (showMoreModuleInfo && module.hasWebUi && module.enabled && !module.remove) {
+                                    ModuleLabel(
+                                        text = "WebUI",
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                                if (showMoreModuleInfo && module.hasActionScript && module.enabled && !module.remove) {
+                                    ModuleLabel(
+                                        text = "Action",
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = labelOpacity),
+                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
+                            }
+                        }
 
                         Text(
-                            text = "${module.version}, $moduleAuthor ${module.author}",
+                            text = module.name,
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            textDecoration = if (module.remove) TextDecoration.LineThrough else TextDecoration.None
+                        )
+                        
+                        Text(
+                            text = "${module.version} • ${module.author}",
                             style = MaterialTheme.typography.bodySmall,
-                            textDecoration = decoration,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textDecoration = if (module.remove) TextDecoration.LineThrough else TextDecoration.None
                         )
                     }
 
@@ -914,96 +956,100 @@ private fun ModuleItem(
                     )
                 }
 
+                Spacer(modifier = Modifier.height(12.dp))
+
                 Text(
-                    modifier = Modifier
-                        .alpha(alpha = alpha)
-                        .padding(horizontal = 16.dp),
                     text = module.description,
                     style = MaterialTheme.typography.bodySmall,
-                    textDecoration = decoration,
-                    color = MaterialTheme.colorScheme.outline
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                HorizontalDivider(
-                    thickness = 1.5.dp,
-                    color = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (updateUrl.isNotEmpty()) {
-                        ModuleUpdateButton(onClick = { onUpdate(module) })
-
-                        Spacer(modifier = Modifier.width(12.dp))
-                    }
-
-                    if (module.hasWebUi) {
+                    if (module.hasWebUi && module.enabled && !module.remove) {
                         FilledTonalButton(
                             onClick = { onClick(module) },
-                            enabled = true,
-                            contentPadding = PaddingValues(horizontal = 12.dp)
+                            contentPadding = ButtonDefaults.TextButtonContentPadding,
+                            modifier = Modifier.height(36.dp),
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
+                            )
                         ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.webui),
-                                contentDescription = null
+                             Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.Wysiwyg,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
                             )
-
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(id = R.string.apm_webui_open),
-                                maxLines = 1,
-                                overflow = TextOverflow.Visible,
-                                softWrap = false
-                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.apm_webui_open))
                         }
-
-                        Spacer(modifier = Modifier.width(12.dp))
                     }
-                    
-                    if (module.hasActionScript) {
+
+                    if (module.hasActionScript && module.enabled && !module.remove) {
                         FilledTonalButton(
-                            onClick = {
+                            onClick = { 
                                 navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                 viewModel.markNeedRefresh()
-                            }, 
-                            enabled = true, 
-                            contentPadding = PaddingValues(horizontal = 12.dp)
+                            },
+                            contentPadding = ButtonDefaults.TextButtonContentPadding,
+                            modifier = Modifier.height(36.dp),
+                            colors = ButtonDefaults.filledTonalButtonColors(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
+                            )
                         ) {
                             Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.settings),
-                                contentDescription = null
+                                imageVector = Icons.Outlined.Terminal,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
                             )
-
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = stringResource(id = R.string.apm_action),
-                                maxLines = 1,
-                                overflow = TextOverflow.Visible,
-                                softWrap = false
-                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.apm_action))
                         }
-
-                        Spacer(modifier = Modifier.width(12.dp))
                     }
-                    
-                    Spacer(modifier = Modifier.weight(1f))
-                    
-                    ModuleRemoveButton(enabled = !module.remove, onClick = { onUninstall(module) })
-                }
-            }
 
-            if (module.remove) {
-                ModuleStateIndicator(R.drawable.trash)
-            }
-            if (module.update) {
-                ModuleStateIndicator(R.drawable.device_mobile_down)
+                     if (updateUrl.isNotEmpty() && !module.remove && !module.update) {
+                        FilledTonalButton(
+                            onClick = { onUpdate(module) },
+                            contentPadding = ButtonDefaults.TextButtonContentPadding,
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Download,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.apm_update))
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    FilledTonalButton(
+                        onClick = { onUninstall(module) },
+                        enabled = !module.remove,
+                        contentPadding = ButtonDefaults.TextButtonContentPadding,
+                        modifier = Modifier.height(36.dp),
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f)),
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.apm_remove))
+                    }
+                }
             }
         }
     }

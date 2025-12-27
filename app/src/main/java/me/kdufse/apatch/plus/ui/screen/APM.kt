@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -123,6 +124,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.layout.ContentScale
 import com.topjohnwu.superuser.io.SuFile
 
 @OptIn(ExperimentalMaterial3Api::class)

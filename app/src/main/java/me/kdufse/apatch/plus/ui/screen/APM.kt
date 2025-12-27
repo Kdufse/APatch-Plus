@@ -1,5 +1,4 @@
-package me.kdufse.apatch.plus.ui.screen
-
+package me.bmax.apatch.ui.screen
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -53,7 +52,6 @@ import androidx.compose.material.icons.outlined.Restore
 import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
 import androidx.compose.material3.ExperimentalMaterial3Api
-
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -102,26 +100,25 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.kdufse.apatch.plus.APApplication
-import me.kdufse.apatch.plus.R
-import me.kdufse.apatch.plus.apApp
-import me.kdufse.apatch.plus.ui.WebUIActivity
-import me.kdufse.apatch.plus.ui.component.ConfirmResult
-import me.kdufse.apatch.plus.ui.component.ModuleRemoveButton
-import me.kdufse.apatch.plus.ui.component.ModuleStateIndicator
-import me.kdufse.apatch.plus.ui.component.ModuleUpdateButton
-import me.kdufse.apatch.plus.ui.component.SearchAppBar
-import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
-import me.kdufse.apatch.plus.ui.component.rememberLoadingDialog
-import me.kdufse.apatch.plus.ui.viewmodel.APModuleViewModel
-import me.kdufse.apatch.plus.util.DownloadListener
-import me.kdufse.apatch.plus.util.download
-import me.kdufse.apatch.plus.util.hasMagisk
-import me.kdufse.apatch.plus.util.reboot
-import me.kdufse.apatch.plus.util.toggleModule
-import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
-import me.kdufse.apatch.plus.util.uninstallModule
-
+import me.bmax.apatch.APApplication
+import me.bmax.apatch.R
+import me.bmax.apatch.apApp
+import me.bmax.apatch.ui.WebUIActivity
+import me.bmax.apatch.ui.component.ConfirmResult
+import me.bmax.apatch.ui.component.ModuleRemoveButton
+import me.bmax.apatch.ui.component.ModuleStateIndicator
+import me.bmax.apatch.ui.component.ModuleUpdateButton
+import me.bmax.apatch.ui.component.SearchAppBar
+import me.bmax.apatch.ui.component.rememberConfirmDialog
+import me.bmax.apatch.ui.component.rememberLoadingDialog
+import me.bmax.apatch.ui.viewmodel.APModuleViewModel
+import me.bmax.apatch.util.DownloadListener
+import me.bmax.apatch.util.download
+import me.bmax.apatch.util.hasMagisk
+import me.bmax.apatch.util.reboot
+import me.bmax.apatch.util.toggleModule
+import me.bmax.apatch.util.ui.LocalSnackbarHost
+import me.bmax.apatch.util.uninstallModule
 import com.ramcosta.composedestinations.generated.destinations.ApmBulkInstallScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.OnlineModuleScreenDestination
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
@@ -129,10 +126,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.MoreVert
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
-import me.kdufse.apatch.plus.util.ModuleBackupUtils
-import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
+import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenu
+import me.bmax.apatch.ui.component.WallpaperAwareDropdownMenuItem
+import me.bmax.apatch.util.ModuleBackupUtils
+import me.bmax.apatch.ui.theme.BackgroundConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -143,14 +140,12 @@ import java.util.Locale
 fun APModuleScreen(navigator: DestinationsNavigator) {
     val snackBarHost = LocalSnackbarHost.current
     val context = LocalContext.current
-
     // First use dialog state
     val prefs = remember { APApplication.sharedPreferences }
-    var showFirstTimeDialog by remember { 
-        mutableStateOf(!prefs.getBoolean("apm_first_use_shown", false)) 
+    var showFirstTimeDialog by remember {
+        mutableStateOf(!prefs.getBoolean("apm_first_use_shown", false))
     }
     var dontShowAgain by remember { mutableStateOf(false) }
-
     var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", true)) }
     
     DisposableEffect(Unit) {
@@ -164,7 +159,6 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
             prefs.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }
-
     val state by APApplication.apStateLiveData.observeAsState(APApplication.State.UNKNOWN_STATE)
     if (state != APApplication.State.ANDROIDPATCH_INSTALLED && state != APApplication.State.ANDROIDPATCH_NEED_UPDATE) {
         Column(
@@ -183,15 +177,12 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
         }
         return
     }
-
     val viewModel = viewModel<APModuleViewModel>()
-
     LaunchedEffect(Unit) {
         if (viewModel.moduleList.isEmpty() || viewModel.isNeedRefresh) {
             viewModel.fetchModuleList()
         }
     }
-
     var pendingInstallUri by remember { mutableStateOf<Uri?>(null) }
     val installConfirmDialog = rememberConfirmDialog(
         onConfirm = {
@@ -205,7 +196,6 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
             pendingInstallUri = null
         }
     )
-
     val webUILauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { viewModel.fetchModuleList() }
@@ -213,9 +203,7 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     val isSafeMode = false
     val hasMagisk = hasMagisk()
     val hideInstallButton = isSafeMode || hasMagisk
-
     val moduleListState = rememberLazyListState()
-
     var searchQuery by remember { mutableStateOf("") }
     val filteredModuleList = remember(viewModel.moduleList, searchQuery) {
         if (searchQuery.isEmpty()) {
@@ -228,67 +216,63 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
             }
         }
     }
-
     Scaffold(
         topBar = {
-        TopBar(navigator, viewModel, snackBarHost, searchQuery) { searchQuery = it }
-    }, floatingActionButton = if (hideInstallButton) {
-        { /* Empty */ }
-    } else {
-        {
-            val selectZipLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult()
-            ) {
-                if (it.resultCode != RESULT_OK) {
-                    return@rememberLauncherForActivityResult
-                }
-                val data = it.data ?: return@rememberLauncherForActivityResult
-                val uri = data.data ?: return@rememberLauncherForActivityResult
-
-                Log.i("ModuleScreen", "select zip result: $uri")
-
-                val prefs = APApplication.sharedPreferences
-                if (prefs.getBoolean("apm_install_confirm_enabled", true)) {
-                    pendingInstallUri = uri
-                    val fileName = try {
-                        var name = uri.path ?: "Module"
-                        context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-                            val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
-                            if (cursor.moveToFirst() && nameIndex >= 0) {
-                                name = cursor.getString(nameIndex)
-                            }
-                        }
-                        name
-                    } catch (e: Exception) {
-                        "Module"
+            TopBar(navigator, viewModel, snackBarHost, searchQuery) { searchQuery = it }
+        }, floatingActionButton = if (hideInstallButton) {
+            { /* Empty */ }
+        } else {
+            {
+                val selectZipLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult()
+                ) {
+                    if (it.resultCode != RESULT_OK) {
+                        return@rememberLauncherForActivityResult
                     }
-                    installConfirmDialog.showConfirm(
-                        title = context.getString(R.string.apm_install_confirm_title),
-                        content = context.getString(R.string.apm_install_confirm_content, fileName),
-                        markdown = false
+                    val data = it.data ?: return@rememberLauncherForActivityResult
+                    val uri = data.data ?: return@rememberLauncherForActivityResult
+                    Log.i("ModuleScreen", "select zip result: $uri")
+                    val prefs = APApplication.sharedPreferences
+                    if (prefs.getBoolean("apm_install_confirm_enabled", true)) {
+                        pendingInstallUri = uri
+                        val fileName = try {
+                            var name = uri.path ?: "Module"
+                            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                                val nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                                if (cursor.moveToFirst() && nameIndex >= 0) {
+                                    name = cursor.getString(nameIndex)
+                                }
+                            }
+                            name
+                        } catch (e: Exception) {
+                            "Module"
+                        }
+                        installConfirmDialog.showConfirm(
+                            title = context.getString(R.string.apm_install_confirm_title),
+                            content = context.getString(R.string.apm_install_confirm_content, fileName),
+                            markdown = false
+                        )
+                    } else {
+                        navigator.navigate(InstallScreenDestination(uri, MODULE_TYPE.APM))
+                        viewModel.markNeedRefresh()
+                    }
+                }
+                FloatingActionButton(
+                    contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 1f),
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
+                    onClick = {
+                        // select the zip file to install
+                        val intent = Intent(Intent.ACTION_GET_CONTENT)
+                        intent.type = "application/zip"
+                        selectZipLauncher.launch(intent)
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.package_import),
+                        contentDescription = null
                     )
-                } else {
-                    navigator.navigate(InstallScreenDestination(uri, MODULE_TYPE.APM))
-                    viewModel.markNeedRefresh()
                 }
             }
-
-            FloatingActionButton(
-                contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 1f),
-                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 1f),
-                onClick = {
-                    // select the zip file to install
-                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-                    intent.type = "application/zip"
-                    selectZipLauncher.launch(intent)
-                }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.package_import),
-                    contentDescription = null
-                )
-            }
-        }
-    }, snackbarHost = { SnackbarHost(snackBarHost) }) { innerPadding ->
+        }, snackbarHost = { SnackbarHost(snackBarHost) }) { innerPadding ->
         when {
             hasMagisk -> {
                 Box(
@@ -303,7 +287,6 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                     )
                 }
             }
-
             else -> {
                 ModuleList(
                     navigator,
@@ -333,7 +316,6 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
             }
         }
     }
-
     // First Use Dialog
     if (showFirstTimeDialog) {
         BasicAlertDialog(
@@ -433,7 +415,6 @@ private fun ModuleList(
     val changelogText = stringResource(R.string.apm_changelog)
     val downloadingText = stringResource(R.string.apm_downloading)
     val startDownloadingText = stringResource(R.string.apm_start_downloading)
-
     val loadingDialog = rememberLoadingDialog()
     val confirmDialog = rememberConfirmDialog()
 
@@ -454,8 +435,6 @@ private fun ModuleList(
                 }
             }
         }
-
-
         if (changelog.isNotEmpty()) {
             // changelog is not empty, show it and wait for confirm
             val confirmResult = confirmDialog.awaitConfirm(
@@ -464,18 +443,15 @@ private fun ModuleList(
                 markdown = true,
                 confirm = updateText,
             )
-
             if (confirmResult != ConfirmResult.Confirmed) {
                 return
             }
         }
-
         withContext(Dispatchers.Main) {
             Toast.makeText(
                 context, startDownloadingText.format(module.name), Toast.LENGTH_SHORT
             ).show()
         }
-
         val downloading = downloadingText.format(module.name)
         withContext(Dispatchers.IO) {
             download(
@@ -502,13 +478,11 @@ private fun ModuleList(
         if (confirmResult != ConfirmResult.Confirmed) {
             return
         }
-
         val success = loadingDialog.withLoading {
             withContext(Dispatchers.IO) {
                 uninstallModule(module.id)
             }
         }
-
         if (success) {
             viewModel.fetchModuleList()
         }
@@ -561,7 +535,6 @@ private fun ModuleList(
                         }
                     }
                 }
-
                 else -> {
                     items(modules) { module ->
                         var isChecked by rememberSaveable(module) { mutableStateOf(module.enabled) }
@@ -571,7 +544,6 @@ private fun ModuleList(
                                 value = viewModel.checkUpdate(module)
                             }
                         }
-
                         ModuleItem(
                             navigator,
                             module,
@@ -591,7 +563,6 @@ private fun ModuleList(
                                     if (success) {
                                         isChecked = it
                                         viewModel.fetchModuleList()
-
                                         val result = snackBarHost.showSnackbar(
                                             message = rebootToApply,
                                             actionLabel = reboot,
@@ -625,7 +596,6 @@ private fun ModuleList(
                 }
             }
         }
-
         DownloadListener(context, onInstallModule)
     }
 }
@@ -646,12 +616,10 @@ private fun TopBar(
     val confirm = stringResource(android.R.string.ok)
     val cancel = stringResource(android.R.string.cancel)
     val context = LocalContext.current
-
     var showDisableAllButton by remember {
         mutableStateOf(APApplication.sharedPreferences.getBoolean("show_disable_all_modules", false))
     }
     var showMenu by remember { mutableStateOf(false) }
-
     val backupLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/gzip")) { uri ->
         uri?.let {
             scope.launch {
@@ -772,7 +740,6 @@ private fun ModuleLabel(
     }
 }
 
-
 @Composable
 private fun ModuleItem(
     navigator: DestinationsNavigator,
@@ -803,22 +770,61 @@ private fun ModuleItem(
         }
     }
 
-    // Banner Logic
-    val bannerData = remember(module.id) {
-        try {
-            val dir = "/data/adb/modules/${module.id}"
-            val candidates = listOf("banner", "banner.png", "banner.jpg", "banner.jpeg")
-            var bytes: ByteArray? = null
-            for (name in candidates) {
-                val file = SuFile("$dir/$name")
-                if (file.exists()) {
-                    bytes = file.newInputStream().use { it.readBytes() }
-                    break
-                }
+    // ???useBanner???????settings???
+    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    var useBanner by rememberSaveable {
+        mutableStateOf(prefs.getBoolean("use_banner", true))
+    }
+
+    // ??use_banner????
+    DisposableEffect(Unit) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
+            if (key == "use_banner") {
+                useBanner = sharedPrefs.getBoolean("use_banner", true)
             }
-            bytes
-        } catch (e: Exception) {
-            null
+        }
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose {
+            prefs.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    // ?????Banner?????????+?????
+    val bannerData = remember { mutableStateOf<ByteArray?>(null) }
+    LaunchedEffect(module.id, module.banner, useBanner) {
+        if (!useBanner || module.banner.isBlank()) {
+            bannerData.value = null
+            return@LaunchedEffect
+        }
+        // ???????????AsyncImage???
+        if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
+            bannerData.value = null
+            return@LaunchedEffect
+        }
+        // ???????????????????
+        val bannerFileName = if (module.banner.isNotBlank()) module.banner else {
+            val candidates = listOf("banner", "banner.png", "banner.jpg", "banner.jpeg")
+            candidates.firstOrNull { fileName ->
+                SuFile("/data/adb/modules/${module.id}/$fileName").exists()
+            } ?: ""
+        }
+        if (bannerFileName.isBlank()) {
+            bannerData.value = null
+            return@LaunchedEffect
+        }
+        // ????Banner??
+        withContext(Dispatchers.IO) {
+            try {
+                val file = SuFile("/data/adb/modules/${module.id}/$bannerFileName")
+                bannerData.value = if (file.exists()) {
+                    file.newInputStream().use { it.readBytes() }
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("ModuleItem", "Failed to read banner file: ${module.id}", e)
+                bannerData.value = null
+            }
         }
     }
 
@@ -837,23 +843,47 @@ private fun ModuleItem(
         tonalElevation = 0.dp
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            if (bannerData != null) {
-                val isDark = isSystemInDarkTheme()
-                val fadeColor = if (isDark) Color(0xFF222222) else Color.White
-
+            // ???????Banner???????/????+?????
+            if (useBanner && (bannerData.value != null || module.banner.startsWith("http", true))) {
+                val colorScheme = MaterialTheme.colorScheme
+                val amoledMode = prefs.getBoolean("amoled_mode", false)
+                val isDynamic = colorScheme.primary != colorScheme.secondary
+                // ?????????????
+                val fadeColor = when {
+                    amoledMode && isDark -> Color.Black
+                    isDynamic -> colorScheme.surface
+                    isDark -> Color(0xFF222222)
+                    else -> Color.White
+                }
                 Box(
                     modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(bannerData)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        alpha = 0.2f
-                    )
+                    // ??????
+                    if (module.banner.startsWith("http", true) && bannerData.value == null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(module.banner)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            alpha = 0.2f
+                        )
+                    }
+                    // ??????
+                    else if (bannerData.value != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(bannerData.value)
+                                .build(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            alpha = 0.2f
+                        )
+                    }
+                    // ?????????????
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -934,7 +964,6 @@ private fun ModuleItem(
                                 }
                             }
                         }
-
                         Text(
                             text = module.name,
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -948,16 +977,13 @@ private fun ModuleItem(
                             textDecoration = if (module.remove) TextDecoration.LineThrough else TextDecoration.None
                         )
                     }
-
                     Switch(
                         enabled = !module.update,
                         checked = isChecked,
                         onCheckedChange = onCheckChanged
                     )
                 }
-
                 Spacer(modifier = Modifier.height(12.dp))
-
                 Text(
                     text = module.description,
                     style = MaterialTheme.typography.bodySmall,
@@ -965,9 +991,7 @@ private fun ModuleItem(
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -981,7 +1005,7 @@ private fun ModuleItem(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
                             )
                         ) {
-                             Icon(
+                            Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Wysiwyg,
                                 contentDescription = null,
                                 modifier = Modifier.size(18.dp)
@@ -990,10 +1014,9 @@ private fun ModuleItem(
                             Text(stringResource(R.string.apm_webui_open))
                         }
                     }
-
                     if (module.hasActionScript && module.enabled && !module.remove) {
                         FilledTonalButton(
-                            onClick = { 
+                            onClick = {
                                 navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                 viewModel.markNeedRefresh()
                             },
@@ -1012,8 +1035,7 @@ private fun ModuleItem(
                             Text(stringResource(R.string.apm_action))
                         }
                     }
-
-                     if (updateUrl.isNotEmpty() && !module.remove && !module.update) {
+                    if (updateUrl.isNotEmpty() && !module.remove && !module.update) {
                         FilledTonalButton(
                             onClick = { onUpdate(module) },
                             contentPadding = ButtonDefaults.TextButtonContentPadding,
@@ -1028,9 +1050,7 @@ private fun ModuleItem(
                             Text(stringResource(R.string.apm_update))
                         }
                     }
-
                     Spacer(modifier = Modifier.weight(1f))
-
                     FilledTonalButton(
                         onClick = { onUninstall(module) },
                         enabled = !module.remove,
@@ -1053,4 +1073,9 @@ private fun ModuleItem(
             }
         }
     }
+}
+
+// ?????MODULE_TYPE???????????
+enum class MODULE_TYPE {
+    APM
 }

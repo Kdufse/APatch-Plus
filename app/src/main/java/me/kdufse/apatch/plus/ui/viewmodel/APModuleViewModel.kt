@@ -66,6 +66,20 @@ class APModuleViewModel : ViewModel() {
         val changelog: String,
     )
 
+    data class ModuleInfo(
+        val id: String,
+        val name: String,
+        val version: String,
+        val author: String,
+        val description: String,
+        val enabled: Boolean,
+        val remove: Boolean,
+        val update: Boolean,
+        val hasWebUi: Boolean,
+        val hasActionScript: Boolean,
+        val banner: String = ""
+    )
+
     var isRefreshing by mutableStateOf(false)
         private set
 

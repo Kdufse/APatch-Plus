@@ -523,6 +523,8 @@
     <string name="settings_category_behavior">Hành vi</string>
     <string name="settings_category_module">Mô-đun</string>
     <string name="settings_category_security">Bảo mật</string>
+    <string name="settings_show_module_banner">Hiển thị biểu ngữ mô-đun</string>
+    <string name="settings_show_module_banner_summary">Hiển thị nền biểu ngữ trong danh sách mô-đun</string>
     
     <!-- Background Music Strings -->
     <string name="settings_background_music">Nhạc nền</string>

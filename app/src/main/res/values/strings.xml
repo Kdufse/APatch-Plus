@@ -538,6 +538,8 @@
     <string name="settings_category_behavior">Behavior</string>
     <string name="settings_category_module">Modules</string>
     <string name="settings_category_security">Security</string>
+    <string name="settings_show_module_banner">Show module banner</string>
+    <string name="settings_show_module_banner_summary">Display module banner background in module list</string>
     
     <!-- Background Music Strings -->
     <string name="settings_background_music">Background Music</string>

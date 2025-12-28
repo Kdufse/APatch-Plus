@@ -1,4 +1,4 @@
-package me.kdufse.apatch.plus.ui.screen
+ package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
 import android.content.Context
@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -65,6 +64,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -116,19 +116,25 @@ import me.kdufse.apatch.plus.util.ModuleBackupUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-// 添加必要的导入
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Restore
+import androidx.compose.material.icons.outlined.Terminal
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
-import androidx.compose.ui.layout.ContentScale
 import com.topjohnwu.superuser.io.SuFile
-import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -145,11 +151,13 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     var dontShowAgain by remember { mutableStateOf(false) }
 
     var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
+    var useBanner by remember { mutableStateOf(prefs.getBoolean("use_banner", true)) }
     
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
-            if (key == "show_more_module_info") {
-                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
+            when (key) {
+                "show_more_module_info" -> showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
+                "use_banner" -> useBanner = sharedPrefs.getBoolean("use_banner", true)
             }
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -303,6 +311,7 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                     viewModel = viewModel,
                     modules = filteredModuleList,
                     showMoreModuleInfo = showMoreModuleInfo,
+                    useBanner = useBanner,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
@@ -405,6 +414,7 @@ private fun ModuleList(
     viewModel: APModuleViewModel,
     modules: List<APModuleViewModel.ModuleInfo>,
     showMoreModuleInfo: Boolean,
+    useBanner: Boolean,
     modifier: Modifier = Modifier,
     state: LazyListState,
     onInstallModule: (Uri) -> Unit,
@@ -571,6 +581,7 @@ private fun ModuleList(
                             isChecked,
                             updatedModule.first,
                             showMoreModuleInfo = showMoreModuleInfo,
+                            useBanner = useBanner,
                             onUninstall = {
                                 scope.launch { onModuleUninstall(module) }
                             },
@@ -751,6 +762,7 @@ private fun ModuleItem(
     isChecked: Boolean,
     updateUrl: String,
     showMoreModuleInfo: Boolean,
+    useBanner: Boolean,
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,
@@ -767,14 +779,29 @@ private fun ModuleItem(
             viewModel.getModuleSize(module.id)
         }
     }
-
-    // 添加useBanner功能
-    val context = LocalContext.current
-    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val useBanner = prefs.getBoolean("use_banner", true)
     
-    // 调试信息：检查 banner 状态
-    Log.d("ModuleItem", "Module: ${module.id}, Banner: '${module.banner}', useBanner: $useBanner")
+    // 尝试获取banner图片
+    val bannerData by produceState<ByteArray?>(initialValue = null, key1 = module.id) {
+        value = withContext(Dispatchers.IO) {
+            try {
+                // 检查模块目录下是否有banner.png文件
+                val file = SuFile("/data/adb/ap/modules/${module.id}/banner.png")
+                if (file.exists()) {
+                    file.newInputStream().use { it.readBytes() }
+                } else {
+                    // 检查是否有banner.jpg
+                    val jpgFile = SuFile("/data/adb/ap/modules/${module.id}/banner.jpg")
+                    if (jpgFile.exists()) {
+                        jpgFile.newInputStream().use { it.readBytes() }
+                    } else {
+                        null
+                    }
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
     
     Surface(
         modifier = modifier,
@@ -782,88 +809,37 @@ private fun ModuleItem(
         tonalElevation = 1.dp,
         shape = RoundedCornerShape(20.dp)
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // 添加横幅背景
-            if (useBanner && module.banner.isNotEmpty()) {
-                Log.d("ModuleItem", "显示横幅: ${module.id}, banner=${module.banner}")
-                
-                val isDark = isSystemInDarkTheme()
-                val colorScheme = MaterialTheme.colorScheme
-                val amoledMode = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                    .getBoolean("amoled_mode", false)
-                val isDynamic = colorScheme.primary != colorScheme.secondary
-
-                val fadeColor = when {
-                    amoledMode && isDark -> Color.Black
-                    isDynamic -> colorScheme.surface
-                    isDark -> Color(0xFF222222)
-                    else -> Color.White
-                }
-
+            // 如果有banner且开启了banner显示
+            if (useBanner && bannerData != null) {
                 Box(
-                    modifier = Modifier
-                        .matchParentSize(),
+                    modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
-                        Log.d("ModuleItem", "加载在线横幅: ${module.banner}")
-                        AsyncImage(
-                            model = module.banner,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight(),
-                            contentScale = ContentScale.Crop,
-                            alpha = 0.18f
-                        )
-                    } else {
-                        // 尝试从本地文件加载横幅
-                        Log.d("ModuleItem", "尝试加载本地横幅: ${module.banner}")
-                        val bannerData = remember(module.banner) {
-                            try {
-                                // 尝试不同的路径
-                                val paths = listOf(
-                                    "/data/adb/modules/${module.id}/${module.banner}",
-                                )
-                                
-                                var result: ByteArray? = null
-                                for (path in paths) {
-                                    Log.d("ModuleItem", "检查路径: $path")
-                                    val file = SuFile(path)
-                                    if (file.exists() && file.canRead()) {
-                                        Log.d("ModuleItem", "找到横幅文件: $path, 大小: ${file.length()} 字节")
-                                        result = file.newInputStream().use { it.readBytes() }
-                                        break
-                                    }
-                                }
-                                result
-                            } catch (e: Exception) {
-                                Log.e("ModuleItem", "读取横幅失败: $e")
-                                null
-                            }
-                        }
-                        if (bannerData != null) {
-                            Log.d("ModuleItem", "成功加载横幅数据，大小: ${bannerData.size} 字节")
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(bannerData)
-                                    .build(),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(),
-                                contentScale = ContentScale.Crop,
-                                alpha = 0.18f
-                            )
-                        } else {
-                            Log.d("ModuleItem", "横幅数据为空")
-                        }
-                    }
+                    // 显示banner图片
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(bannerData)
+                            .build(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        contentScale = ContentScale.Crop,
+                        alpha = 0.18f
+                    )
+                    
+                    // 渐变覆盖
+                    val isDark = isSystemInDarkTheme()
+                    val colorScheme = MaterialTheme.colorScheme
+                    val fadeColor = if (isDark) Color(0xFF222222) else Color.White
+                    
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -880,8 +856,6 @@ private fun ModuleItem(
                             )
                     )
                 }
-            } else {
-                Log.d("ModuleItem", "不显示横幅: useBanner=$useBanner, banner.isEmpty=${module.banner.isEmpty()}")
             }
             
             Column(
@@ -967,23 +941,6 @@ private fun ModuleItem(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        
-                        // 添加横幅调试标签
-                        if (module.banner.isNotEmpty()) {
-                            Surface(
-                                shape = RoundedCornerShape(4.dp),
-                                color = MaterialTheme.colorScheme.tertiaryContainer,
-                            ) {
-                                Text(
-                                    text = "BANNER",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
                     }
                 }
 
@@ -1063,22 +1020,8 @@ private fun ModuleItem(
             if (module.update) {
                 ModuleStateIndicator(R.drawable.device_mobile_down)
             }
-            
-            // 添加调试信息：显示 banner 状态
-            if (module.banner.isNotEmpty()) {
-                Text(
-                    text = "Banner: ${module.banner}",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                        .background(Color.Red.copy(alpha = 0.7f))
-                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                    color = Color.White,
-                    fontSize = 10.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
         }
     }
+
+
 }

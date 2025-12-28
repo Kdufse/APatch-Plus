@@ -522,6 +522,8 @@
     <string name="settings_category_behavior">咒语指令</string>
     <string name="settings_category_module">魔法模组</string>
     <string name="settings_category_security">结界守护</string>
+    <string name="settings_show_module_banner">显现魔法深渊</string>
+    <string name="settings_show_module_banner_summary">在魔法模组中发现深渊</string>
     
     <!-- 背景音乐字符串（魔法少女风格版） -->
     <string name="settings_background_music">魔法颂歌</string>

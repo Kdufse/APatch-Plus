@@ -21,6 +21,7 @@ import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.log10
 import kotlin.math.pow
+import com.topjohnwu.superuser.io.SuFile
 
 class APModuleViewModel : ViewModel() {
     companion object {
@@ -91,16 +92,35 @@ class APModuleViewModel : ViewModel() {
             kotlin.runCatching {
 
                 val result = listModules()
-
-                Log.i(TAG, "result: $result")
+                Log.i(TAG, "=== RAW MODULE DATA ===")
+                Log.i(TAG, "Full result: $result")
 
                 val array = JSONArray(result)
                 modules = (0 until array.length())
                     .asSequence()
                     .map { array.getJSONObject(it) }
                     .map { obj ->
+                        val id = obj.getString("id")
+                        
+                        // 调试：检查 banner 字段是否存在
+                        val hasBannerField = obj.has("banner")
+                        val bannerFromJson = obj.optString("banner", "")
+                        
+                        Log.i(TAG, "Module $id: hasBannerField=$hasBannerField, banner='$bannerFromJson'")
+                        
+                        // 如果 JSON 中有 banner 字段，使用它
+                        // 否则手动检查常见的 banner 文件
+                        val banner = if (bannerFromJson.isNotEmpty()) {
+                            bannerFromJson
+                        } else {
+                            // 手动检查 banner 文件
+                            detectBannerFile(id)
+                        }
+                        
+                        Log.i(TAG, "Final banner for $id: '$banner'")
+                        
                         ModuleInfo(
-                            obj.getString("id"),
+                            id,
                             obj.optString("name"),
                             obj.optString("author", "Unknown"),
                             obj.optString("version", "Unknown"),
@@ -112,10 +132,16 @@ class APModuleViewModel : ViewModel() {
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
                             obj.optBoolean("action"),
-                            obj.optString("banner", "") // 添加 banner 字段
+                            banner  // 使用检测到的 banner
                         )
                     }.toList()
                 isNeedRefresh = false
+                
+                // 打印所有模块的 banner 信息
+                Log.i(TAG, "=== MODULES WITH BANNER ===")
+                modules.forEach { module ->
+                    Log.i(TAG, "Module: ${module.id}, Banner: '${module.banner}'")
+                }
             }.onFailure { e ->
                 Log.e(TAG, "fetchModuleList: ", e)
                 isRefreshing = false
@@ -128,6 +154,58 @@ class APModuleViewModel : ViewModel() {
             }
 
             Log.i(TAG, "load cost: ${SystemClock.elapsedRealtime() - start}, modules: $modules")
+        }
+    }
+    
+    // 手动检测 banner 文件
+    private fun detectBannerFile(moduleId: String): String {
+        return try {
+            // 常见的 banner 文件名
+            val bannerFiles = listOf("banner.jpg", "banner.png", "banner.webp", "banner.jpeg")
+            
+            for (bannerFile in bannerFiles) {
+                // 尝试不同的路径
+                val paths = listOf(
+                    "/data/adb/modules/$moduleId/$bannerFile",
+                    "/data/adb/ap/modules/$moduleId/$bannerFile",
+                    "/data/adb/modules/$moduleId/files/$bannerFile"
+                )
+                
+                for (path in paths) {
+                    val file = SuFile(path)
+                    if (file.exists() && file.canRead()) {
+                        Log.i(TAG, "Found banner for $moduleId: $path")
+                        return bannerFile  // 返回文件名
+                    }
+                }
+            }
+            
+            // 检查 module.prop 文件中的 banner 字段
+            val propPaths = listOf(
+                "/data/adb/modules/$moduleId/module.prop",
+                "/data/adb/ap/modules/$moduleId/module.prop"
+            )
+            
+            for (propPath in propPaths) {
+                val propFile = SuFile(propPath)
+                if (propFile.exists()) {
+                    val lines = propFile.readText().lines()
+                    for (line in lines) {
+                        if (line.startsWith("banner=")) {
+                            val bannerValue = line.substringAfter("banner=").trim()
+                            if (bannerValue.isNotEmpty()) {
+                                Log.i(TAG, "Found banner in module.prop for $moduleId: $bannerValue")
+                                return bannerValue
+                            }
+                        }
+                    }
+                }
+            }
+            
+            "" // 没有找到 banner
+        } catch (e: Exception) {
+            Log.e(TAG, "Error detecting banner for $moduleId: $e")
+            ""
         }
     }
 

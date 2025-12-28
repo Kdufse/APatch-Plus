@@ -128,6 +128,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import androidx.compose.ui.layout.ContentScale
 import com.topjohnwu.superuser.io.SuFile
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -772,6 +773,9 @@ private fun ModuleItem(
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     val useBanner = prefs.getBoolean("use_banner", true)
     
+    // 调试信息：检查 banner 状态
+    Log.d("ModuleItem", "Module: ${module.id}, Banner: '${module.banner}', useBanner: $useBanner")
+    
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
@@ -786,6 +790,8 @@ private fun ModuleItem(
         ) {
             // 添加横幅背景
             if (useBanner && module.banner.isNotEmpty()) {
+                Log.d("ModuleItem", "显示横幅: ${module.id}, banner=${module.banner}")
+                
                 val isDark = isSystemInDarkTheme()
                 val colorScheme = MaterialTheme.colorScheme
                 val amoledMode = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
@@ -805,6 +811,7 @@ private fun ModuleItem(
                     contentAlignment = Alignment.Center
                 ) {
                     if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
+                        Log.d("ModuleItem", "加载在线横幅: ${module.banner}")
                         AsyncImage(
                             model = module.banner,
                             contentDescription = null,
@@ -816,16 +823,34 @@ private fun ModuleItem(
                         )
                     } else {
                         // 尝试从本地文件加载横幅
+                        Log.d("ModuleItem", "尝试加载本地横幅: ${module.banner}")
                         val bannerData = remember(module.banner) {
                             try {
-                                // APatch模块路径可能不同，这里使用通用路径
-                                val file = SuFile("/data/adb/modules/${module.id}/${module.banner}")
-                                file.newInputStream().use { it.readBytes() }
-                            } catch (_: Exception) {
+                                // 尝试不同的路径
+                                val paths = listOf(
+                                    "/data/adb/modules/${module.id}/${module.banner}",
+                                    "/data/adb/ap/modules/${module.id}/${module.banner}",
+                                    "/data/adb/modules/${module.id}/files/${module.banner}"
+                                )
+                                
+                                var result: ByteArray? = null
+                                for (path in paths) {
+                                    Log.d("ModuleItem", "检查路径: $path")
+                                    val file = SuFile(path)
+                                    if (file.exists() && file.canRead()) {
+                                        Log.d("ModuleItem", "找到横幅文件: $path, 大小: ${file.length()} 字节")
+                                        result = file.newInputStream().use { it.readBytes() }
+                                        break
+                                    }
+                                }
+                                result
+                            } catch (e: Exception) {
+                                Log.e("ModuleItem", "读取横幅失败: $e")
                                 null
                             }
                         }
                         if (bannerData != null) {
+                            Log.d("ModuleItem", "成功加载横幅数据，大小: ${bannerData.size} 字节")
                             AsyncImage(
                                 model = ImageRequest.Builder(context)
                                     .data(bannerData)
@@ -837,6 +862,8 @@ private fun ModuleItem(
                                 contentScale = ContentScale.Crop,
                                 alpha = 0.18f
                             )
+                        } else {
+                            Log.d("ModuleItem", "横幅数据为空")
                         }
                     }
                     Box(
@@ -855,6 +882,8 @@ private fun ModuleItem(
                             )
                     )
                 }
+            } else {
+                Log.d("ModuleItem", "不显示横幅: useBanner=$useBanner, banner.isEmpty=${module.banner.isEmpty()}")
             }
             
             Column(
@@ -940,6 +969,23 @@ private fun ModuleItem(
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
+                        
+                        // 添加横幅调试标签
+                        if (module.banner.isNotEmpty()) {
+                            Surface(
+                                shape = RoundedCornerShape(4.dp),
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
+                            ) {
+                                Text(
+                                    text = "BANNER",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
                     }
                 }
 
@@ -1018,6 +1064,22 @@ private fun ModuleItem(
             }
             if (module.update) {
                 ModuleStateIndicator(R.drawable.device_mobile_down)
+            }
+            
+            // 添加调试信息：显示 banner 状态
+            if (module.banner.isNotEmpty()) {
+                Text(
+                    text = "Banner: ${module.banner}",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .background(Color.Red.copy(alpha = 0.7f))
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

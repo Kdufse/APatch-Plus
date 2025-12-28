@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,27 +34,7 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.CardDefaults
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.topjohnwu.superuser.io.SuFile
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.Restore
-import androidx.compose.material.icons.outlined.Terminal
-import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
 import androidx.compose.material3.ExperimentalMaterial3Api
-
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -132,10 +113,21 @@ import androidx.compose.material.icons.filled.MoreVert
 import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
 import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
 import me.kdufse.apatch.plus.util.ModuleBackupUtils
-import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+// 添加必要的导入
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.layout.ContentScale
+import com.topjohnwu.superuser.io.SuFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -151,12 +143,12 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     }
     var dontShowAgain by remember { mutableStateOf(false) }
 
-    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", true)) }
+    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
     
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
             if (key == "show_more_module_info") {
-                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", true)
+                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
             }
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -752,28 +744,6 @@ private fun TopBar(
 }
 
 @Composable
-private fun ModuleLabel(
-    text: String,
-    containerColor: Color,
-    contentColor: Color
-) {
-    Surface(
-        color = containerColor,
-        contentColor = contentColor,
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-
-@Composable
 private fun ModuleItem(
     navigator: DestinationsNavigator,
     module: APModuleViewModel.ModuleInfo,
@@ -787,165 +757,132 @@ private fun ModuleItem(
     modifier: Modifier = Modifier,
     alpha: Float = 1f,
 ) {
-    val context = LocalContext.current
+    val decoration = if (!module.remove) TextDecoration.None else TextDecoration.LineThrough
+    val moduleAuthor = stringResource(id = R.string.apm_author)
     val viewModel = viewModel<APModuleViewModel>()
-    
-    val isWallpaperMode = BackgroundConfig.isCustomBackgroundEnabled
-    val opacity = if (isWallpaperMode) {
-        BackgroundConfig.customBackgroundOpacity.coerceAtLeast(0.2f)
-    } else {
-        1f
-    }
-    
+
     val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
         value = withContext(Dispatchers.IO) {
             viewModel.getModuleSize(module.id)
         }
     }
 
-    // Banner Logic
-    val bannerData = remember(module.id) {
-        try {
-            val dir = "/data/adb/modules/${module.id}"
-            val candidates = listOf("banner", "banner.png", "banner.jpg", "banner.jpeg")
-            var bytes: ByteArray? = null
-            for (name in candidates) {
-                val file = SuFile("$dir/$name")
-                if (file.exists()) {
-                    bytes = file.newInputStream().use { it.readBytes() }
-                    break
-                }
-            }
-            bytes
-        } catch (e: Exception) {
-            null
-        }
-    }
+    // 添加useBanner功能
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val useBanner = prefs.getBoolean("use_banner", true)
     
-    val isDark = isSystemInDarkTheme()
-    val cardColor = if (isWallpaperMode) {
-        MaterialTheme.colorScheme.surface.copy(alpha = opacity)
-    } else {
-        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f)
-    }
-
     Surface(
-        onClick = { onClick(module) },
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        color = cardColor,
-        tonalElevation = 0.dp
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 1.dp,
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            if (bannerData != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick(module) },
+            contentAlignment = Alignment.Center
+        ) {
+            // 添加横幅背景
+            if (useBanner && module.banner.isNotEmpty()) {
                 val isDark = isSystemInDarkTheme()
-                val fadeColor = if (isDark) Color(0xFF222222) else Color.White
+                val colorScheme = MaterialTheme.colorScheme
+                val amoledMode = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                    .getBoolean("amoled_mode", false)
+                val isDynamic = colorScheme.primary != colorScheme.secondary
+
+                val fadeColor = when {
+                    amoledMode && isDark -> Color.Black
+                    isDynamic -> colorScheme.surface
+                    isDark -> Color(0xFF222222)
+                    else -> Color.White
+                }
 
                 Box(
-                    modifier = Modifier.matchParentSize(),
+                    modifier = Modifier
+                        .matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(bannerData)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        alpha = 0.2f
-                    )
+                    if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
+                        AsyncImage(
+                            model = module.banner,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            contentScale = ContentScale.Crop,
+                            alpha = 0.18f
+                        )
+                    } else {
+                        // 尝试从本地文件加载横幅
+                        val bannerData = remember(module.banner) {
+                            try {
+                                // APatch模块路径可能不同，这里使用通用路径
+                                val file = SuFile("/data/adb/ap/modules/${module.id}/${module.banner}")
+                                file.newInputStream().use { it.readBytes() }
+                            } catch (_: Exception) {
+                                null
+                            }
+                        }
+                        if (bannerData != null) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(bannerData)
+                                    .build(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                contentScale = ContentScale.Crop,
+                                alpha = 0.18f
+                            )
+                        }
+                    }
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .fillMaxHeight()
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        fadeColor.copy(alpha = 0.1f),
-                                        fadeColor.copy(alpha = 0.9f)
-                                    )
+                                        fadeColor.copy(alpha = 0.0f),
+                                        fadeColor.copy(alpha = 0.8f)
+                                    ),
+                                    startY = 0f,
+                                    endY = Float.POSITIVE_INFINITY
                                 )
                             )
                     )
                 }
             }
-
+            
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top
+                    modifier = Modifier.padding(all = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        val hasAnyLabel = showMoreModuleInfo || module.remove || (updateUrl.isNotEmpty() && !module.update) || module.update
-                        if (hasAnyLabel) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            ) {
-                                val labelOpacity = (opacity + 0.1f).coerceAtMost(1f)
-                                if (showMoreModuleInfo) {
-                                    ModuleLabel(
-                                        text = sizeStr,
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                    ModuleLabel(
-                                        text = module.id,
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                                if (module.remove) {
-                                    ModuleLabel(
-                                        text = stringResource(R.string.apm_remove),
-                                        containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                                    )
-                                } else if (updateUrl.isNotEmpty() && !module.update) {
-                                    ModuleLabel(
-                                        text = stringResource(R.string.apm_update),
-                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                                    )
-                                } else if (module.update) {
-                                    ModuleLabel(
-                                        text = "Updated",
-                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                                    )
-                                }
-                                
-                                if (showMoreModuleInfo && module.hasWebUi && module.enabled && !module.remove) {
-                                    ModuleLabel(
-                                        text = "WebUI",
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                                if (showMoreModuleInfo && module.hasActionScript && module.enabled && !module.remove) {
-                                    ModuleLabel(
-                                        text = "Action",
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = labelOpacity),
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                }
-                            }
-                        }
-
+                    Column(
+                        modifier = Modifier
+                            .alpha(alpha = alpha)
+                            .weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
                         Text(
                             text = module.name,
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            textDecoration = if (module.remove) TextDecoration.LineThrough else TextDecoration.None
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            maxLines = 2,
+                            textDecoration = decoration,
+                            overflow = TextOverflow.Ellipsis
                         )
-                        
+
                         Text(
-                            text = "${module.version} ? ${module.author}",
+                            text = "${module.version}, $moduleAuthor ${module.author}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textDecoration = if (module.remove) TextDecoration.LineThrough else TextDecoration.None
+                            textDecoration = decoration,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
@@ -956,103 +893,131 @@ private fun ModuleItem(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
-
                 Text(
+                    modifier = Modifier
+                        .alpha(alpha = alpha)
+                        .padding(horizontal = 16.dp),
                     text = module.description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis
+                    textDecoration = decoration,
+                    color = MaterialTheme.colorScheme.outline
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                if (showMoreModuleInfo) {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (module.hasWebUi && module.enabled && !module.remove) {
-                        FilledTonalButton(
-                            onClick = { onClick(module) },
-                            contentPadding = ButtonDefaults.TextButtonContentPadding,
-                            modifier = Modifier.height(36.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
-                            )
-                        ) {
-                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.Wysiwyg,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.apm_webui_open))
-                        }
-                    }
-
-                    if (module.hasActionScript && module.enabled && !module.remove) {
-                        FilledTonalButton(
-                            onClick = { 
-                                navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
-                                viewModel.markNeedRefresh()
-                            },
-                            contentPadding = ButtonDefaults.TextButtonContentPadding,
-                            modifier = Modifier.height(36.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Terminal,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.apm_action))
-                        }
-                    }
-
-                     if (updateUrl.isNotEmpty() && !module.remove && !module.update) {
-                        FilledTonalButton(
-                            onClick = { onUpdate(module) },
-                            contentPadding = ButtonDefaults.TextButtonContentPadding,
-                            modifier = Modifier.height(36.dp),
-                            colors = ButtonDefaults.filledTonalButtonColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f))
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Download,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.apm_update))
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    FilledTonalButton(
-                        onClick = { onUninstall(module) },
-                        enabled = !module.remove,
-                        contentPadding = ButtonDefaults.TextButtonContentPadding,
-                        modifier = Modifier.height(36.dp),
-                        colors = ButtonDefaults.filledTonalButtonColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = (opacity + 0.3f).coerceAtMost(1f)),
-                            contentColor = MaterialTheme.colorScheme.onErrorContainer
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Delete,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(stringResource(R.string.apm_remove))
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Text(
+                                text = module.id,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                        ) {
+                            Text(
+                                text = sizeStr,
+                                style = MaterialTheme.typography.labelSmall,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     }
                 }
+
+                HorizontalDivider(
+                    thickness = 1.5.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (updateUrl.isNotEmpty()) {
+                        ModuleUpdateButton(onClick = { onUpdate(module) })
+
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+
+                    if (module.hasWebUi) {
+                        FilledTonalButton(
+                            onClick = { onClick(module) },
+                            enabled = true,
+                            contentPadding = PaddingValues(horizontal = 12.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                painter = painterResource(id = R.drawable.webui),
+                                contentDescription = null
+                            )
+
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(id = R.string.apm_webui_open),
+                                maxLines = 1,
+                                overflow = TextOverflow.Visible,
+                                softWrap = false
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                        Spacer(modifier = Modifier.weight(1f))
+                    if (module.hasActionScript) {
+                        FilledTonalButton(
+                            onClick = {
+                                navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
+                                viewModel.markNeedRefresh()
+                            }, enabled = true, contentPadding = PaddingValues(horizontal = 12.dp)
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                painter = painterResource(id = R.drawable.settings),
+                                contentDescription = null
+                            )
+
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(id = R.string.apm_action),
+                                maxLines = 1,
+                                overflow = TextOverflow.Visible,
+                                softWrap = false
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    ModuleRemoveButton(enabled = !module.remove, onClick = { onUninstall(module) })
+                }
+            }
+
+            if (module.remove) {
+                ModuleStateIndicator(R.drawable.trash)
+            }
+            if (module.update) {
+                ModuleStateIndicator(R.drawable.device_mobile_down)
             }
         }
     }

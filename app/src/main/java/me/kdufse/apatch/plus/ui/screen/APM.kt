@@ -821,7 +821,7 @@ private fun ModuleItem(
             null
         }
     }
-
+    
     val isDark = isSystemInDarkTheme()
     val cardColor = if (isWallpaperMode) {
         MaterialTheme.colorScheme.surface.copy(alpha = opacity)

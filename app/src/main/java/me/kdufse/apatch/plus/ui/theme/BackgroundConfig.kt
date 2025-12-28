@@ -417,7 +417,7 @@ object BackgroundConfig {// State
     fun reset() {
         // Default to custom background enabled with "background.png"
         customBackgroundUri = "background.png"
-        isCustomBackgroundEnabled = true
+        isCustomBackgroundEnabled = false
         customBackgroundOpacity = 0.23f
         customBackgroundBlur = 0f
         customBackgroundDim = 0.0f

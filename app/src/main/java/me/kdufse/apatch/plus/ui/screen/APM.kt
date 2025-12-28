@@ -117,7 +117,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// ???????
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.ui.graphics.Brush
@@ -767,7 +766,6 @@ private fun ModuleItem(
         }
     }
 
-    // ??useBanner??
     val context = LocalContext.current
     val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
     val useBanner = prefs.getBoolean("use_banner", true)
@@ -784,7 +782,6 @@ private fun ModuleItem(
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // ??????
             if (useBanner && module.banner.isNotEmpty()) {
                 val isDark = isSystemInDarkTheme()
                 val colorScheme = MaterialTheme.colorScheme

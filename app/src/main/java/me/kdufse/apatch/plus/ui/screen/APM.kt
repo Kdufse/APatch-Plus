@@ -819,7 +819,7 @@ private fun ModuleItem(
                         val bannerData = remember(module.banner) {
                             try {
                                 // APatch模块路径可能不同，这里使用通用路径
-                                val file = SuFile("/data/adb/ap/modules/${module.id}/${module.banner}")
+                                val file = SuFile("/data/adb/modules/${module.id}/${module.banner}")
                                 file.newInputStream().use { it.readBytes() }
                             } catch (_: Exception) {
                                 null

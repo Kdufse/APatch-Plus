@@ -829,8 +829,6 @@ private fun ModuleItem(
                                 // 尝试不同的路径
                                 val paths = listOf(
                                     "/data/adb/modules/${module.id}/${module.banner}",
-                                    "/data/adb/ap/modules/${module.id}/${module.banner}",
-                                    "/data/adb/modules/${module.id}/files/${module.banner}"
                                 )
                                 
                                 var result: ByteArray? = null

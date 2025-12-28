@@ -833,8 +833,7 @@ private fun ModuleItem(
                             .build(),
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(),
+                            .fillMaxSize(),
                         contentScale = ContentScale.Crop,
                         alpha = 0.18f
                     )
@@ -856,8 +855,7 @@ private fun ModuleItem(
                     
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight()
+                            .fillMaxSize()
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(

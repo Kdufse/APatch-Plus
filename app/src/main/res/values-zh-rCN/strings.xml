@@ -532,8 +532,6 @@
     <string name="settings_category_behavior">行为</string>
     <string name="settings_category_module">模块</string>
     <string name="settings_category_security">安全</string>
-    <string name="settings_show_module_banner">显示模块横幅</string>
-    <string name="settings_show_module_banner_summary">在模块列表中显示模块横幅背景</string>
     
     <!-- 背景音乐字符串 -->
     <string name="settings_background_music">背景音乐</string>

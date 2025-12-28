@@ -514,8 +514,6 @@
     <string name="settings_category_behavior">功法运转</string>
     <string name="settings_category_module">悟道模块</string>
     <string name="settings_category_security">护道结界</string>
-    <string name="settings_show_module_banner">展示仙符底层用料</string>
-    <string name="settings_show_module_banner_summary">在天道仙符介绍中展示仙符底层用料</string>
     
     <!-- 背景音乐字符串（修仙风格版） -->
     <string name="settings_background_music">仙音缭绕</string>

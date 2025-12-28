@@ -526,8 +526,6 @@
     <string name="settings_category_behavior">Поведение</string>
     <string name="settings_category_module">Модули</string>
     <string name="settings_category_security">Безопасность</string>
-    <string name="settings_show_module_banner">Показать баннер модуля</string>
-    <string name="settings_show_module_banner_summary">Показать фон баннера модуля в списке модулей</string>
     
     <!-- Background Music Strings -->
     <string name="settings_background_music">Фоновая музыка</string>

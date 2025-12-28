@@ -516,8 +516,6 @@
     <string name="settings_category_behavior">行為</string>
     <string name="settings_category_module">模組</string>
     <string name="settings_category_security">安全</string>
-    <string name="settings_show_module_banner">顯示模組橫幅</string>
-    <string name="settings_show_module_banner_summary">在模組列表中顯示模組橫幅背景</string>
     
     <!-- 背景音樂字符串 -->
     <string name="settings_background_music">背景音樂</string>

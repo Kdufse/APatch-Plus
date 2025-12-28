@@ -524,8 +524,6 @@
     <string name="settings_category_behavior">Zachowanie</string>
     <string name="settings_category_module">Moduły</string>
     <string name="settings_category_security">Bezpieczeństwo</string>
-    <string name="settings_show_module_banner">Pokaż baner modułu</string>
-    <string name="settings_show_module_banner_summary">Pokaż tło banera modułu na liście modułów</string>
     
     <!-- Background Music Strings -->
     <string name="settings_background_music">Muzyka w tle</string>

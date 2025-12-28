@@ -478,8 +478,6 @@
     <string name="settings_category_behavior">動作</string>
     <string name="settings_category_module">モジュール</string>
     <string name="settings_category_security">セキュリティ</string>
-    <string name="settings_show_module_banner">モジュールバナーを表示</string>
-    <string name="settings_show_module_banner_summary">モジュールリストにモジュールバナーバックグラウンドを表示</string>
     
     <!-- 背景音楽の文字列 -->
     <string name="settings_background_music">背景音楽</string>

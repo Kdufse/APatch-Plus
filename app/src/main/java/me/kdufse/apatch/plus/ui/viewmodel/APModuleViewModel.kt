@@ -41,7 +41,7 @@ class APModuleViewModel : ViewModel() {
         val updateJson: String,
         val hasWebUi: Boolean,
         val hasActionScript: Boolean,
-        val banner: String = "", // ?? banner ??
+        val banner: String = "", // Ìí¼Ó banner ×Ö¶Î
     )
 
     data class ModuleUpdateInfo(
@@ -112,7 +112,7 @@ class APModuleViewModel : ViewModel() {
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
                             obj.optBoolean("action"),
-                            obj.optString("banner", "") // ?? banner ??
+                            obj.optString("banner", "") // Ìí¼Ó banner ×Ö¶Î
                         )
                     }.toList()
                 isNeedRefresh = false

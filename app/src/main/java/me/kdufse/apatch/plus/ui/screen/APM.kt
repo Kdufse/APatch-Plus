@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -781,8 +780,12 @@ private fun ModuleItem(
         }
     }
     
-    // 尝试获取banner图片
-    val bannerData by produceState<ByteArray?>(initialValue = null, key1 = module.id) {
+    // 尝试获取banner图片 - 使用与Module.kt相同的方法
+    val bannerData by produceState<ByteArray?>(initialValue = null, key1 = module.id, key2 = useBanner) {
+        if (!useBanner) {
+            value = null
+            return@produceState
+        }
         value = withContext(Dispatchers.IO) {
             try {
                 // 检查模块目录下是否有banner.png文件
@@ -836,10 +839,20 @@ private fun ModuleItem(
                         alpha = 0.18f
                     )
                     
-                    // 渐变覆盖
+                    // 渐变覆盖 - 使用与Module.kt相同的逻辑
                     val isDark = isSystemInDarkTheme()
                     val colorScheme = MaterialTheme.colorScheme
-                    val fadeColor = if (isDark) Color(0xFF222222) else Color.White
+                    val context = LocalContext.current
+                    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                    val amoledMode = prefs.getBoolean("amoled_mode", false)
+                    val isDynamic = colorScheme.primary != colorScheme.secondary
+                    
+                    val fadeColor = when {
+                        amoledMode && isDark -> Color.Black
+                        isDynamic -> colorScheme.surface
+                        isDark -> Color(0xFF222222)
+                        else -> Color.White
+                    }
                     
                     Box(
                         modifier = Modifier

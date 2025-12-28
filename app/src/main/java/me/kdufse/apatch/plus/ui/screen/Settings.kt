@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Engineering
 import androidx.compose.material.icons.filled.FilePresent
 import androidx.compose.material.icons.filled.FormatColorFill
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.InvertColors
 import androidx.compose.material.icons.filled.Key
@@ -114,7 +113,6 @@ import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.os.LocaleListCompat
-
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import kotlinx.coroutines.Dispatchers
@@ -214,8 +212,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
     }
 
     val snackBarHost = LocalSnackbarHost.current
-    val context = LocalContext.current
-    val prefs = APApplication.sharedPreferences
 
     Scaffold(
         topBar = {
@@ -289,6 +285,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         var showLogBottomSheet by remember { mutableStateOf(false) }
 
         val scope = rememberCoroutineScope()
+        val context = LocalContext.current
         val logSavedMessage = stringResource(R.string.log_saved)
         val exportBugreportLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.CreateDocument("application/gzip")
@@ -308,8 +305,8 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             }
         }
 
-        // Module Banner
-        var useBanner by rememberSaveable { mutableStateOf(prefs.getBoolean("use_banner", true)) }
+        // --- Hoisted State & Launchers ---
+        val prefs = APApplication.sharedPreferences
 
         // General
         var autoUpdateCheck by rememberSaveable { mutableStateOf(prefs.getBoolean("auto_update_check", true)) }
@@ -977,11 +974,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val clearFontTitle = stringResource(id = R.string.settings_clear_font)
             val showClearFont = FontConfig.isCustomFontEnabled && FontConfig.customFontFilename != null && (matchAppearance || shouldShow(clearFontTitle))
 
-            // Module Banner
-            val showModuleBannerTitle = stringResource(id = R.string.settings_show_module_banner)
-            val showModuleBannerSummary = stringResource(id = R.string.settings_show_module_banner_summary)
-            val showModuleBanner = matchAppearance || shouldShow(showModuleBannerTitle, showModuleBannerSummary)
-
             // Theme Store
             val themeStoreTitle = stringResource(id = R.string.theme_store_title)
             val showThemeStore = matchAppearance || shouldShow(themeStoreTitle)
@@ -992,7 +984,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val importThemeTitle = stringResource(id = R.string.settings_import_theme)
             val showImportTheme = matchAppearance || shouldShow(importThemeTitle)
 
-            val showAppearanceCategory = showNightModeFollowSys || showNightModeEnabled || showUseSystemColor || showCustomColor || showHomeLayout || showGridBackgroundSwitch || showGridCheckHidden || showGridTextHidden || showGridModeHidden || showListModeHidden || showCustomBackgroundSwitch || showCustomFontSwitch || showModuleBanner || showThemeStore || showSaveTheme || showImportTheme
+            val showAppearanceCategory = showNightModeFollowSys || showNightModeEnabled || showUseSystemColor || showCustomColor || showHomeLayout || showGridBackgroundSwitch || showGridCheckHidden || showGridTextHidden || showGridModeHidden || showListModeHidden || showCustomBackgroundSwitch || showCustomFontSwitch || showThemeStore || showSaveTheme || showImportTheme
 
             if (showAppearanceCategory) {
                 SettingsCategory(icon = Icons.Filled.Palette, title = appearanceTitle, isSearching = searchText.isNotEmpty()) {
@@ -1458,7 +1450,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                                             }
                                         } else {
-                                            Toast.makeText(context, "请先授予存储权限才能选择背景视�  ", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "请先授予存储权限才能选择背景视频", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 )
@@ -1695,19 +1687,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                     }
                                 )
                             }
-                        }
-                    }
-
-                    // Module Banner
-                    if (showModuleBanner) {
-                        SwitchItem(
-                            icon = Icons.Filled.Image,
-                            title = showModuleBannerTitle,
-                            summary = showModuleBannerSummary,
-                            checked = useBanner
-                        ) {
-                            prefs.edit { putBoolean("use_banner", it) }
-                            useBanner = it
                         }
                     }
 

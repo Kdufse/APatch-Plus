@@ -214,6 +214,8 @@ fun SettingScreen(navigator: DestinationsNavigator) {
     }
 
     val snackBarHost = LocalSnackbarHost.current
+    val context = LocalContext.current
+    val prefs = APApplication.sharedPreferences
 
     Scaffold(
         topBar = {
@@ -287,7 +289,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
         var showLogBottomSheet by remember { mutableStateOf(false) }
 
         val scope = rememberCoroutineScope()
-        val context = LocalContext.current
         val logSavedMessage = stringResource(R.string.log_saved)
         val exportBugreportLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.CreateDocument("application/gzip")
@@ -307,11 +308,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             }
         }
 
-        // --- Hoisted State & Launchers ---
-        val prefs = APApplication.sharedPreferences
-        
         // Module Banner
-        val prefs = APApplication.sharedPreferences
         var useBanner by rememberSaveable { mutableStateOf(prefs.getBoolean("use_banner", true)) }
 
         // General
@@ -771,18 +768,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                 autoBackupBoot = it
                             })
                     }
-                    
-                    if (showModuleBanner) {
-                        SwitchItem(
-                            icon = Icons.Filled.Image,
-                            title = showModuleBannerTitle,
-                            ummary = showModuleBannerSummary,
-                            checked = useBanner // 这个变量需要在SettingScreen函数中声明
-                        ) {
-                            prefs.edit { putBoolean("use_banner", it) }
-                            useBanner = it
-                        }
-                    }
 
                     // Reset SU Path
                     if (showResetSuPath) {
@@ -992,6 +977,11 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val clearFontTitle = stringResource(id = R.string.settings_clear_font)
             val showClearFont = FontConfig.isCustomFontEnabled && FontConfig.customFontFilename != null && (matchAppearance || shouldShow(clearFontTitle))
 
+            // Module Banner
+            val showModuleBannerTitle = stringResource(id = R.string.settings_show_module_banner)
+            val showModuleBannerSummary = stringResource(id = R.string.settings_show_module_banner_summary)
+            val showModuleBanner = matchAppearance || shouldShow(showModuleBannerTitle, showModuleBannerSummary)
+
             // Theme Store
             val themeStoreTitle = stringResource(id = R.string.theme_store_title)
             val showThemeStore = matchAppearance || shouldShow(themeStoreTitle)
@@ -1002,7 +992,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val importThemeTitle = stringResource(id = R.string.settings_import_theme)
             val showImportTheme = matchAppearance || shouldShow(importThemeTitle)
 
-            val showAppearanceCategory = showNightModeFollowSys || showNightModeEnabled || showUseSystemColor || showCustomColor || showHomeLayout || showGridBackgroundSwitch || showGridCheckHidden || showGridTextHidden || showGridModeHidden || showListModeHidden || showCustomBackgroundSwitch || showCustomFontSwitch || showThemeStore || showSaveTheme || showImportTheme || showModuleBanner
+            val showAppearanceCategory = showNightModeFollowSys || showNightModeEnabled || showUseSystemColor || showCustomColor || showHomeLayout || showGridBackgroundSwitch || showGridCheckHidden || showGridTextHidden || showGridModeHidden || showListModeHidden || showCustomBackgroundSwitch || showCustomFontSwitch || showModuleBanner || showThemeStore || showSaveTheme || showImportTheme
 
             if (showAppearanceCategory) {
                 SettingsCategory(icon = Icons.Filled.Palette, title = appearanceTitle, isSearching = searchText.isNotEmpty()) {
@@ -1468,7 +1458,7 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                                             }
                                         } else {
-                                            Toast.makeText(context, "璇峰厛鎺堜簣瀛樺偍鏉冮檺鎵嶈兘閫夋嫨鑳屾櫙瑙嗛", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "璇峰厛鎺堜簣瀛樺偍鏉冮檺鎵嶈兘閫夋嫨鑳屾櫙瑙嗛  ", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 )
@@ -1705,6 +1695,19 @@ fun SettingScreen(navigator: DestinationsNavigator) {
                                     }
                                 )
                             }
+                        }
+                    }
+
+                    // Module Banner
+                    if (showModuleBanner) {
+                        SwitchItem(
+                            icon = Icons.Filled.Image,
+                            title = showModuleBannerTitle,
+                            summary = showModuleBannerSummary,
+                            checked = useBanner
+                        ) {
+                            prefs.edit { putBoolean("use_banner", it) }
+                            useBanner = it
                         }
                     }
 
@@ -1962,10 +1965,6 @@ fun SettingScreen(navigator: DestinationsNavigator) {
             val autoBackupTitle = stringResource(id = R.string.settings_auto_backup_module)
             val autoBackupSummary = stringResource(id = R.string.settings_auto_backup_module_summary)
             val showAutoBackup = aPatchReady && (matchModule || shouldShow(autoBackupTitle, autoBackupSummary))
-
-            val showModuleBannerTitle = stringResource(id = R.string.settings_show_module_banner)
-            val showModuleBannerSummary = stringResource(id = R.string.settings_show_module_banner_summary)
-            val showModuleBanner = matchAppearance || shouldShow(showModuleBannerTitle, showModuleBannerSummary)
 
             val openBackupDirTitle = stringResource(id = R.string.settings_open_backup_dir)
             val showOpenBackupDir = aPatchReady && autoBackupModule && (matchModule || shouldShow(openBackupDirTitle))

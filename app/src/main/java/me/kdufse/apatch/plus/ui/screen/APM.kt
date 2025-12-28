@@ -1,4 +1,4 @@
- package me.kdufse.apatch.plus.ui.screen
+package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
 import android.content.Context
@@ -10,7 +10,10 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +32,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Restore
+import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
@@ -38,6 +51,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -60,11 +74,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,13 +89,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.ApmBulkInstallScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ExecuteAPMActionScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.OnlineModuleScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.topjohnwu.superuser.io.SuFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,49 +114,27 @@ import me.kdufse.apatch.plus.ui.component.ModuleRemoveButton
 import me.kdufse.apatch.plus.ui.component.ModuleStateIndicator
 import me.kdufse.apatch.plus.ui.component.ModuleUpdateButton
 import me.kdufse.apatch.plus.ui.component.SearchAppBar
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
 import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
 import me.kdufse.apatch.plus.ui.component.rememberLoadingDialog
 import me.kdufse.apatch.plus.ui.viewmodel.APModuleViewModel
 import me.kdufse.apatch.plus.util.DownloadListener
+import me.kdufse.apatch.plus.util.ModuleBackupUtils
 import me.kdufse.apatch.plus.util.download
 import me.kdufse.apatch.plus.util.hasMagisk
 import me.kdufse.apatch.plus.util.reboot
 import me.kdufse.apatch.plus.util.toggleModule
 import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.kdufse.apatch.plus.util.uninstallModule
-
-import com.ramcosta.composedestinations.generated.destinations.ApmBulkInstallScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.OnlineModuleScreenDestination
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.MoreVert
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
-import me.kdufse.apatch.plus.util.ModuleBackupUtils
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.Restore
-import androidx.compose.material.icons.outlined.Terminal
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.topjohnwu.superuser.io.SuFile
+
+// 移除重复的导入
+// import androidx.compose.foundation.shape.RoundedCornerShape (已移除)
+// import androidx.compose.material.icons.* (已合并)
+// import androidx.compose.material3.* (已存在)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -691,7 +691,7 @@ private fun TopBar(
         onClearClick = { onSearchQueryChange("") },
         leadingActions = {
             if (showDisableAllButton) {
-                androidx.compose.material3.IconButton(onClick = {
+                IconButton(onClick = {
                     scope.launch {
                         val result = confirmDialog.awaitConfirm(
                             title = disableAllTitle,
@@ -710,7 +710,7 @@ private fun TopBar(
                     )
                 }
             }
-            androidx.compose.material3.IconButton(onClick = {
+            IconButton(onClick = {
                 navigator.navigate(OnlineModuleScreenDestination)
             }) {
                 Icon(
@@ -718,7 +718,7 @@ private fun TopBar(
                     contentDescription = "Online Modules"
                 )
             }
-            androidx.compose.material3.IconButton(onClick = {
+            IconButton(onClick = {
                 navigator.navigate(ApmBulkInstallScreenDestination)
             }) {
                 Icon(
@@ -728,7 +728,7 @@ private fun TopBar(
             }
         },
         dropdownContent = {
-            androidx.compose.material3.IconButton(onClick = { showMenu = true }) {
+            IconButton(onClick = { showMenu = true }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = "More")
                 WallpaperAwareDropdownMenu(
                     expanded = showMenu,
@@ -1022,6 +1022,4 @@ private fun ModuleItem(
             }
         }
     }
-
-
 }

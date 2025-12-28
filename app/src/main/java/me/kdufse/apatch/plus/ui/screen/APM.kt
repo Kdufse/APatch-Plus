@@ -789,7 +789,7 @@ private fun ModuleItem(
         value = withContext(Dispatchers.IO) {
             try {
                 // 检查模块目录下是否有banner.png文件
-                val file = SuFile("/data/adb/ap/modules/${module.id}/banner.png")
+                val file = SuFile("/data/adb/modules/${module.id}/banner.png")
                 if (file.exists()) {
                     file.newInputStream().use { it.readBytes() }
                 } else {

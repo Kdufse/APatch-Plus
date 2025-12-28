@@ -1,3 +1,4 @@
+// APM.kt - 完整修改版
 package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
@@ -130,11 +131,6 @@ import me.kdufse.apatch.plus.util.uninstallModule
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-// 移除重复的导入
-// import androidx.compose.foundation.shape.RoundedCornerShape (已移除)
-// import androidx.compose.material.icons.* (已合并)
-// import androidx.compose.material3.* (已存在)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -780,26 +776,36 @@ private fun ModuleItem(
         }
     }
     
-    // 尝试获取banner图片 - 使用与Module.kt相同的方法
-    val bannerData by produceState<ByteArray?>(initialValue = null, key1 = module.id, key2 = useBanner) {
-        if (!useBanner) {
+    // 获取banner数据
+    val bannerData by produceState<Any?>(initialValue = null, key1 = module.id, key2 = module.banner, key3 = useBanner) {
+        if (!useBanner || module.banner.isEmpty()) {
             value = null
             return@produceState
         }
+        
         value = withContext(Dispatchers.IO) {
             try {
-                // 检查模块目录下是否有banner.png文件
-                val file = SuFile("/data/adb/modules/${module.id}/banner.png")
-                if (file.exists()) {
-                    file.newInputStream().use { it.readBytes() }
+                // 检查banner是否是URL
+                if (Patterns.WEB_URL.matcher(module.banner).matches()) {
+                    // 如果是URL，直接返回URL字符串
+                    module.banner
                 } else {
-                    // 检查是否有banner.jpg
-                    val jpgFile = SuFile("/data/adb/ap/modules/${module.id}/banner.jpg")
-                    if (jpgFile.exists()) {
-                        jpgFile.newInputStream().use { it.readBytes() }
-                    } else {
-                        null
+                    // 如果是本地文件，尝试读取
+                    // 检查APatch模块路径
+                    val apPath = "/data/adb/ap/modules/${module.id}/${module.banner}"
+                    // 检查Magisk模块路径
+                    val magiskPath = "/data/adb/modules/${module.id}/${module.banner}"
+                    
+                    val paths = listOf(apPath, magiskPath)
+                    
+                    for (path in paths) {
+                        val file = SuFile(path)
+                        if (file.exists() && file.canRead()) {
+                            file.newInputStream().use { it.readBytes() }
+                        }
                     }
+                    
+                    null // 如果没有找到文件，返回null
                 }
             } catch (e: Exception) {
                 null
@@ -828,9 +834,7 @@ private fun ModuleItem(
                 ) {
                     // 显示banner图片
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(bannerData)
-                            .build(),
+                        model = bannerData,
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize(),

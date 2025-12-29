@@ -46,6 +46,7 @@ import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -61,6 +62,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -769,6 +771,7 @@ private fun ModuleItem(
     val decoration = if (!module.remove) TextDecoration.None else TextDecoration.LineThrough
     val moduleAuthor = stringResource(id = R.string.apm_author)
     val viewModel = viewModel<APModuleViewModel>()
+    val context = LocalContext.current
 
     val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
         value = withContext(Dispatchers.IO) {
@@ -815,10 +818,13 @@ private fun ModuleItem(
         }
     }
     
+    // 检查是否有banner
+    val hasBanner = useBanner && bannerData != null
+    
     Surface(
         modifier = modifier,
-        color = if (useBanner && bannerData != null) Color.Transparent else MaterialTheme.colorScheme.surface,
-        tonalElevation = if (useBanner && bannerData != null) 0.dp else 1.dp,
+        color = if (hasBanner) Color.Transparent else MaterialTheme.colorScheme.surface,
+        tonalElevation = if (hasBanner) 0.dp else 1.dp,
         shape = RoundedCornerShape(20.dp)
     ) {
         Box(
@@ -827,11 +833,11 @@ private fun ModuleItem(
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // 如果有banner数据且启用banner显示
-            if (useBanner && bannerData != null) {
+            // 如果有banner
+            if (hasBanner) {
                 // 显示banner图片作为背景
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
+                    model = ImageRequest.Builder(context)
                         .data(bannerData)
                         .crossfade(true)
                         .build(),
@@ -842,7 +848,7 @@ private fun ModuleItem(
                     contentScale = ContentScale.Crop
                 )
                 
-                // 底部渐变覆盖层（只有底部有，顶部透明）
+                // 底部渐变覆盖层
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -851,7 +857,7 @@ private fun ModuleItem(
                                 colors = listOf(
                                     Color.Transparent,
                                     Color.Transparent,
-                                    Color.Black.copy(alpha = 0.7f)
+                                    Color.Black.copy(alpha = 0.6f)
                                 ),
                                 startY = 0f,
                                 endY = Float.POSITIVE_INFINITY
@@ -864,49 +870,66 @@ private fun ModuleItem(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 上部内容区域（没有背景）
-                Row(
-                    modifier = Modifier.padding(all = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .alpha(alpha = alpha)
-                            .weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        Text(
-                            text = module.name,
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            maxLines = 2,
-                            textDecoration = decoration,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onSurface
+                // 上部内容
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = if (hasBanner) Color.Transparent else MaterialTheme.colorScheme.surface
                         )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(all = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .alpha(alpha = alpha)
+                                .weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            Text(
+                                text = module.name,
+                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                maxLines = 2,
+                                textDecoration = decoration,
+                                overflow = TextOverflow.Ellipsis,
+                                color = if (hasBanner) Color.White else MaterialTheme.colorScheme.onSurface
+                            )
 
-                        Text(
-                            text = "${module.version}, $moduleAuthor ${module.author}",
-                            style = MaterialTheme.typography.bodySmall,
-                            textDecoration = decoration,
-                            color = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant
+                            Text(
+                                text = "${module.version}, $moduleAuthor ${module.author}",
+                                style = MaterialTheme.typography.bodySmall,
+                                textDecoration = decoration,
+                                color = if (hasBanner) Color.White.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        Switch(
+                            enabled = !module.update,
+                            checked = isChecked,
+                            onCheckedChange = onCheckChanged,
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = if (hasBanner) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = if (hasBanner) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primaryContainer,
+                                uncheckedThumbColor = if (hasBanner) MaterialTheme.colorScheme.outline.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outline,
+                                uncheckedTrackColor = if (hasBanner) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f) else MaterialTheme.colorScheme.surfaceVariant
+                            )
                         )
                     }
-
-                    androidx.compose.material3.Switch(
-                        enabled = !module.update,
-                        checked = isChecked,
-                        onCheckedChange = onCheckChanged
-                    )
                 }
 
                 Text(
                     modifier = Modifier
                         .alpha(alpha = alpha)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.dp)
+                        .background(
+                            color = if (hasBanner) Color.Transparent else MaterialTheme.colorScheme.surface
+                        ),
                     text = module.description,
                     style = MaterialTheme.typography.bodySmall,
                     textDecoration = decoration,
-                    color = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outline
+                    color = if (hasBanner) Color.White.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outline
                 )
 
                 if (showMoreModuleInfo) {
@@ -918,16 +941,19 @@ private fun ModuleItem(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
+                            .background(
+                                color = if (hasBanner) Color.Transparent else MaterialTheme.colorScheme.surface
+                            )
                     ) {
                         Surface(
                             shape = RoundedCornerShape(4.dp),
-                            color = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.primary,
+                            color = if (hasBanner) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.primary,
                         ) {
                             Text(
                                 text = module.id,
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                                color = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onPrimary,
+                                color = if (hasBanner) Color.White else MaterialTheme.colorScheme.onPrimary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -935,13 +961,13 @@ private fun ModuleItem(
 
                         Surface(
                             shape = RoundedCornerShape(4.dp),
-                            color = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.secondary,
+                            color = if (hasBanner) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.secondary,
                         ) {
                             Text(
                                 text = sizeStr,
                                 style = MaterialTheme.typography.labelSmall,
                                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                                color = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onPrimary,
+                                color = if (hasBanner) Color.White else MaterialTheme.colorScheme.onPrimary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
@@ -949,19 +975,19 @@ private fun ModuleItem(
                     }
                 }
 
-                // 底部区域 - 添加半透明背景
+                // 底部按钮区域
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
-                            color = if (useBanner && bannerData != null) Color.Black.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                            color = if (hasBanner) Color.Black.copy(alpha = 0.5f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         )
                         .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
                 ) {
                     Column {
                         HorizontalDivider(
                             thickness = 1.5.dp,
-                            color = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                            color = if (hasBanner) Color.White.copy(alpha = 0.3f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
                             modifier = Modifier.padding(top = 8.dp)
                         )
 
@@ -972,30 +998,48 @@ private fun ModuleItem(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (updateUrl.isNotEmpty()) {
-                                // 使用ModuleUpdateButton而不是自定义按钮
-                                ModuleUpdateButton(
+                                // 更新按钮
+                                FilledTonalButton(
                                     onClick = { onUpdate(module) },
-                                    useWhiteTheme = useBanner && bannerData != null
-                                )
+                                    enabled = true,
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = if (hasBanner) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.primary,
+                                        contentColor = if (hasBanner) Color.White else MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 12.dp)
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(20.dp),
+                                        painter = painterResource(id = R.drawable.device_mobile_down),
+                                        contentDescription = null
+                                    )
+
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = stringResource(R.string.apm_update),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Visible,
+                                        softWrap = false
+                                    )
+                                }
 
                                 Spacer(modifier = Modifier.width(12.dp))
                             }
 
                             if (module.hasWebUi) {
-                                androidx.compose.material3.FilledTonalButton(
+                                FilledTonalButton(
                                     onClick = { onClick(module) },
                                     enabled = true,
-                                    colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.secondaryContainer,
-                                        contentColor = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = if (hasBanner) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = if (hasBanner) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
                                     ),
-                                    contentPadding = androidx.compose.ui.layout.PaddingValues(horizontal = 12.dp)
+                                    contentPadding = PaddingValues(horizontal = 12.dp)
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(20.dp),
                                         painter = painterResource(id = R.drawable.webui),
-                                        contentDescription = null,
-                                        tint = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
+                                        contentDescription = null
                                     )
 
                                     Spacer(modifier = Modifier.width(6.dp))
@@ -1003,8 +1047,7 @@ private fun ModuleItem(
                                         text = stringResource(id = R.string.apm_webui_open),
                                         maxLines = 1,
                                         overflow = TextOverflow.Visible,
-                                        softWrap = false,
-                                        color = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onSecondaryContainer
+                                        softWrap = false
                                     )
                                 }
 
@@ -1014,23 +1057,22 @@ private fun ModuleItem(
                             Spacer(modifier = Modifier.weight(1f))
                             
                             if (module.hasActionScript) {
-                                androidx.compose.material3.FilledTonalButton(
+                                FilledTonalButton(
                                     onClick = {
                                         navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                         viewModel.markNeedRefresh()
                                     }, 
                                     enabled = true, 
-                                    colors = androidx.compose.material3.ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = if (useBanner && bannerData != null) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.tertiaryContainer,
-                                        contentColor = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onTertiaryContainer
+                                    colors = ButtonDefaults.filledTonalButtonColors(
+                                        containerColor = if (hasBanner) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.tertiaryContainer,
+                                        contentColor = if (hasBanner) Color.White else MaterialTheme.colorScheme.onTertiaryContainer
                                     ),
-                                    contentPadding = androidx.compose.ui.layout.PaddingValues(horizontal = 12.dp)
+                                    contentPadding = PaddingValues(horizontal = 12.dp)
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(20.dp),
                                         painter = painterResource(id = R.drawable.settings),
-                                        contentDescription = null,
-                                        tint = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onTertiaryContainer
+                                        contentDescription = null
                                     )
 
                                     Spacer(modifier = Modifier.width(6.dp))
@@ -1038,30 +1080,74 @@ private fun ModuleItem(
                                         text = stringResource(id = R.string.apm_action),
                                         maxLines = 1,
                                         overflow = TextOverflow.Visible,
-                                        softWrap = false,
-                                        color = if (useBanner && bannerData != null) Color.White else MaterialTheme.colorScheme.onTertiaryContainer
+                                        softWrap = false
                                     )
                                 }
 
                                 Spacer(modifier = Modifier.width(12.dp))
                             }
                             
-                            // 使用ModuleRemoveButton
-                            ModuleRemoveButton(
-                                enabled = !module.remove,
+                            // 删除按钮
+                            FilledTonalButton(
                                 onClick = { onUninstall(module) },
-                                useWhiteTheme = useBanner && bannerData != null
-                            )
+                                enabled = !module.remove,
+                                colors = ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = if (hasBanner) Color.Red.copy(alpha = 0.6f) else Color.Red,
+                                    contentColor = Color.White
+                                ),
+                                contentPadding = PaddingValues(horizontal = 12.dp)
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = null
+                                )
+
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = stringResource(id = R.string.apm_remove),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Visible,
+                                    softWrap = false
+                                )
+                            }
                         }
                     }
                 }
             }
 
+            // 状态指示器
             if (module.remove) {
-                ModuleStateIndicator(R.drawable.trash)
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Red.copy(alpha = 0.5f))
+                        .clip(RoundedCornerShape(20.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.trash),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.White
+                    )
+                }
             }
             if (module.update) {
-                ModuleStateIndicator(R.drawable.device_mobile_down)
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Blue.copy(alpha = 0.5f))
+                        .clip(RoundedCornerShape(20.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.device_mobile_down),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = Color.White
+                    )
+                }
             }
         }
     }

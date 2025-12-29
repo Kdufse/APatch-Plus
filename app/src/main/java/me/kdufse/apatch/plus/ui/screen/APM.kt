@@ -46,6 +46,7 @@ import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -61,6 +62,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -841,6 +843,21 @@ private fun ModuleItem(
                         .clip(RoundedCornerShape(20.dp)),
                     contentScale = ContentScale.Crop
                 )
+            } else {
+                // 如果没有banner，显示纯色背景
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surface,
+                                    MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            )
+                        )
+                )
             }
             
             // 整个内容区域覆盖半透明黑色背景
@@ -975,7 +992,7 @@ private fun ModuleItem(
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.arrow_up),
+                                painter = painterResource(id = R.drawable.device_mobile_down),
                                 contentDescription = null
                             )
 
@@ -984,7 +1001,8 @@ private fun ModuleItem(
                                 text = stringResource(R.string.apm_update),
                                 maxLines = 1,
                                 overflow = TextOverflow.Visible,
-                                softWrap = false
+                                softWrap = false,
+                                color = Color.White
                             )
                         }
 

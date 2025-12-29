@@ -1,4 +1,4 @@
-// APM.kt - 完整修改版
+// APM.kt - 俇淕党蜊唳
 package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
@@ -776,7 +776,7 @@ private fun ModuleItem(
         }
     }
     
-    // 获取banner数据
+    // 读取banner数据
     val bannerData by produceState<Any?>(initialValue = null, key1 = module.id, key2 = module.banner, key3 = useBanner) {
         if (!useBanner || module.banner.isEmpty()) {
             value = null
@@ -790,24 +790,26 @@ private fun ModuleItem(
                     // 如果是URL，直接返回URL字符串
                     module.banner
                 } else {
-                    // 如果是本地文件，尝试读取
-                    // 检查APatch模块路径
-                    val apPath = "/data/adb/ap/modules/${module.id}/${module.banner}"
-                    // 检查Magisk模块路径
-                    val magiskPath = "/data/adb/modules/${module.id}/${module.banner}"
+                    // 如果是相对路径，从模块目录读取
+                    // 检查模块目录
+                    val apPath = "/data/adb/modules/${module.id}/${module.banner}"
+                    // 检查挂载模块目录（兼容性）
+                    val magiskPath = "/data/adb/modules_mount/${module.id}/${module.banner}"
                     
                     val paths = listOf(apPath, magiskPath)
                     
                     for (path in paths) {
                         val file = SuFile(path)
                         if (file.exists() && file.canRead()) {
-                            file.newInputStream().use { it.readBytes() }
+                            // 返回文件的URI
+                            return@withContext Uri.fromFile(file).toString()
                         }
                     }
                     
                     null // 如果没有找到文件，返回null
                 }
             } catch (e: Exception) {
+                Log.e("ModuleItem", "Failed to load banner for module ${module.id}: ${e.message}")
                 null
             }
         }
@@ -826,7 +828,7 @@ private fun ModuleItem(
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // 如果有banner且开启了banner显示
+            // 如果有banner数据且启用banner显示
             if (useBanner && bannerData != null) {
                 Box(
                     modifier = Modifier.matchParentSize(),
@@ -834,15 +836,19 @@ private fun ModuleItem(
                 ) {
                     // 显示banner图片
                     AsyncImage(
-                        model = bannerData,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(bannerData)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp)),
                         contentScale = ContentScale.Crop,
-                        alpha = 0.18f
+                        alpha = 0.25f // 设置透明度，避免影响文字显示
                     )
                     
-                    // 渐变覆盖 - 使用与Module.kt相同的逻辑
+                    // 添加渐变覆盖 - 确保文字可读性
                     val isDark = isSystemInDarkTheme()
                     val colorScheme = MaterialTheme.colorScheme
                     val context = LocalContext.current
@@ -860,11 +866,12 @@ private fun ModuleItem(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .clip(RoundedCornerShape(20.dp))
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
                                         fadeColor.copy(alpha = 0.0f),
-                                        fadeColor.copy(alpha = 0.8f)
+                                        fadeColor.copy(alpha = 0.6f)
                                     ),
                                     startY = 0f,
                                     endY = Float.POSITIVE_INFINITY
@@ -892,7 +899,8 @@ private fun ModuleItem(
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                             maxLines = 2,
                             textDecoration = decoration,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Text(
@@ -962,7 +970,7 @@ private fun ModuleItem(
 
                 HorizontalDivider(
                     thickness = 1.5.dp,
-                    color = MaterialTheme.colorScheme.surface,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
                     modifier = Modifier.padding(top = 8.dp)
                 )
 

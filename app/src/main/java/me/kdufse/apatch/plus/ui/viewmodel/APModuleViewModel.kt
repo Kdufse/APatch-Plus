@@ -42,7 +42,7 @@ class APModuleViewModel : ViewModel() {
         val updateJson: String,
         val hasWebUi: Boolean,
         val hasActionScript: Boolean,
-        val banner: String = "", // 添加 banner 字段
+        val banner: String // 添加banner字段
     )
 
     data class ModuleUpdateInfo(
@@ -102,22 +102,8 @@ class APModuleViewModel : ViewModel() {
                     .map { obj ->
                         val id = obj.getString("id")
                         
-                        // 调试：检查 banner 字段是否存在
-                        val hasBannerField = obj.has("banner")
-                        val bannerFromJson = obj.optString("banner", "")
-                        
-                        Log.i(TAG, "Module $id: hasBannerField=$hasBannerField, banner='$bannerFromJson'")
-                        
-                        // 如果 JSON 中有 banner 字段，使用它
-                        // 否则手动检查常见的 banner 文件
-                        val banner = if (bannerFromJson.isNotEmpty()) {
-                            bannerFromJson
-                        } else {
-                            // 手动检查 banner 文件
-                            detectBannerFile(id)
-                        }
-                        
-                        Log.i(TAG, "Final banner for $id: '$banner'")
+                        // 从module.prop文件中读取banner变量
+                        val banner = getModuleBanner(id)
                         
                         ModuleInfo(
                             id,
@@ -132,12 +118,12 @@ class APModuleViewModel : ViewModel() {
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
                             obj.optBoolean("action"),
-                            banner  // 使用检测到的 banner
+                            banner  // 添加banner字段
                         )
                     }.toList()
                 isNeedRefresh = false
                 
-                // 打印所有模块的 banner 信息
+                // 记录所有模块的banner信息
                 Log.i(TAG, "=== MODULES WITH BANNER ===")
                 modules.forEach { module ->
                     Log.i(TAG, "Module: ${module.id}, Banner: '${module.banner}'")
@@ -157,30 +143,10 @@ class APModuleViewModel : ViewModel() {
         }
     }
     
-    // 手动检测 banner 文件
-    private fun detectBannerFile(moduleId: String): String {
+    // 从module.prop文件中读取banner变量
+    private fun getModuleBanner(moduleId: String): String {
         return try {
-            // 常见的 banner 文件名
-            val bannerFiles = listOf("banner.jpg", "banner.png", "banner.webp", "banner.jpeg")
-            
-            for (bannerFile in bannerFiles) {
-                // 尝试不同的路径
-                val paths = listOf(
-                    "/data/adb/modules/$moduleId/$bannerFile",
-                    "/data/adb/ap/modules/$moduleId/$bannerFile",
-                    "/data/adb/modules/$moduleId/files/$bannerFile"
-                )
-                
-                for (path in paths) {
-                    val file = SuFile(path)
-                    if (file.exists() && file.canRead()) {
-                        Log.i(TAG, "Found banner for $moduleId: $path")
-                        return bannerFile  // 返回文件名
-                    }
-                }
-            }
-            
-            // 检查 module.prop 文件中的 banner 字段
+            // 可能的module.prop文件路径
             val propPaths = listOf(
                 "/data/adb/modules/$moduleId/module.prop",
                 "/data/adb/ap/modules/$moduleId/module.prop"
@@ -188,13 +154,16 @@ class APModuleViewModel : ViewModel() {
             
             for (propPath in propPaths) {
                 val propFile = SuFile(propPath)
-                if (propFile.exists()) {
+                if (propFile.exists() && propFile.canRead()) {
+                    Log.i(TAG, "Reading module.prop from: $propPath")
+                    
                     val lines = propFile.readText().lines()
                     for (line in lines) {
+                        // 查找banner变量
                         if (line.startsWith("banner=")) {
                             val bannerValue = line.substringAfter("banner=").trim()
                             if (bannerValue.isNotEmpty()) {
-                                Log.i(TAG, "Found banner in module.prop for $moduleId: $bannerValue")
+                                Log.i(TAG, "Found banner for module $moduleId: $bannerValue")
                                 return bannerValue
                             }
                         }
@@ -202,11 +171,44 @@ class APModuleViewModel : ViewModel() {
                 }
             }
             
-            "" // 没有找到 banner
+            // 如果没有在module.prop中找到banner，检查常见的banner文件
+            detectBannerFile(moduleId)
         } catch (e: Exception) {
-            Log.e(TAG, "Error detecting banner for $moduleId: $e")
+            Log.e(TAG, "Error reading banner for module $moduleId: $e")
             ""
         }
+    }
+    
+    // 检测常见的banner文件（兼容性）
+    private fun detectBannerFile(moduleId: String): String {
+        try {
+            // 常见的banner文件名
+            val bannerFiles = listOf("banner.jpg", "banner.png", "banner.webp", "banner.jpeg")
+            
+            // 可能的模块路径
+            val modulePaths = listOf(
+                "/data/adb/modules/$moduleId",
+                "/data/adb/ap/modules/$moduleId"
+            )
+            
+            for (modulePath in modulePaths) {
+                val moduleDir = SuFile(modulePath)
+                if (moduleDir.exists() && moduleDir.isDirectory) {
+                    for (bannerFile in bannerFiles) {
+                        val bannerPath = "$modulePath/$bannerFile"
+                        val banner = SuFile(bannerPath)
+                        if (banner.exists() && banner.canRead()) {
+                            Log.i(TAG, "Found banner file for module $moduleId: $bannerFile")
+                            return bannerFile
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error detecting banner file for $moduleId: $e")
+        }
+        
+        return "" // 没有找到banner
     }
 
     private fun sanitizeVersionString(version: String): String {

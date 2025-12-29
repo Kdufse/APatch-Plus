@@ -793,7 +793,7 @@ private fun ModuleItem(
                     // 如果是相对路径，从模块目录读取
                     // 检查模块目录
                     val apPath = "/data/adb/modules/${module.id}/${module.banner}"
-                    // 检查挂载模块目录（兼容性）
+                    // 检查挂载模块目录
                     val magiskPath = "/data/adb/modules_mount/${module.id}/${module.banner}"
                     
                     val paths = listOf(apPath, magiskPath)

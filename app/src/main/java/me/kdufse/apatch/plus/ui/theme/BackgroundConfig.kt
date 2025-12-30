@@ -16,7 +16,7 @@ import java.io.FileOutputStream
 object BackgroundConfig {// State
     var customBackgroundUri: String? by mutableStateOf("background.png")
         private set
-    var isCustomBackgroundEnabled: Boolean by mutableStateOf(true)
+    var isCustomBackgroundEnabled: Boolean by mutableStateOf(false)
         private set
     var customBackgroundOpacity: Float by mutableStateOf(0.7f)
         private set

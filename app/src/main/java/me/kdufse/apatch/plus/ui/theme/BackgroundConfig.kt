@@ -415,13 +415,11 @@ object BackgroundConfig {// State
      * 重置配置
      */
     fun reset() {
-        // Default to custom background enabled with "background.png"
-        customBackgroundUri = "background.png"
         isCustomBackgroundEnabled = false
         customBackgroundOpacity = 0.23f
         customBackgroundBlur = 0f
         customBackgroundDim = 0.0f
-        isDualBackgroundDimEnabled = true
+        isDualBackgroundDimEnabled = false
         customBackgroundDayDim = 0.0f
         customBackgroundNightDim = 0.75f
         

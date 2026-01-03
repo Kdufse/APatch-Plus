@@ -1,4 +1,3 @@
-// APM.kt - ÍêÕûÐÞ¸Ä°æ
 package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
@@ -776,7 +775,7 @@ private fun ModuleItem(
         }
     }
     
-    // »ñÈ¡bannerÊý¾Ý
+    // ï¿½ï¿½È¡bannerï¿½ï¿½ï¿½ï¿½
     val bannerData by produceState<Any?>(initialValue = null, key1 = module.id, key2 = module.banner, key3 = useBanner) {
         if (!useBanner || module.banner.isEmpty()) {
             value = null
@@ -785,15 +784,15 @@ private fun ModuleItem(
         
         value = withContext(Dispatchers.IO) {
             try {
-                // ¼ì²ébannerÊÇ·ñÊÇURL
+                // ï¿½ï¿½ï¿½bannerï¿½Ç·ï¿½ï¿½ï¿½URL
                 if (Patterns.WEB_URL.matcher(module.banner).matches()) {
-                    // Èç¹ûÊÇURL£¬Ö±½Ó·µ»ØURL×Ö·û´®
+                    // ï¿½ï¿½ï¿½ï¿½ï¿½URLï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½URLï¿½Ö·ï¿½ï¿½ï¿½
                     module.banner
                 } else {
-                    // Èç¹ûÊÇ±¾µØÎÄ¼þ£¬³¢ÊÔ¶ÁÈ¡
-                    // ¼ì²éAPatchÄ£¿éÂ·¾¶
+                    // ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½È¡
+                    // ï¿½ï¿½ï¿½APatchÄ£ï¿½ï¿½Â·ï¿½ï¿½
                     val apPath = "/data/adb/ap/modules/${module.id}/${module.banner}"
-                    // ¼ì²éMagiskÄ£¿éÂ·¾¶
+                    // ï¿½ï¿½ï¿½MagiskÄ£ï¿½ï¿½Â·ï¿½ï¿½
                     val magiskPath = "/data/adb/modules/${module.id}/${module.banner}"
                     
                     val paths = listOf(apPath, magiskPath)
@@ -805,7 +804,7 @@ private fun ModuleItem(
                         }
                     }
                     
-                    null // Èç¹ûÃ»ÓÐÕÒµ½ÎÄ¼þ£¬·µ»Ønull
+                    null // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½null
                 }
             } catch (e: Exception) {
                 null
@@ -826,13 +825,13 @@ private fun ModuleItem(
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // Èç¹ûÓÐbannerÇÒ¿ªÆôÁËbannerÏÔÊ¾
+            // ï¿½ï¿½ï¿½ï¿½ï¿½bannerï¿½Ò¿ï¿½ï¿½ï¿½ï¿½ï¿½bannerï¿½ï¿½Ê¾
             if (useBanner && bannerData != null) {
                 Box(
                     modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // ÏÔÊ¾bannerÍ¼Æ¬
+                    // ï¿½ï¿½Ê¾bannerÍ¼Æ¬
                     AsyncImage(
                         model = bannerData,
                         contentDescription = null,
@@ -842,7 +841,7 @@ private fun ModuleItem(
                         alpha = 0.18f
                     )
                     
-                    // ½¥±ä¸²¸Ç - Ê¹ÓÃÓëModule.ktÏàÍ¬µÄÂß¼­
+                    // ï¿½ï¿½ï¿½ä¸²ï¿½ï¿½ - Ê¹ï¿½ï¿½ï¿½ï¿½Module.ktï¿½ï¿½Í¬ï¿½ï¿½ï¿½ß¼ï¿½
                     val isDark = isSystemInDarkTheme()
                     val colorScheme = MaterialTheme.colorScheme
                     val context = LocalContext.current

@@ -74,6 +74,10 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
         @Deprecated("No more KPatch ELF from 0.11.0-dev")
         const val KPATCH_PATH = "/data/adb/kpatch"
         const val SUPERCMD = "/system/bin/truncate"
+        const val MAGISK_PATH = "/data/adb/magisk"
+        const val MAGISK_BIN_PATH = "/data/adb/magisk.db"
+        const val KSU_PATH = "/data/adb/ksu"
+        const val KSUD_PATH = "/data/adb/ksud"
         const val APATCH_FOLDER = "/data/adb/ap/"
         private const val APATCH_BIN_FOLDER = APATCH_FOLDER + "bin/"
         private const val APATCH_LOG_FOLDER = APATCH_FOLDER + "log/"
@@ -161,6 +165,11 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                 "chmod +x $APD_PATH",
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
+
+                "rm -rf $MAGISK_PATH"
+                "rm -rf $MAGISK_BIN_PATH"
+                "rm -rf $KSU_PATH"
+                "rm -rf $KSUD_PATH"
 
                 "cp -f ${nativeDir}/libmagiskpolicy.so $MAGISKPOLICY_BIN_PATH",
                 "chmod +x $MAGISKPOLICY_BIN_PATH",

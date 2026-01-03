@@ -166,10 +166,10 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler, ImageLoade
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
 
-                "rm -rf $MAGISK_PATH"
-                "rm -rf $MAGISK_BIN_PATH"
-                "rm -rf $KSU_PATH"
-                "rm -rf $KSUD_PATH"
+                "rm -rf $MAGISK_PATH",
+                "rm -rf $MAGISK_BIN_PATH",
+                "rm -rf $KSU_PATH",
+                "rm -rf $KSUD_PATH",
 
                 "cp -f ${nativeDir}/libmagiskpolicy.so $MAGISKPOLICY_BIN_PATH",
                 "chmod +x $MAGISKPOLICY_BIN_PATH",

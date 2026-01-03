@@ -136,7 +136,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // 初始化权限处理器
         permissionHandler = PermissionRequestHandler(this)
 
         val prefs = APApplication.sharedPreferences
@@ -180,15 +179,14 @@ class MainActivity : AppCompatActivity() {
         me.kdufse.apatch.plus.util.DPIUtils.load(this)
         me.kdufse.apatch.plus.util.DPIUtils.applyDpi(this)
         
-        // 检查并请求权限
         if (!PermissionUtils.hasExternalStoragePermission(this) || 
             !PermissionUtils.hasWriteExternalStoragePermission(this)) {
             permissionHandler.requestPermissions(
                 onGranted = {
-                    // 权限已授予
+                    // Empty
                 },
                 onDenied = {
-                    // 权限被拒绝，可以显示一个提示
+                    // Empty
                 }
             )
         }
@@ -455,7 +453,6 @@ class MainActivity : AppCompatActivity() {
 fun UnofficialVersionDialog() {
     val uriHandler = LocalUriHandler.current
     
-    // 6秒后强制退出
     LaunchedEffect(Unit) {
         delay(3000)
         exitProcess(0)

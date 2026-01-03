@@ -42,7 +42,7 @@ class APModuleViewModel : ViewModel() {
         val updateJson: String,
         val hasWebUi: Boolean,
         val hasActionScript: Boolean,
-        val banner: String // Ìí¼Óbanner×Ö¶Î
+        val banner: String
     )
 
     data class ModuleUpdateInfo(
@@ -102,7 +102,7 @@ class APModuleViewModel : ViewModel() {
                     .map { obj ->
                         val id = obj.getString("id")
                         
-                        // ´Ómodule.propÎÄ¼þÖÐ¶ÁÈ¡banner±äÁ¿
+                        // ï¿½ï¿½module.propï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡bannerï¿½ï¿½ï¿½ï¿½
                         val banner = getModuleBanner(id)
                         
                         ModuleInfo(
@@ -118,12 +118,12 @@ class APModuleViewModel : ViewModel() {
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
                             obj.optBoolean("action"),
-                            banner  // Ìí¼Óbanner×Ö¶Î
+                            banner  // ï¿½ï¿½ï¿½ï¿½bannerï¿½Ö¶ï¿½
                         )
                     }.toList()
                 isNeedRefresh = false
                 
-                // ¼ÇÂ¼ËùÓÐÄ£¿éµÄbannerÐÅÏ¢
+                // ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½bannerï¿½ï¿½Ï¢
                 Log.i(TAG, "=== MODULES WITH BANNER ===")
                 modules.forEach { module ->
                     Log.i(TAG, "Module: ${module.id}, Banner: '${module.banner}'")
@@ -143,10 +143,10 @@ class APModuleViewModel : ViewModel() {
         }
     }
     
-    // ´Ómodule.propÎÄ¼þÖÐ¶ÁÈ¡banner±äÁ¿
+    // ï¿½ï¿½module.propï¿½Ä¼ï¿½ï¿½Ð¶ï¿½È¡bannerï¿½ï¿½ï¿½ï¿½
     private fun getModuleBanner(moduleId: String): String {
         return try {
-            // ¿ÉÄÜµÄmodule.propÎÄ¼þÂ·¾¶
+            // ï¿½ï¿½ï¿½Üµï¿½module.propï¿½Ä¼ï¿½Â·ï¿½ï¿½
             val propPaths = listOf(
                 "/data/adb/modules/$moduleId/module.prop",
                 "/data/adb/ap/modules/$moduleId/module.prop"
@@ -159,7 +159,7 @@ class APModuleViewModel : ViewModel() {
                     
                     val lines = propFile.readText().lines()
                     for (line in lines) {
-                        // ²éÕÒbanner±äÁ¿
+                        // ï¿½ï¿½ï¿½ï¿½bannerï¿½ï¿½ï¿½ï¿½
                         if (line.startsWith("banner=")) {
                             val bannerValue = line.substringAfter("banner=").trim()
                             if (bannerValue.isNotEmpty()) {
@@ -171,7 +171,7 @@ class APModuleViewModel : ViewModel() {
                 }
             }
             
-            // Èç¹ûÃ»ÓÐÔÚmodule.propÖÐÕÒµ½banner£¬¼ì²é³£¼ûµÄbannerÎÄ¼þ
+            // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½module.propï¿½ï¿½ï¿½Òµï¿½bannerï¿½ï¿½ï¿½ï¿½é³£ï¿½ï¿½ï¿½ï¿½bannerï¿½Ä¼ï¿½
             detectBannerFile(moduleId)
         } catch (e: Exception) {
             Log.e(TAG, "Error reading banner for module $moduleId: $e")
@@ -179,13 +179,13 @@ class APModuleViewModel : ViewModel() {
         }
     }
     
-    // ¼ì²â³£¼ûµÄbannerÎÄ¼þ£¨¼æÈÝÐÔ£©
+    // ï¿½ï¿½â³£ï¿½ï¿½ï¿½ï¿½bannerï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½
     private fun detectBannerFile(moduleId: String): String {
         try {
-            // ³£¼ûµÄbannerÎÄ¼þÃû
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bannerï¿½Ä¼ï¿½ï¿½ï¿½
             val bannerFiles = listOf("banner.jpg", "banner.png", "banner.webp", "banner.jpeg")
             
-            // ¿ÉÄÜµÄÄ£¿éÂ·¾¶
+            // ï¿½ï¿½ï¿½Üµï¿½Ä£ï¿½ï¿½Â·ï¿½ï¿½
             val modulePaths = listOf(
                 "/data/adb/modules/$moduleId",
                 "/data/adb/ap/modules/$moduleId"
@@ -208,7 +208,7 @@ class APModuleViewModel : ViewModel() {
             Log.e(TAG, "Error detecting banner file for $moduleId: $e")
         }
         
-        return "" // Ã»ÓÐÕÒµ½banner
+        return "" // Ã»ï¿½ï¿½ï¿½Òµï¿½banner
     }
 
     private fun sanitizeVersionString(version: String): String {

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,25 +33,25 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.topjohnwu.superuser.io.SuFile
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Restore
+import androidx.compose.material.icons.outlined.Terminal
+import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
 import androidx.compose.material3.ExperimentalMaterial3Api
 
 import androidx.compose.material3.FilledTonalButton
@@ -133,22 +132,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
 import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
 import me.kdufse.apatch.plus.util.ModuleBackupUtils
-
+import me.kdufse.apatch.plus.ui.theme.BackgroundConfig
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
-// 添加必要的导入
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.background
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
-import androidx.compose.ui.layout.ContentScale
-import com.topjohnwu.superuser.io.SuFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -164,12 +151,12 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     }
     var dontShowAgain by remember { mutableStateOf(false) }
 
-    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
+    var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", true)) }
 
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
             if (key == "show_more_module_info") {
-                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
+                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", true)
             }
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -764,26 +751,26 @@ private fun TopBar(
     )
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@Composable
+private fun ModuleLabel(
+    text: String,
+    containerColor: Color,
+    contentColor: Color
+) {
+    Surface(
+        color = containerColor,
+        contentColor = contentColor,
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
 
 
 @Composable
@@ -792,7 +779,7 @@ private fun ModuleItem(
     module: APModuleViewModel.ModuleInfo,
     isChecked: Boolean,
     updateUrl: String,
-    showMoreModuleInfo: Boolean,
+
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,
@@ -803,24 +790,27 @@ private fun ModuleItem(
     val decoration = if (!module.remove) TextDecoration.None else TextDecoration.LineThrough
     val moduleAuthor = stringResource(id = R.string.apm_author)
     val viewModel = viewModel<APModuleViewModel>()
-
-
-
-
-
-
-
-
-    val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
-        value = withContext(Dispatchers.IO) {
-            viewModel.getModuleSize(module.id)
-        }
-    }
-
-    // 添加useBanner功能
     val context = LocalContext.current
-    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-    val useBanner = prefs.getBoolean("use_banner", true)
+    val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
+    val useBanner = remember { mutableStateOf(prefs.getBoolean("use_banner", true)) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -850,18 +840,18 @@ private fun ModuleItem(
         shape = RoundedCornerShape(20.dp)
 
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // 添加横幅背景
-            if (useBanner && module.banner.isNotEmpty()) {
+            // 添加 Banner 背景
+            if (useBanner.value && module.banner.isNotEmpty()) {
                 val isDark = isSystemInDarkTheme()
                 val colorScheme = MaterialTheme.colorScheme
-                val amoledMode = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                    .getBoolean("amoled_mode", false)
+                val amoledMode = prefs.getBoolean("amoled_mode", false)
                 val isDynamic = colorScheme.primary != colorScheme.secondary
 
                 val fadeColor = when {
@@ -872,11 +862,11 @@ private fun ModuleItem(
                 }
 
                 Box(
-                    modifier = Modifier
-                        .matchParentSize(),
+                    modifier = Modifier.matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
+                        // 网络图片
                         AsyncImage(
                             model = module.banner,
                             contentDescription = null,
@@ -887,11 +877,10 @@ private fun ModuleItem(
                             alpha = 0.18f
                         )
                     } else {
-                        // 尝试从本地文件加载横幅
+                        // 本地图片
                         val bannerData = remember(module.banner) {
                             try {
-                                // APatch模块路径可能不同，这里使用通用路径
-                                val file = SuFile("/data/adb/ap/modules/${module.id}/${module.banner}")
+                                val file = SuFile("/data/adb/modules/${module.id}/${module.banner}")
                                 file.newInputStream().use { it.readBytes() }
                             } catch (_: Exception) {
                                 null
@@ -928,7 +917,7 @@ private fun ModuleItem(
                     )
                 }
             }
-            
+
             Column(
                 modifier = Modifier.fillMaxWidth()
 
@@ -1031,48 +1020,6 @@ private fun ModuleItem(
 
                 )
 
-                if (showMoreModuleInfo) {
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                        ) {
-                            Text(
-                                text = module.id,
-                                style = MaterialTheme.typography.labelSmall,
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-
-                        Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                        ) {
-                            Text(
-                                text = sizeStr,
-                                style = MaterialTheme.typography.labelSmall,
-                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-
-
-                        }
-                    }
-                }
-
                 HorizontalDivider(
                     thickness = 1.5.dp,
                     color = MaterialTheme.colorScheme.surface,
@@ -1099,9 +1046,6 @@ private fun ModuleItem(
 
 
 
-
-
-
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
@@ -1123,13 +1067,16 @@ private fun ModuleItem(
 
                         Spacer(modifier = Modifier.width(12.dp))
                     }
-                        Spacer(modifier = Modifier.weight(1f))
+                    
                     if (module.hasActionScript) {
                         FilledTonalButton(
                             onClick = {
                                 navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                 viewModel.markNeedRefresh()
-                            }, enabled = true, contentPadding = PaddingValues(horizontal = 12.dp)
+                            }, 
+                            enabled = true, 
+                            contentPadding = PaddingValues(horizontal = 12.dp)
+
 
 
                         ) {
@@ -1149,8 +1096,15 @@ private fun ModuleItem(
                                 maxLines = 1,
                                 overflow = TextOverflow.Visible,
                                 softWrap = false
+
+
+
+
                             )
+
+
                         }
+
 
                         Spacer(modifier = Modifier.width(12.dp))
 
@@ -1169,7 +1123,12 @@ private fun ModuleItem(
 
 
 
+
+
                     }
+                    
+                    Spacer(modifier = Modifier.weight(1f))
+                    
                     ModuleRemoveButton(enabled = !module.remove, onClick = { onUninstall(module) })
                 }
             }

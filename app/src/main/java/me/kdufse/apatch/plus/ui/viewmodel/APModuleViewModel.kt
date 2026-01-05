@@ -1,5 +1,6 @@
 package me.kdufse.apatch.plus.ui.viewmodel
 
+import android.content.SharedPreferences
 import android.os.SystemClock
 import android.util.Log
 import androidx.compose.runtime.derivedStateOf
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import me.kdufse.apatch.plus.APApplication
 import me.kdufse.apatch.plus.apApp
 import me.kdufse.apatch.plus.util.getRootShell
 import me.kdufse.apatch.plus.util.listModules
@@ -21,12 +23,18 @@ import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.math.log10
 import kotlin.math.pow
-import com.topjohnwu.superuser.io.SuFile
 
 class APModuleViewModel : ViewModel() {
     companion object {
         private const val TAG = "ModuleViewModel"
         private var modules by mutableStateOf<List<ModuleInfo>>(emptyList())
+        private val zygiskModuleIds = listOf(
+            "zygisksu",
+            "zygisknext",
+            "rezygisk",
+            "neozygisk",
+            "shirokozygisk"
+        )
     }
 
     class ModuleInfo(
@@ -42,7 +50,14 @@ class APModuleViewModel : ViewModel() {
         val updateJson: String,
         val hasWebUi: Boolean,
         val hasActionScript: Boolean,
-        val banner: String
+        val isZygisk: Boolean,
+        val isLSPosed: Boolean,
+        // KernelSU banner added for APatchPlus
+        val banner: String = "",
+        val size: Long = 0L,
+        val isMetaModule: Boolean = false,
+        val updateJson: String = "",
+        val versionCode: Int = 0
     )
 
     data class ModuleUpdateInfo(
@@ -55,9 +70,39 @@ class APModuleViewModel : ViewModel() {
     var isRefreshing by mutableStateOf(false)
         private set
 
+    private val prefs = APApplication.sharedPreferences
+    var sortOptimizationEnabled by mutableStateOf(prefs.getBoolean("module_sort_optimization", true))
+
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == "module_sort_optimization") {
+            sortOptimizationEnabled = prefs.getBoolean("module_sort_optimization", true)
+        }
+    }
+
+    init {
+        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        prefs.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
     val moduleList by derivedStateOf {
-        val comparator = compareBy(Collator.getInstance(Locale.getDefault()), ModuleInfo::id)
-        modules.sortedWith(comparator).also {
+        val collator = Collator.getInstance(Locale.getDefault())
+        val sortedList = if (sortOptimizationEnabled) {
+            modules.sortedWith(
+                compareByDescending<ModuleInfo> { it.isZygisk }
+                    .thenByDescending { it.isLSPosed }
+                    .thenByDescending { it.hasWebUi }
+                    .thenByDescending { it.hasActionScript }
+                    .thenBy(collator) { it.id }
+            )
+        } else {
+            val comparator = compareBy(collator, ModuleInfo::id)
+            modules.sortedWith(comparator)
+        }
+        sortedList.also {
             isRefreshing = false
         }
     }
@@ -92,21 +137,17 @@ class APModuleViewModel : ViewModel() {
             kotlin.runCatching {
 
                 val result = listModules()
-                Log.i(TAG, "=== RAW MODULE DATA ===")
-                Log.i(TAG, "Full result: $result")
+
+                Log.i(TAG, "result: $result")
 
                 val array = JSONArray(result)
                 modules = (0 until array.length())
                     .asSequence()
                     .map { array.getJSONObject(it) }
                     .map { obj ->
-                        val id = obj.getString("id")
-                        
-                        // ��module.prop�ļ��ж�ȡbanner����
-                        val banner = getModuleBanner(id)
-                        
                         ModuleInfo(
-                            id,
+                            obj.getString("id"),
+
                             obj.optString("name"),
                             obj.optString("author", "Unknown"),
                             obj.optString("version", "Unknown"),
@@ -118,16 +159,11 @@ class APModuleViewModel : ViewModel() {
                             obj.optString("updateJson"),
                             obj.optBoolean("web"),
                             obj.optBoolean("action"),
-                            banner  // ����banner�ֶ�
+                            zygiskModuleIds.contains(obj.getString("id")),
+                            obj.optString("name").contains("LSPosed", ignoreCase = true)
                         )
                     }.toList()
                 isNeedRefresh = false
-                
-                // ��¼����ģ���banner��Ϣ
-                Log.i(TAG, "=== MODULES WITH BANNER ===")
-                modules.forEach { module ->
-                    Log.i(TAG, "Module: ${module.id}, Banner: '${module.banner}'")
-                }
             }.onFailure { e ->
                 Log.e(TAG, "fetchModuleList: ", e)
                 isRefreshing = false
@@ -141,74 +177,6 @@ class APModuleViewModel : ViewModel() {
 
             Log.i(TAG, "load cost: ${SystemClock.elapsedRealtime() - start}, modules: $modules")
         }
-    }
-    
-    // ��module.prop�ļ��ж�ȡbanner����
-    private fun getModuleBanner(moduleId: String): String {
-        return try {
-            // ���ܵ�module.prop�ļ�·��
-            val propPaths = listOf(
-                "/data/adb/modules/$moduleId/module.prop",
-                "/data/adb/ap/modules/$moduleId/module.prop"
-            )
-            
-            for (propPath in propPaths) {
-                val propFile = SuFile(propPath)
-                if (propFile.exists() && propFile.canRead()) {
-                    Log.i(TAG, "Reading module.prop from: $propPath")
-                    
-                    val lines = propFile.readText().lines()
-                    for (line in lines) {
-                        // ����banner����
-                        if (line.startsWith("banner=")) {
-                            val bannerValue = line.substringAfter("banner=").trim()
-                            if (bannerValue.isNotEmpty()) {
-                                Log.i(TAG, "Found banner for module $moduleId: $bannerValue")
-                                return bannerValue
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // ���û����module.prop���ҵ�banner����鳣����banner�ļ�
-            detectBannerFile(moduleId)
-        } catch (e: Exception) {
-            Log.e(TAG, "Error reading banner for module $moduleId: $e")
-            ""
-        }
-    }
-    
-    // ��ⳣ����banner�ļ��������ԣ�
-    private fun detectBannerFile(moduleId: String): String {
-        try {
-            // ������banner�ļ���
-            val bannerFiles = listOf("banner.jpg", "banner.png", "banner.webp", "banner.jpeg")
-            
-            // ���ܵ�ģ��·��
-            val modulePaths = listOf(
-                "/data/adb/modules/$moduleId",
-                "/data/adb/ap/modules/$moduleId"
-            )
-            
-            for (modulePath in modulePaths) {
-                val moduleDir = SuFile(modulePath)
-                if (moduleDir.exists() && moduleDir.isDirectory) {
-                    for (bannerFile in bannerFiles) {
-                        val bannerPath = "$modulePath/$bannerFile"
-                        val banner = SuFile(bannerPath)
-                        if (banner.exists() && banner.canRead()) {
-                            Log.i(TAG, "Found banner file for module $moduleId: $bannerFile")
-                            return bannerFile
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error detecting banner file for $moduleId: $e")
-        }
-        
-        return "" // û���ҵ�banner
     }
 
     private fun sanitizeVersionString(version: String): String {

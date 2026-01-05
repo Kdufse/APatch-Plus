@@ -10,10 +10,7 @@ import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,26 +30,35 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.automirrored.outlined.Wysiwyg
-import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Download
-import androidx.compose.material.icons.outlined.Restore
-import androidx.compose.material.icons.outlined.Terminal
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import androidx.compose.material3.ExperimentalMaterial3Api
+
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -74,13 +81,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -89,19 +93,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.ApmBulkInstallScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ExecuteAPMActionScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.InstallScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.OnlineModuleScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.topjohnwu.superuser.io.SuFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -114,22 +112,43 @@ import me.kdufse.apatch.plus.ui.component.ModuleRemoveButton
 import me.kdufse.apatch.plus.ui.component.ModuleStateIndicator
 import me.kdufse.apatch.plus.ui.component.ModuleUpdateButton
 import me.kdufse.apatch.plus.ui.component.SearchAppBar
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
-import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
 import me.kdufse.apatch.plus.ui.component.rememberConfirmDialog
 import me.kdufse.apatch.plus.ui.component.rememberLoadingDialog
 import me.kdufse.apatch.plus.ui.viewmodel.APModuleViewModel
 import me.kdufse.apatch.plus.util.DownloadListener
-import me.kdufse.apatch.plus.util.ModuleBackupUtils
 import me.kdufse.apatch.plus.util.download
 import me.kdufse.apatch.plus.util.hasMagisk
 import me.kdufse.apatch.plus.util.reboot
 import me.kdufse.apatch.plus.util.toggleModule
 import me.kdufse.apatch.plus.util.ui.LocalSnackbarHost
 import me.kdufse.apatch.plus.util.uninstallModule
+
+import com.ramcosta.composedestinations.generated.destinations.ApmBulkInstallScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.OnlineModuleScreenDestination
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.MoreVert
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenu
+import me.kdufse.apatch.plus.ui.component.WallpaperAwareDropdownMenuItem
+import me.kdufse.apatch.plus.util.ModuleBackupUtils
+
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+// 添加必要的导入
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.layout.ContentScale
+import com.topjohnwu.superuser.io.SuFile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
@@ -146,13 +165,11 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
     var dontShowAgain by remember { mutableStateOf(false) }
 
     var showMoreModuleInfo by remember { mutableStateOf(prefs.getBoolean("show_more_module_info", false)) }
-    var useBanner by remember { mutableStateOf(prefs.getBoolean("use_banner", true)) }
-    
+
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPrefs, key ->
-            when (key) {
-                "show_more_module_info" -> showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
-                "use_banner" -> useBanner = sharedPrefs.getBoolean("use_banner", true)
+            if (key == "show_more_module_info") {
+                showMoreModuleInfo = sharedPrefs.getBoolean("show_more_module_info", false)
             }
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -306,7 +323,6 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                     viewModel = viewModel,
                     modules = filteredModuleList,
                     showMoreModuleInfo = showMoreModuleInfo,
-                    useBanner = useBanner,
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize(),
@@ -359,13 +375,13 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    
+
                     Text(
                         text = stringResource(R.string.apm_first_use_text),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -382,7 +398,7 @@ fun APModuleScreen(navigator: DestinationsNavigator) {
                             modifier = Modifier.padding(start = 8.dp)
                         )
                     }
-                    
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -409,7 +425,6 @@ private fun ModuleList(
     viewModel: APModuleViewModel,
     modules: List<APModuleViewModel.ModuleInfo>,
     showMoreModuleInfo: Boolean,
-    useBanner: Boolean,
     modifier: Modifier = Modifier,
     state: LazyListState,
     onInstallModule: (Uri) -> Unit,
@@ -576,7 +591,6 @@ private fun ModuleList(
                             isChecked,
                             updatedModule.first,
                             showMoreModuleInfo = showMoreModuleInfo,
-                            useBanner = useBanner,
                             onUninstall = {
                                 scope.launch { onModuleUninstall(module) }
                             },
@@ -686,7 +700,7 @@ private fun TopBar(
         onClearClick = { onSearchQueryChange("") },
         leadingActions = {
             if (showDisableAllButton) {
-                IconButton(onClick = {
+                androidx.compose.material3.IconButton(onClick = {
                     scope.launch {
                         val result = confirmDialog.awaitConfirm(
                             title = disableAllTitle,
@@ -705,7 +719,7 @@ private fun TopBar(
                     )
                 }
             }
-            IconButton(onClick = {
+            androidx.compose.material3.IconButton(onClick = {
                 navigator.navigate(OnlineModuleScreenDestination)
             }) {
                 Icon(
@@ -713,7 +727,7 @@ private fun TopBar(
                     contentDescription = "Online Modules"
                 )
             }
-            IconButton(onClick = {
+            androidx.compose.material3.IconButton(onClick = {
                 navigator.navigate(ApmBulkInstallScreenDestination)
             }) {
                 Icon(
@@ -723,7 +737,7 @@ private fun TopBar(
             }
         },
         dropdownContent = {
-            IconButton(onClick = { showMenu = true }) {
+            androidx.compose.material3.IconButton(onClick = { showMenu = true }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = "More")
                 WallpaperAwareDropdownMenu(
                     expanded = showMenu,
@@ -750,6 +764,28 @@ private fun TopBar(
     )
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Composable
 private fun ModuleItem(
     navigator: DestinationsNavigator,
@@ -757,7 +793,6 @@ private fun ModuleItem(
     isChecked: Boolean,
     updateUrl: String,
     showMoreModuleInfo: Boolean,
-    useBanner: Boolean,
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,
@@ -769,96 +804,117 @@ private fun ModuleItem(
     val moduleAuthor = stringResource(id = R.string.apm_author)
     val viewModel = viewModel<APModuleViewModel>()
 
+
+
+
+
+
+
+
     val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
         value = withContext(Dispatchers.IO) {
             viewModel.getModuleSize(module.id)
         }
     }
-    
-    // ��ȡbanner����
-    val bannerData by produceState<Any?>(initialValue = null, key1 = module.id, key2 = module.banner, key3 = useBanner) {
-        if (!useBanner || module.banner.isEmpty()) {
-            value = null
-            return@produceState
-        }
-        
-        value = withContext(Dispatchers.IO) {
-            try {
-                // ���banner�Ƿ���URL
-                if (Patterns.WEB_URL.matcher(module.banner).matches()) {
-                    // �����URL��ֱ�ӷ���URL�ַ���
-                    module.banner
-                } else {
-                    // ����Ǳ����ļ������Զ�ȡ
-                    // ���APatchģ��·��
-                    val apPath = "/data/adb/ap/modules/${module.id}/${module.banner}"
-                    // ���Magiskģ��·��
-                    val magiskPath = "/data/adb/modules/${module.id}/${module.banner}"
-                    
-                    val paths = listOf(apPath, magiskPath)
-                    
-                    for (path in paths) {
-                        val file = SuFile(path)
-                        if (file.exists() && file.canRead()) {
-                            file.newInputStream().use { it.readBytes() }
-                        }
-                    }
-                    
-                    null // ���û���ҵ��ļ�������null
-                }
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-    
+
+    // 添加useBanner功能
+    val context = LocalContext.current
+    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+    val useBanner = prefs.getBoolean("use_banner", true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 1.dp,
         shape = RoundedCornerShape(20.dp)
-    ) {
 
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick(module) },
             contentAlignment = Alignment.Center
         ) {
-            // �����banner�ҿ�����banner��ʾ
-            if (useBanner && bannerData != null) {
+            // 添加横幅背景
+            if (useBanner && module.banner.isNotEmpty()) {
+                val isDark = isSystemInDarkTheme()
+                val colorScheme = MaterialTheme.colorScheme
+                val amoledMode = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                    .getBoolean("amoled_mode", false)
+                val isDynamic = colorScheme.primary != colorScheme.secondary
+
+                val fadeColor = when {
+                    amoledMode && isDark -> Color.Black
+                    isDynamic -> colorScheme.surface
+                    isDark -> Color(0xFF222222)
+                    else -> Color.White
+                }
+
                 Box(
-                    modifier = Modifier.matchParentSize(),
+                    modifier = Modifier
+                        .matchParentSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // ��ʾbannerͼƬ
-                    AsyncImage(
-                        model = bannerData,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        alpha = 0.18f
-                    )
-                    
-                    // ���串�� - ʹ����Module.kt��ͬ���߼�
-                    val isDark = isSystemInDarkTheme()
-                    val colorScheme = MaterialTheme.colorScheme
-                    val context = LocalContext.current
-                    val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                    val amoledMode = prefs.getBoolean("amoled_mode", false)
-                    val isDynamic = colorScheme.primary != colorScheme.secondary
-                    
-                    val fadeColor = when {
-                        amoledMode && isDark -> Color.Black
-                        isDynamic -> colorScheme.surface
-                        isDark -> Color(0xFF222222)
-                        else -> Color.White
+                    if (module.banner.startsWith("https", true) || module.banner.startsWith("http", true)) {
+                        AsyncImage(
+                            model = module.banner,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            contentScale = ContentScale.Crop,
+                            alpha = 0.18f
+                        )
+                    } else {
+                        // 尝试从本地文件加载横幅
+                        val bannerData = remember(module.banner) {
+                            try {
+                                // APatch模块路径可能不同，这里使用通用路径
+                                val file = SuFile("/data/adb/ap/modules/${module.id}/${module.banner}")
+                                file.newInputStream().use { it.readBytes() }
+                            } catch (_: Exception) {
+                                null
+                            }
+                        }
+                        if (bannerData != null) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(bannerData)
+                                    .build(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(),
+                                contentScale = ContentScale.Crop,
+                                alpha = 0.18f
+                            )
+                        }
                     }
-                    
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .fillMaxHeight()
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
@@ -875,6 +931,8 @@ private fun ModuleItem(
             
             Column(
                 modifier = Modifier.fillMaxWidth()
+
+
             ) {
                 Row(
                     modifier = Modifier.padding(all = 16.dp),
@@ -886,6 +944,57 @@ private fun ModuleItem(
                             .weight(1f),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                         Text(
                             text = module.name,
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -909,6 +1018,8 @@ private fun ModuleItem(
                     )
                 }
 
+
+
                 Text(
                     modifier = Modifier
                         .alpha(alpha = alpha)
@@ -917,6 +1028,7 @@ private fun ModuleItem(
                     style = MaterialTheme.typography.bodySmall,
                     textDecoration = decoration,
                     color = MaterialTheme.colorScheme.outline
+
                 )
 
                 if (showMoreModuleInfo) {
@@ -955,6 +1067,8 @@ private fun ModuleItem(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
+
+
                         }
                     }
                 }
@@ -982,6 +1096,12 @@ private fun ModuleItem(
                             onClick = { onClick(module) },
                             enabled = true,
                             contentPadding = PaddingValues(horizontal = 12.dp)
+
+
+
+
+
+
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
@@ -996,7 +1116,10 @@ private fun ModuleItem(
                                 overflow = TextOverflow.Visible,
                                 softWrap = false
                             )
+
+
                         }
+
 
                         Spacer(modifier = Modifier.width(12.dp))
                     }
@@ -1007,12 +1130,18 @@ private fun ModuleItem(
                                 navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                 viewModel.markNeedRefresh()
                             }, enabled = true, contentPadding = PaddingValues(horizontal = 12.dp)
+
+
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
                                 painter = painterResource(id = R.drawable.settings),
                                 contentDescription = null
                             )
+
+
+
+
 
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
@@ -1024,6 +1153,22 @@ private fun ModuleItem(
                         }
 
                         Spacer(modifier = Modifier.width(12.dp))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     }
                     ModuleRemoveButton(enabled = !module.remove, onClick = { onUninstall(module) })
                 }

@@ -1,3 +1,4 @@
+
 package me.kdufse.apatch.plus.ui.screen
 
 import android.app.Activity.RESULT_OK
@@ -779,7 +780,7 @@ private fun ModuleItem(
     module: APModuleViewModel.ModuleInfo,
     isChecked: Boolean,
     updateUrl: String,
-
+    showMoreModuleInfo: Boolean,
     onUninstall: (APModuleViewModel.ModuleInfo) -> Unit,
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: (APModuleViewModel.ModuleInfo) -> Unit,
@@ -794,51 +795,11 @@ private fun ModuleItem(
     val prefs = remember { context.getSharedPreferences("settings", Context.MODE_PRIVATE) }
     val useBanner = remember { mutableStateOf(prefs.getBoolean("use_banner", true)) }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     Surface(
         modifier = modifier,
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 1.dp,
         shape = RoundedCornerShape(20.dp)
-
     ) {
 
         Box(
@@ -920,8 +881,6 @@ private fun ModuleItem(
 
             Column(
                 modifier = Modifier.fillMaxWidth()
-
-
             ) {
                 Row(
                     modifier = Modifier.padding(all = 16.dp),
@@ -933,57 +892,6 @@ private fun ModuleItem(
                             .weight(1f),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         Text(
                             text = module.name,
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -1007,8 +915,6 @@ private fun ModuleItem(
                     )
                 }
 
-
-
                 Text(
                     modifier = Modifier
                         .alpha(alpha = alpha)
@@ -1017,7 +923,6 @@ private fun ModuleItem(
                     style = MaterialTheme.typography.bodySmall,
                     textDecoration = decoration,
                     color = MaterialTheme.colorScheme.outline
-
                 )
 
                 HorizontalDivider(
@@ -1043,9 +948,6 @@ private fun ModuleItem(
                             onClick = { onClick(module) },
                             enabled = true,
                             contentPadding = PaddingValues(horizontal = 12.dp)
-
-
-
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
@@ -1060,14 +962,11 @@ private fun ModuleItem(
                                 overflow = TextOverflow.Visible,
                                 softWrap = false
                             )
-
-
                         }
-
 
                         Spacer(modifier = Modifier.width(12.dp))
                     }
-                    
+
                     if (module.hasActionScript) {
                         FilledTonalButton(
                             onClick = {
@@ -1076,9 +975,6 @@ private fun ModuleItem(
                             }, 
                             enabled = true, 
                             contentPadding = PaddingValues(horizontal = 12.dp)
-
-
-
                         ) {
                             Icon(
                                 modifier = Modifier.size(20.dp),
@@ -1086,49 +982,20 @@ private fun ModuleItem(
                                 contentDescription = null
                             )
 
-
-
-
-
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = stringResource(id = R.string.apm_action),
                                 maxLines = 1,
                                 overflow = TextOverflow.Visible,
                                 softWrap = false
-
-
-
-
                             )
-
-
                         }
 
-
                         Spacer(modifier = Modifier.width(12.dp))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     }
-                    
+
                     Spacer(modifier = Modifier.weight(1f))
-                    
+
                     ModuleRemoveButton(enabled = !module.remove, onClick = { onUninstall(module) })
                 }
             }

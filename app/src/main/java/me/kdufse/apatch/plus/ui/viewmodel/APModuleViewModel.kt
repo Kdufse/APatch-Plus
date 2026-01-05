@@ -16,6 +16,7 @@ import me.kdufse.apatch.plus.apApp
 import me.kdufse.apatch.plus.util.getRootShell
 import me.kdufse.apatch.plus.util.listModules
 import me.kdufse.apatch.plus.util.toggleModule
+import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.Collator
@@ -55,9 +56,7 @@ class APModuleViewModel : ViewModel() {
         // KernelSU banner added for APatchPlus
         val banner: String = "",
         val size: Long = 0L,
-        val isMetaModule: Boolean = false,
-        val updateJson: String = "",
-        val versionCode: Int = 0
+        val isMetaModule: Boolean = false
     )
 
     data class ModuleUpdateInfo(
@@ -194,7 +193,7 @@ class APModuleViewModel : ViewModel() {
             Log.i(TAG, "checkUpdate url: $url")
             val response = apApp.okhttpClient
                 .newCall(
-                    okhttp3.Request.Builder()
+                    Request.Builder()
                         .url(url)
                         .build()
                 ).execute()

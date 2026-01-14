@@ -40,7 +40,7 @@
     <string name="super_key">Khóa siêu cấp</string>
     <string name="clear_super_key">Xóa khóa siêu cấp</string>
     <string name="patch_set_superkey">Đặt khóa siêu cấp</string>
-    <string name="home_patch_set_key_desc">Bản ghi chứng thực duy nhất của KernelPatch</string>
+    <string name="home_patch_set_key_desc">Bản ghi chứng thực duy nhất của XZPatch</string>
     <string name="home_patch_next_step">Bước tiếp theo</string>
 
     <string name="home_not_installed">Chưa cài đặt</string>
@@ -219,7 +219,7 @@
     <string name="mode_select_page_install_inactive_slot_warning">Thiết bị của bạn SẼ BỊ BẮT BUỘC khởi động vào slot chưa kích hoạt hiện tại sau khi khởi động lại!\nChỉ sử dụng tùy chọn này sau khi OTA hoàn tất.\nTiếp tục?</string>
 
     <string name="home_dialog_auth_fail_title">Xác thực thất bại</string>
-    <string name="home_dialog_auth_fail_content">Không thể xác thực khóa siêu cấp, do đó APatch không thể hoạt động bình thường.\nDưới đây là một số nguyên nhân có thể导致 xác thực thất bại:\n1. Bạn chưa sử dụng KernelPatch để vá boot.img.\n2. boot.img sau khi vá chưa được flash.\n3. Khóa siêu cấp sai hoặc chứa ký tự đặc biệt.\n4. Thiết bị của bạn không hỗ trợ APatch và KernelPatch.\n\nVui lòng kiểm tra và thử lại. Nếu vẫn có vấn đề, bạn có thể đặt câu hỏi trên trang issue của kho lưu trữ chính thức.</string>
+    <string name="home_dialog_auth_fail_content">Không thể xác thực khóa siêu cấp, do đó APatch không thể hoạt động bình thường.\nDưới đây là một số nguyên nhân có thể导致 xác thực thất bại:\n1. Bạn chưa sử dụng XZPatch để vá boot.img.\n2. boot.img sau khi vá chưa được flash.\n3. Khóa siêu cấp sai hoặc chứa ký tự đặc biệt.\n4. Thiết bị của bạn không hỗ trợ APatch và XZPatch.\n\nVui lòng kiểm tra và thử lại. Nếu vẫn có vấn đề, bạn có thể đặt câu hỏi trên trang issue của kho lưu trữ chính thức.</string>
 
     <string name="home_more_menu_feedback_or_suggestion">Phản hồi hoặc đề xuất</string>
     <string name="home_more_menu_about">Về</string>
@@ -232,7 +232,7 @@
     <string name="home_dialog_uninstall_all_desc">Gỡ AndroidPatch và bắt đầu quy trình gỡ cài đặt hoàn toàn.</string>
     
     <!-- Install Mode Select -->
-    <string name="kp_install_methods">KernelPatch Vá/安装</string>
+    <string name="kp_install_methods">XZPatch Vá/安装</string>
     <string name="restore_boot_methods">Chọn một boot để khôi phục vào phân vùng boot</string>
     <string name="restore_select_file">Chọn tệp boot phân vùng để khôi phục</string>
 
@@ -302,7 +302,7 @@
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
     <string name="app_title_apatchplus">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_kernelpatch">XZPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
     <string name="app_title_superuser">Superuser</string>

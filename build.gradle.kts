@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler) apply false
 }
 
-project.ext.set("kernelPatchVersion", "0.12.6")
+project.ext.set("kernelPatchVersion", "0.13.0")
 
 val androidMinSdkVersion = 26
 val androidTargetSdkVersion = 36
@@ -32,7 +32,7 @@ fun getGitDescribe(): String {
 }
 
 fun getVersionCode(): Int {
-    return 112130
+    return 112152
 }
 
 fun getbranch(): String {
@@ -40,7 +40,7 @@ fun getbranch(): String {
 }
 
 fun getVersionName(): String {
-    return "1.8.1"
+    return "1.8.2"
 }
 
 tasks.register("printVersion") {

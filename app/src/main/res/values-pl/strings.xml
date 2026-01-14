@@ -11,7 +11,7 @@
     <string name="patch_warnning">Instalacja wiąże się z ryzykiem. Upewnij się, że masz kopię zapasową danych.</string>
     <string name="patch">Poprawka</string>
 
-    <string name="kernel_patch">KernelPatch</string>
+    <string name="kernel_patch">XZPatch</string>
     <string name="android_patch">AndroidPatch</string>
 
     <string name="reboot">Uruchom ponownie</string>
@@ -44,7 +44,7 @@
     <string name="super_key">SuperKlucz</string>
     <string name="clear_super_key">Wyczyść SuperKlucz</string>
     <string name="patch_set_superkey">Ustaw SuperKlucz</string>
-    <string name="home_patch_set_key_desc">Tylko dane uwierzytelniające dla KernelPatch</string>
+    <string name="home_patch_set_key_desc">Tylko dane uwierzytelniające dla XZPatch</string>
     <string name="home_patch_next_step">Następny krok</string>
 
     <string name="home_not_installed">Nie zainstalowano</string>
@@ -115,12 +115,12 @@
 
     <string name="home_device_info">Urządzenie</string>
     <string name="home_system_version">Wersja systemu</string>
-    <string name="home_kpatch_version">Wersja KernelPatch</string>
+    <string name="home_kpatch_version">Wersja XZPatch</string>
     <string name="home_su_path">Plik wykonywalny su</string>
     <string name="home_apatch_version">Wersja APatch Plus</string>
 
     <string name="kpm">KPModule</string>
-    <string name="kpm_kp_not_installed">KernelPatch nie jest zainstalowany</string>
+    <string name="kpm_kp_not_installed">XZPatch nie jest zainstalowany</string>
     <string name="kpm_add_kpm">Dodaj KPM</string>
     <string name="kpm_load">Załaduj</string>
     <string name="kpm_install">Zainstaluj</string>
@@ -222,7 +222,7 @@
     <string name="mode_select_page_install_inactive_slot_warning">Twoje urządzenie zostanie **WYMUSZONE** do uruchomienia w aktualnie nieaktywnym slocie po ponownym uruchomieniu!\nUżyj tej opcji tylko po zakończeniu OTA.\nKontynuować?</string>
 
     <string name="home_dialog_auth_fail_title">Uwierzytelnianie nie powiodło się</string>
-    <string name="home_dialog_auth_fail_content">Nie można uwierzytelnić SuperKlucza, dlatego APatch nie może działać prawidłowo.\nOto kilka możliwych przyczyn niepowodzenia uwierzytelnienia:\n1. Nie poprawiłeś boot.img za pomocą KernelPatch.\n2. Poprawiony obraz boot.img nie został wgrany.\n3. SuperKlucz jest nieprawidłowy lub zawiera znaki specjalne.\n4. Twoje urządzenie nie obsługuje APatch i KernelPatch.\n\nProszę sprawdzić i spróbować ponownie. Jeśli nadal występują problemy, zawsze można zadać pytania na stronie problemów oficjalnego repozytorium.</string>
+    <string name="home_dialog_auth_fail_content">Nie można uwierzytelnić SuperKlucza, dlatego APatch nie może działać prawidłowo.\nOto kilka możliwych przyczyn niepowodzenia uwierzytelnienia:\n1. Nie poprawiłeś boot.img za pomocą XZPatch.\n2. Poprawiony obraz boot.img nie został wgrany.\n3. SuperKlucz jest nieprawidłowy lub zawiera znaki specjalne.\n4. Twoje urządzenie nie obsługuje APatch i XZPatch.\n\nProszę sprawdzić i spróbować ponownie. Jeśli nadal występują problemy, zawsze można zadać pytania na stronie problemów oficjalnego repozytorium.</string>
 
     <string name="home_more_menu_feedback_or_suggestion">Opinie lub sugestie</string>
     <string name="home_more_menu_about">O aplikacji</string>
@@ -235,7 +235,7 @@
     <string name="home_dialog_uninstall_all_desc">Usuń AndroidPatch i rozpocznij pełny proces odinstalowywania.</string>
     
     <!-- Install Mode Select -->
-    <string name="kp_install_methods">KernelPatch Łatanie/Instalowanie</string>
+    <string name="kp_install_methods">XZPatch Łatanie/Instalowanie</string>
     <string name="restore_boot_methods">Wybierz rozruch do przywrócenia do partycji rozruchowej</string>
     <string name="restore_select_file">Wybierz plik rozruchowy partycji do przywrócenia</string>
 
@@ -305,7 +305,7 @@
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
     <string name="app_title_apatchplus">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_kernelpatch">XZPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
     <string name="app_title_superuser">Superuser</string>

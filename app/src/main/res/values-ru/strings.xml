@@ -13,7 +13,7 @@
     <string name="patch_warnning">Установка сопряжена с рисками. Убедитесь, что у вас есть резервная копия данных.</string>
     <string name="patch">Патч</string>
 
-    <string name="kernel_patch">KernelPatch</string>
+    <string name="kernel_patch">XZPatch</string>
     <string name="android_patch">AndroidPatch</string>
 
     <string name="reboot">Перезагрузка</string>
@@ -48,7 +48,7 @@
     <string name="super_key">SuperKey</string>
     <string name="clear_super_key">Очистить SuperKey</string>
     <string name="patch_set_superkey">Установить SuperKey</string>
-    <string name="home_patch_set_key_desc">Единственные учётные данные для KernelPatch</string>
+    <string name="home_patch_set_key_desc">Единственные учётные данные для XZPatch</string>
     <string name="home_patch_next_step">Следующий шаг</string>
 
     <string name="home_not_installed">Не установлено</string>
@@ -119,12 +119,12 @@
 
     <string name="home_device_info">Устройство</string>
     <string name="home_system_version">Версия системы</string>
-    <string name="home_kpatch_version">Версия KernelPatch</string>
+    <string name="home_kpatch_version">Версия XZPatch</string>
     <string name="home_su_path">Исполняемый файл su</string>
     <string name="home_apatch_version">Версия APatch Plus</string>
 
     <string name="kpm">KPModule</string>
-    <string name="kpm_kp_not_installed">KernelPatch не установлен</string>
+    <string name="kpm_kp_not_installed">XZPatch не установлен</string>
     <string name="kpm_add_kpm">Добавить KPM</string>
     <string name="kpm_load">Загрузить</string>
     <string name="kpm_install">Установить</string>
@@ -227,7 +227,7 @@
     <string name="mode_select_page_install_inactive_slot_warning">Ваше устройство будет **ПРИНУДИТЕЛЬНО** загружено в текущий неактивный слот после перезагрузки!\nИспользуйте эту опцию только после завершения OTA.\nПродолжить?</string>
 
     <string name="home_dialog_auth_fail_title">Ошибка аутентификации</string>
-    <string name="home_dialog_auth_fail_content">Не удалось аутентифицировать SuperKey, поэтому APatch не может работать правильно.\nВот несколько возможных причин ошибки аутентификации:\n1. Вы не пропатчили boot.img с KernelPatch.\n2. Пропатченный boot.img не был прошит.\n3. SuperKey неверный или содержит специальные символы.\n4. Ваше устройство не поддерживает APatch и KernelPatch.\n\nПожалуйста, проверьте и попробуйте снова. Если проблемы всё ещё остаются, вы всегда можете задать вопросы на странице issues официального репозитория.</string>
+    <string name="home_dialog_auth_fail_content">Не удалось аутентифицировать SuperKey, поэтому APatch не может работать правильно.\nВот несколько возможных причин ошибки аутентификации:\n1. Вы не пропатчили boot.img с XZPatch.\n2. Пропатченный boot.img не был прошит.\n3. SuperKey неверный или содержит специальные символы.\n4. Ваше устройство не поддерживает APatch и XZPatch.\n\nПожалуйста, проверьте и попробуйте снова. Если проблемы всё ещё остаются, вы всегда можете задать вопросы на странице issues официального репозитория.</string>
 
     <string name="home_more_menu_feedback_or_suggestion">Обратная связь или предложение</string>
     <string name="home_more_menu_about">О приложении</string>
@@ -240,7 +240,7 @@
     <string name="home_dialog_uninstall_all_desc">Удалить AndroidPatch и запустить процесс полного удаления.</string>
     
     <!-- Install Mode Select -->
-    <string name="kp_install_methods">KernelPatch Патчинг/Установка</string>
+    <string name="kp_install_methods">XZPatch Патчинг/Установка</string>
     <string name="restore_boot_methods">Выберите загрузочный образ для восстановления в загрузочный раздел</string>
     <string name="restore_select_file">Выберите файл загрузочного раздела для восстановления</string>
 
@@ -310,7 +310,7 @@
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
     <string name="app_title_folkpatch">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_kernelpatch">XZPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
     <string name="app_title_superuser">Superuser</string>

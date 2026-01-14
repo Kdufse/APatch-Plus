@@ -227,7 +227,7 @@
     <string name="mode_select_page_install_inactive_slot_warning">您的设备将在重启后**强制**启动到当前未激活的槽位！\n仅在 OTA 完成后使用此选项。\n继续吗？</string>
 
     <string name="home_dialog_auth_fail_title">认证失败</string>
-    <string name="home_dialog_auth_fail_content">无法认证超级密钥，因此 APatch 无法正常工作。\n以下是认证失败的一些可能原因：\n1. 您没有使用 KernelPatch 修补 boot.img。\n2. 修补后的 boot.img 未刷入。\n3. 超级密钥错误或包含特殊字符。\n4. 您的设备不支持 APatch 和 KernelPatch。\n\n请检查并重试。如果仍有问题，您可以在官方仓库的 issue 页面提问。</string>
+    <string name="home_dialog_auth_fail_content">无法认证超级密钥，因此 APatch 无法正常工作。\n以下是认证失败的一些可能原因：\n1. 您没有使用 XZPatch 修补 boot.img。\n2. 修补后的 boot.img 未刷入。\n3. 超级密钥错误或包含特殊字符。\n4. 您的设备不支持 APatch 和 XZPatch。\n\n请检查并重试。如果仍有问题，您可以在官方仓库的 issue 页面提问。</string>
 
     <string name="home_more_menu_feedback_or_suggestion">反馈或建议</string>
     <string name="home_more_menu_about">关于</string>
@@ -305,7 +305,7 @@
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
     <string name="app_title_apatchplus">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_kernelpatch">XZPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
     <string name="app_title_superuser">Superuser</string>
@@ -596,7 +596,7 @@
     <string name="settings_list_working_card_hide_mode_summary">隐藏显示工作模式的小卡片</string>
 
     <!-- Install Mode Select -->
-    <string name="kp_install_methods">KernelPatch 修补/安装</string>
+    <string name="kp_install_methods">XZPatch 修补/安装</string>
     <string name="restore_boot_methods">选择一个启动来恢复到引导分区</string>
 
 </resources>

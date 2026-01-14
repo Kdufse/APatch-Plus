@@ -39,7 +39,7 @@
     <string name="super_key">登仙秘钥</string>
     <string name="clear_super_key">碎毁登仙秘钥</string>
     <string name="patch_set_superkey">凝炼登仙秘钥</string>
-    <string name="home_patch_set_key_desc">KernelPatch仙法之唯一登仙凭证</string>
+    <string name="home_patch_set_key_desc">XZPatch仙法之唯一登仙凭证</string>
     <string name="home_patch_next_step">下一道劫</string>
 
     <string name="home_not_installed">未入仙门</string>
@@ -217,7 +217,7 @@
     <string name="mode_select_page_install_inactive_slot_warning">仙器重铸后，必启于当前未启之仙槽！\n唯天道易筋既毕，可用此渡劫之选。\n道友欲继之乎？</string>
 
     <string name="home_dialog_auth_fail_title">仙籍验败</string>
-    <string name="home_dialog_auth_fail_content">未验登仙秘钥，APatch仙法未可用。\n仙籍验败之由，约有数端：\n一、未以KernelPatch仙法炼符补仙躯boot.img；\n二、炼符后之仙躯boot.img未引仙入体；\n三、登仙秘钥符文舛误，或杂邪魔异符；\n四、仙器不兼容APatch与KernelPatch仙法。\n\n宜勘之重试。若仍有天劫，可于仙门官库issue仙台问之。</string>
+    <string name="home_dialog_auth_fail_content">未验登仙秘钥，APatch仙法未可用。\n仙籍验败之由，约有数端：\n一、未以XZPatch仙法炼符补仙躯boot.img；\n二、炼符后之仙躯boot.img未引仙入体；\n三、登仙秘钥符文舛误，或杂邪魔异符；\n四、仙器不兼容APatch与XZPatch仙法。\n\n宜勘之重试。若仍有天劫，可于仙门官库issue仙台问之。</string>
 
     <string name="home_more_menu_feedback_or_suggestion">呈渡劫见谛或献升仙策</string>
     <string name="home_more_menu_about">仙门叙略</string>
@@ -294,7 +294,7 @@
     <string name="app_title_apatchx">APatch X</string>
     <string name="app_title_apatch">APatch</string>
     <string name="app_title_apatchplus">APatch Plus</string>
-    <string name="app_title_kernelpatch">KernelPatch</string>
+    <string name="app_title_kernelpatch">XZPatch</string>
     <string name="app_title_supersu">SuperSU</string>
     <string name="app_title_folksu">FolkSU</string>
     <string name="app_title_superuser">Superuser</string>

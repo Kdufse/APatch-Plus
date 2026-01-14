@@ -197,7 +197,7 @@ fun downloadFile(url: String, destFile: File) {
 // HongKong CDN Accelerate
 registerDownloadTask(
     taskName = "downloadKpimg",
-    // srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kpimg-android",
+    srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kpimg-android",
     srcUrl = "https://github.com/bmax121/KernelPatch/releases/latest/download/kpimg-android",
     destPath = "${project.projectDir}/src/main/assets/kpimg",
     project = project,
@@ -206,8 +206,7 @@ registerDownloadTask(
 
 registerDownloadTask(
     taskName = "downloadKptools",
-    // srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kptools-android",
-    srcUrl = "https://github.com/bmax121/KernelPatch/releases/latest/download/kptools-android",
+    srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kptools-android",
     destPath = "${project.projectDir}/libs/arm64-v8a/libkptools.so",
     project = project,
     version = kernelPatchVersion
@@ -217,8 +216,7 @@ registerDownloadTask(
 // TODO: Remove in future
 registerDownloadTask(
     taskName = "downloadCompatKpatch",
-    // srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/0.10.7/kpatch-android",
-    srcUrl = "https://hk.gh-proxy.org/https://github.com/bmax121/KernelPatch/releases/download/0.10.7/kpatch-android",
+    srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/0.10.7/kpatch-android",
     destPath = "${project.projectDir}/libs/arm64-v8a/libkpatch.so",
     project = project,
     version = "0.10.7"

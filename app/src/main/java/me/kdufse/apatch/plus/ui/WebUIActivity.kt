@@ -70,9 +70,9 @@ class WebUIActivity : ComponentActivity() {
         val name = intent.getStringExtra("name")!!
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             @Suppress("DEPRECATION")
-            setTaskDescription(ActivityManager.TaskDescription("FolkPatch - $name"))
+            setTaskDescription(ActivityManager.TaskDescription("APatchPlus - $name"))
         } else {
-            val taskDescription = ActivityManager.TaskDescription.Builder().setLabel("FolkPatch - $name").build()
+            val taskDescription = ActivityManager.TaskDescription.Builder().setLabel("APatchPlus - $name").build()
             setTaskDescription(taskDescription)
         }
 

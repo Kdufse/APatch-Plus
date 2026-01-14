@@ -28,7 +28,7 @@
 
 ## 下载安装
 
-从 [发布页面](https://github.com/matsuzaka-yuki/APatchPlus/releases/latest) 下载最新的APK。
+从 [发布页面](https://github.com/Kdufse/APatch-Plus/releases/latest) 下载最新的APK。
 
 ## 系统要求
 

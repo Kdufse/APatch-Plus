@@ -28,7 +28,7 @@
 
 ## Download & Install
 
-Download the latest APK from the [Releases Section](https://github.com/matsuzaka-yuki/APatchPlus/releases/latest).
+Download the latest APK from the [Releases Section](https://github.com/Kdufse/APatch-Plus/releases/latest).
 
 ## System Requirements
 

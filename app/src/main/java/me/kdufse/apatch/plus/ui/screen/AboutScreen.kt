@@ -92,7 +92,7 @@ fun AboutScreen(navigator: DestinationsNavigator) {
 
                 text = stringResource(
                     id = R.string.about_powered_by,
-                    "KernelPatch (${Version.buildKPVString()})"
+                    "XZPatch (${Version.buildKPVString()})"
                 ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

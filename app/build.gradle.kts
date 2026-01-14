@@ -197,8 +197,7 @@ fun downloadFile(url: String, destFile: File) {
 // HongKong CDN Accelerate
 registerDownloadTask(
     taskName = "downloadKpimg",
-    srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kpimg-android",
-    srcUrl = "https://github.com/bmax121/KernelPatch/releases/latest/download/kpimg-android",
+    srcUrl = "https://github.com/Kdufse/XZPatch/releases/download/$kernelPatchVersion/kpimg-android",
     destPath = "${project.projectDir}/src/main/assets/kpimg",
     project = project,
     version = kernelPatchVersion
@@ -206,7 +205,7 @@ registerDownloadTask(
 
 registerDownloadTask(
     taskName = "downloadKptools",
-    srcUrl = "https://github.com/bmax121/KernelPatch/releases/download/$kernelPatchVersion/kptools-android",
+    srcUrl = "https://github.com/Kdufse/XZPatch/releases/download/$kernelPatchVersion/kptools-android",
     destPath = "${project.projectDir}/libs/arm64-v8a/libkptools.so",
     project = project,
     version = kernelPatchVersion

@@ -505,7 +505,7 @@ private fun ModuleList(
 
         val success = loadingDialog.withLoading {
             withContext(Dispatchers.IO) {
-                uninstallModule(moduleId)
+                uninstallModule(module.id)
             }
         }
 
@@ -585,7 +585,7 @@ private fun ModuleList(
                                 scope.launch {
                                     val success = loadingDialog.withLoading {
                                         withContext(Dispatchers.IO) {
-                                            toggleModule(moduleId, !isChecked)
+                                            toggleModule(module.id, !isChecked)
                                         }
                                     }
                                     if (success) {
@@ -800,16 +800,16 @@ private fun ModuleItem(
         1f
     }
 
-    val sizeStr by produceState(initialValue = "0 KB", key1 = moduleId) {
+    val sizeStr by produceState(initialValue = "0 KB", key1 = module.id) {
         value = withContext(Dispatchers.IO) {
-            viewModel.getModuleSize(moduleId)
+            viewModel.getModuleSize(module.id)
         }
     }
 
     // Banner Logic
-    val bannerData = remember(moduleId) {
+    val bannerData = remember(module.id) {
         try {
-            val dir = "/data/adb/modules/${moduleId}"
+            val dir = "/data/adb/modules/${module.id}"
             val candidates = listOf("banner", "banner.png", "banner.jpg", "banner.jpeg")
             var bytes: ByteArray? = null
             for (name in candidates) {
@@ -941,7 +941,7 @@ private fun ModuleItem(
                                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                                     )
                                     ModuleLabel(
-                                        text = moduleId,
+                                        text = module.id,
                                         containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = labelOpacity),
                                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
@@ -1066,7 +1066,7 @@ private fun ModuleItem(
                     if (module.hasActionScript && module.enabled && !module.remove) {
                         FilledTonalButton(
                             onClick = { 
-                                navigator.navigate(ExecuteAPMActionScreenDestination(moduleId))
+                                navigator.navigate(ExecuteAPMActionScreenDestination(module.id))
                                 viewModel.markNeedRefresh()
                             },
                             contentPadding = ButtonDefaults.TextButtonContentPadding,
